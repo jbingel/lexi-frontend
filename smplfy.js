@@ -2,18 +2,21 @@
  * Created by joachim on 10/12/16.
  */
 
-/**
- * Returns <p> element and character offsets for selected text
- * @returns {Array}
- */
-
 function doSomethingWithSelectedText() {
     var selection = getSelectionRange();
     if (selection) {
-        // alert("Selection " + selection);
+        var startNode = selection[0];
+        var endNode = selection[2];
+        // TODO: use ajax to connect to REST, probably gotta import ajax
+        // in background page of extension? [edit: already done]
     }
 }
 
+/**
+ * Gets the char offset from the document start for a given node
+ * @param node
+ * @returns {Number} The char offset from the document start
+ */
 function getNodeOffset(node) {
     var range = document.createRange();
     range.selectNodeContents(document);
@@ -21,12 +24,12 @@ function getNodeOffset(node) {
     return range.toString().length;
 }
 
+/**
+ * Gets the current selection and finds its start and end (nodes and char offsets)
+ * @returns {*[]} startNode, offset_in_startNode, endNode, offset_in_endNode
+ */
 function getSelectionRange() {
     var sel = window.getSelection();
-    var p = sel.anchorNode;
-    // if (p.nodeType == 3) {
-    //     p = p.parentNode;
-    // }
     var startNode = sel.anchorNode;
     var endNode = sel.focusNode;
     var start = sel.anchorOffset;
