@@ -2,66 +2,84 @@
  * Created by joachim on 10/12/16.
  */
 
-function doSomethingWithSelectedText() {
+function getSelectedText() {
+    var post_data = {};
     var selection = getSelectionRange();
     if (selection) {
-        // console.log(selection[0]);
-        // console.log(selection[0].toString());
-        // console.log(JSON.stringify(selection[0]));
         var startNode = selection[0].parentNode;
         var endNode = selection[2].parentNode;
-        console.log(startNode);
-        console.log(endNode);
-        var post_data = {};
-        post_data["startNode"] = startNode.textContent;
+        post_data["startNode"] = startNode;
+        post_data["startNodeText"] = startNode.textContent;
         post_data["startOffset"] = selection[1];
-        post_data["endNode"] = endNode.textContent;
+        post_data["endNode"] = endNode;
+        post_data["endNodeText"] = endNode.textContent;
         post_data["endOffset"] = selection[3];
-        post_data["textBetween"] = null;
-        if (startNode != endNode) {
-            var textBetween = "";
+        post_data["betweenNodesText"] = null;
+        post_data["betweenNodes"] = [];
+        post_data["outerHtml"] = startNode.outerHTML;
+        if (startNode != endNode) {  // TODO test if child relation between nodes, too!
+            var betweenText = "";
+            var betweenNodes = [];
             var curNode = startNode.nextSibling;
             while (curNode && curNode != endNode) {
-                console.log(curNode);
-                textBetween = textBetween.concat(" ");
-                textBetween = textBetween.concat(curNode.textContent);
+                betweenText = betweenText.concat(" ");
+                betweenText = betweenText.concat(curNode.textContent);
+                betweenNodes.push(curNode);
                 curNode = curNode.nextSibling;
-                console.log(textBetween);
             }
-            post_data["textBetween"] = textBetween;
+            post_data["betweenNodes"] = betweenNodes;
+            post_data["betweenNodesText"] = betweenText;
         }
-
-        //
-        // var post_data = {
-        //     "startNode": selection[0],
-        //     "startOffset": selection[1],
-        //     "endNode": selection[2],
-        //     "endOffset": selection[3]
-        // };
-        console.log(JSON.stringify(post_data));
-        $(document).ready(function() {
-            // $.post("http://localhost:5000/post",
-            //     {"myarg": 3},
-            //     function (response, status) {
-            //         console.log(response);
-            //         alert(response.status);
-            //         alert(response.myarg);
-            //     }
-            // );
-            //
-            $.ajax({
-                type: "POST",
-                contentType: "application/json; charset=utf-8",
-                headers: { 'access-control-allow-origin': '*' },
-                url: "http://127.0.0.1:5000/post",
-                data: JSON.stringify(post_data)
-            }).then(function(data) {
-                $('.myarg').append(data.myarg);
-                console.log(data.myarg);
-            });
-        });
     }
+    return post_data;
 }
+
+
+function getRestResponse(post_data) {
+    // console.log(JSON.stringify(post_data));
+    $(document).ready(function() {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            headers: { 'access-control-allow-origin': '*' },
+            url: "http://127.0.0.1:5000/post",
+            data: JSON.stringify(post_data),
+            success: processResponse
+            // success: function(data) {
+            //     // console.log(data.textOut);
+            //     console.log("FOOOO");
+            //     // $('.length').append(data.length);
+            //     // $('.textOut').append(data.textOut);
+            //     // console.log(data.length);
+            //     response = data.textOut;
+            //     console.log(response.slice(0, 50));
+            //     // post_data.startNode.textContent = data.textOut;
+            //     post_data.startNode.outerHTML = data.textOut;
+            // }
+        });
+    });
+}
+
+function simplify() {
+    var post_data = getSelectedText();
+    var rest_response = getRestResponse(post_data);
+    console.log(post_data);
+    console.log("REST RESPONSE: ");
+    console.log(rest_response);
+    // post_data.startNode.textContent = "FOO";
+    // post_data.startNode.textContent = rest_response;
+}
+
+
+function processResponse(data) {
+    $('.length').append(data.length);
+    $('.textOut').append(data.textOut);
+    console.log("textOut");
+    console.log(data.textOut);
+    var response = data.textOut;
+    // return data;
+}
+
 
 /**
  * Gets the char offset from the document start for a given node
@@ -105,4 +123,4 @@ function getSelectionRange() {
     return [startNode, start, endNode, end];
 }
 console.log("Started EZRead extension.");
-document.onmouseup = doSomethingWithSelectedText;
+document.onmouseup = simplify;
