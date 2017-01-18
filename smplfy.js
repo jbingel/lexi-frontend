@@ -60,12 +60,32 @@ function getRestResponse(post_data) {
     });
 }
 
-function simplify() {
-    var post_data = getSelectedText();
-    var rest_response = getRestResponse(post_data);
-    console.log(post_data);
-    console.log("REST RESPONSE: ");
-    console.log(rest_response);
+
+function ajaxCall(url, html) {
+    return new Promise(function(resolve, reject) {
+        // console.log(html.slice(0, 20));
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(JSON.parse(this.responseText));
+            // console.log(this.responseText);
+        };
+        xhr.onerror = reject;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+        xhr.setRequestHeader("access-control-allow-origin", "*");
+        xhr.send(JSON.stringify(html));
+    })
+}
+
+function load_simplifications() {
+    ajaxCall("http://127.0.0.1:5000/post", document.documentElement.outerHTML).then(function (result) {
+        document.documentElement.innerHTML = result['html'];
+    });
+
+    // var rest_response = getRestResponse(post_data);
+    // console.log(post_data);
+    // console.log("REST RESPONSE: ");
+    // console.log(rest_response);
     // post_data.startNode.textContent = "FOO";
     // post_data.startNode.textContent = rest_response;
 }
@@ -122,5 +142,34 @@ function getSelectionRange() {
     console.log([startNode, start, endNode, end]);
     return [startNode, start, endNode, end];
 }
+
+// CSS rules
+function addStyleString(str) {
+    var node = document.createElement('style');
+    node.innerHTML = str;
+    document.body.appendChild(node);
+}
+
+addStyleString('.simple {display: none}');
+addStyleString('.normal:hover {background: yellow}');
+addStyleString('simple: {background: green}');
+
+
+function simplify() {
+
+}
+
+
+var simple = (function(html) {
+    var res;
+    ajaxCall("http://127.0.0.1:5000/post", html).then(function (result) {
+        // console.log(result['html']);
+        // document.onmouseup = simplify(result['html']);
+        res = result;
+    });
+    return res;
+});
+
 console.log("Started EZRead extension.");
+load_simplifications();
 document.onmouseup = simplify;
