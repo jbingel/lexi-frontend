@@ -1,0 +1,30 @@
+/* CONTENT */
+
+.simplify {background: #e6ffff}
+.simplify:hover {background: paleturquoise}
+
+/* EZREAD INTERFACE */
+
+#ezread {
+    position: fixed;
+    z-index: 0;
+    /*font-family: sans;*/
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background: paleturquoise;
+    border-top: 2px solid darkslategrey;
+    border-bottom: 2px solid darkslategrey;
+    height: 24px;
+    padding-top: 5px;
+    padding-left: 5px;
+    margin-bottom: 50px;
+}
+
+#feedback_button {
+    position: absolute;
+    right: 10px;
+    top: 2px;
+    background: #ffffff;
+    height: 20px;
+}
