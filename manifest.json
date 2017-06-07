@@ -15,10 +15,12 @@
     {
       "matches": ["<all_urls>"],
       "css": ["ezread.css"]
+//      "js": ["user_management.js", "util.js", "smplfy.js"]
     }
   ],
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "content_security_policy":"script-src 'self'; object-src 'self'"
 }

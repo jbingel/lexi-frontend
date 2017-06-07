@@ -2,40 +2,24 @@
  * Created by joachim on 10/12/16.
  */
 
-// function getSelectedText() {
-//     var post_data = {};
-//     var selection = getSelectionRange();
-//     if (selection) {
-//         var startNode = selection[0].parentNode;
-//         var endNode = selection[2].parentNode;
-//         post_data["startNode"] = startNode;
-//         post_data["startNodeText"] = startNode.textContent;
-//         post_data["startOffset"] = selection[1];
-//         post_data["endNode"] = endNode;
-//         post_data["endNodeText"] = endNode.textContent;
-//         post_data["endOffset"] = selection[3];
-//         post_data["betweenNodesText"] = null;
-//         post_data["betweenNodes"] = [];
-//         post_data["outerHtml"] = startNode.outerHTML;
-//         if (startNode != endNode) {  // TODO test if child relation between nodes, too!
-//             var betweenText = "";
-//             var betweenNodes = [];
-//             var curNode = startNode.nextSibling;
-//             while (curNode && curNode != endNode) {
-//                 betweenText = betweenText.concat(" ");
-//                 betweenText = betweenText.concat(curNode.textContent);
-//                 betweenNodes.push(curNode);
-//                 curNode = curNode.nextSibling;
-//             }
-//             post_data["betweenNodes"] = betweenNodes;
-//             post_data["betweenNodesText"] = betweenText;
-//         }
-//     }
-//     return post_data;
-// }
+/**
+ * Stores all simplifications as returned from backend. Each simplification has an ID starting with
+ * `ezread_'. This object maps an ID to another object containing the fields: (i) `original': the original
+ * text, (ii) `simple': the simple version, (iii): `is_simplified': a boolean var indicating whether the
+ * sentence has been selected for simplification.
+  * @type {{}}
+ */
 
+var SERVER_URL = "http://127.0.0.1:5000";
 var simplifications = {};
 
+/**
+ * Makes an AJAX call to backend requesting simplifications based on some HTML.
+ * @param {string} url -
+ * @param {string} html -
+ * @param {string} usr -
+ * @returns {Promise}
+ */
 function simplifyAjaxCall(url, html, usr) {
     var request = {};
     request['user'] = usr;
@@ -53,7 +37,13 @@ function simplifyAjaxCall(url, html, usr) {
     })
 }
 
-function feedbackAjaxCall(url, html, usr) {
+/**
+ *
+ * @param {string} url
+ * @param {string} usr
+ * @returns {Promise}
+ */
+function feedbackAjaxCall(url, usr) {
     var request = {};
     request['user'] = usr;
     request['simplifications'] = simplifications;
@@ -72,6 +62,10 @@ function feedbackAjaxCall(url, html, usr) {
     })
 }
 
+/**
+ *
+ * @param {string} elemId
+ */
 function changeText(elemId) {
     var elem = document.getElementById(elemId);
     var orig = simplifications[elemId].original;
@@ -87,6 +81,9 @@ function changeText(elemId) {
     console.log(simplifications[elemId]);
 }
 
+/**
+ *
+ */
 function make_simplification_listeners() {
     $(".simplify").each(function () {
         this.addEventListener('click', function () {
@@ -96,21 +93,25 @@ function make_simplification_listeners() {
     })
 }
 
+/**
+ *
+ * @param {string} usr
+ */
 function load_simplifications(usr) {
-    simplifyAjaxCall("http://127.0.0.1:5000/post", document.body.outerHTML, usr).then(function (result) {
+    simplifyAjaxCall(SERVER_URL+"/post", document.body.outerHTML, usr).then(function (result) {
         document.body.outerHTML = result['html'];
         simplifications = result['simplifications'];
         console.log(simplifications);
         var header = document.getElementById("ezread");
         header.textContent = "Simplifications loaded. " +
-            "Click on highlighted spans to simplify them.";
+            "Click on highlighted words to simplify them.";
         // Add submit feedback button
         var button = document.createElement("button");
         button.innerHTML = "Click when done!";
         button.id = "feedback_button";
         header.appendChild(button);
         button.addEventListener('click', function() {
-            feedbackAjaxCall("http://127.0.0.1:5000/feedback", "fooo", usr);
+            feedbackAjaxCall(SERVER_URL+"/feedback", usr);
         });
         make_simplification_listeners();
     });
@@ -158,13 +159,9 @@ function load_simplifications(usr) {
 //     return [startNode, start, endNode, end];
 // }
 
-// CSS rules
-function addStyleString(str) {
-    var node = document.createElement('style');
-    node.innerHTML = str;
-    document.head.appendChild(node);
-}
-
+/**
+ *
+ */
 function add_ezread_header() {
     var header = document.createElement("div");
     header.id = "ezread";
@@ -172,7 +169,7 @@ function add_ezread_header() {
     console.log(document.documentElement.innerHTML);
 }
 
-var usr = "xyz";
+var usr = "xyz";  // TODO: get user ID
 console.log("Started EZRead extension. User: "+usr);
 // register_styles();
 add_ezread_header();
