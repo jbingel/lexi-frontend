@@ -2,17 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../ezread.css" media="screen">
     <title>User Credentials</title>
 </head>
 <body>
 
-<form id="login_form">
-    Brugernavn: <br/>
-    <input type="text" id="userId">
-    <br/>
-    <input id="login_button" type="submit" value="Login">
-    <input id="register_button" type="submit" value="Register">
-</form>
+<div class="ezread">
+    <form id="login_form">
+        <div id="input_fields">
+            Brugernavn: <br/>
+            <input type="text" id="userId">
+            <br/> Password: <br/>
+            <input type="password" id="password">
+        </div>
+        <div class="buttons" id="buttons">
+            <button id="login_button" type="submit" value="Login">Login</button>
+            <br/>
+            <button id="new_user_button" type="submit" value="Create new user">Create new user</button>
+            <br/>
+            <button id="register_button" type="submit" value="Register" style="visibility: hidden;">Register</button>
+        </div>
+    </form>
+</div>
 
 <script src="../scripts/login_user.js"></script>
 

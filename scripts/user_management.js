@@ -17,7 +17,7 @@ function check_user_login() {
         function(uId) {
             console.log(uId);
             if (isEmpty(uId)) {
-                alert("Requesting PW...");
+                console.log("User not logged on. Requesting credentials...");
                 // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 //     alert("sending msg... "+ tabs[0].id);
                 //     alert(tabs[0].id);
@@ -26,13 +26,20 @@ function check_user_login() {
                 //         // callback();
                 //     });
                 // });
-                chrome.runtime.sendMessage({type:'request_password'}, function () {
-                    return true;
+                chrome.runtime.sendMessage({type:'request_password'}, function () {  // TODO work with response here, check if login actually worked
+                    chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+                        // alert("Message sent");
+                        return true;
+                    });
                 });
             } else {
                 userId = uId.ezread_user.userId;
                 console.log("User ID: "+userId);
-                return true;
+                // here we can assume user is logged on just fine
+                chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+                    // alert("Message sent");
+                    return true;
+                });
                 // callback();
             }
         })

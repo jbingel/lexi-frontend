@@ -10,18 +10,21 @@
 .simplify:hover {background: #ffdac4;}
 
 /* EZREAD INTERFACE */
-#ezread {
+
+.ezread {
     color: white;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    z-index: 100000;
+    background: #333333;
+    margin: 0;
+}
+
+#ezread_header {
     position: fixed;
-    z-index: 10000;
-    /*font-family: sans;*/
     top: 0;
     left: 0;
     width: 100vw;
-    background: #333333;
     /*background: #43314b;*/
-    /*border-top: 2px solid #616161;*/
     border-bottom: 2px solid #fe9276;
     /*height: 30px;*/
     padding-top: 5px;
@@ -29,21 +32,51 @@
     margin-bottom: 50px;
 }
 
-#feedback_button {
+#login_form input {
+    color: white;
+    width: 95%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed #616161;
+    outline: none;
+}
+
+#login_form input:focus {
+    border-bottom: 1px dashed #fe9276;
+}
+
+#login_form .buttons {
+    position: relative;
+    margin-top: 10px;
+}
+
+#login_form .buttons button {
+    color: white;
+    width: 95%;
+    padding: 6px;
+    margin-bottom: 5px;
+}
+
+button {
     cursor: pointer;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #fe9276;
-    z-index: 10000;
-    position: absolute;
-    right: 10px;
-    top: 2px;
-    background: #616161;
+    z-index: 100001;
+    /*background: #616161;*/
+    background: #333333;
     height: 25px;
-    border: 0 solid transparent;
-    border-radius: 0px;
+    border: 1px solid transparent;
+    border-color: #fe9276;
+    border-radius: 5px;
     margin: 0;
     align-items: flex-start;
     text-align: center;
     display: inline-block;
     padding: 0 20px;
+}
+
+#feedback_button {
+    position: absolute;
+    right: 10px;
+    top: 2px;
 }

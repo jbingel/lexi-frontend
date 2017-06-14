@@ -9,9 +9,9 @@
  * sentence has been selected for simplification.
   * @type {{}}
  */
-
-var SERVER_URL = "http://127.0.0.1:5000";
 var simplifications = {};
+
+SERVER_URL = "http://127.0.0.1:5000";
 
 /**
  * Makes an AJAX call to backend requesting simplifications based on some HTML.
@@ -102,7 +102,7 @@ function load_simplifications(usr) {
         document.body.outerHTML = result['html'];
         simplifications = result['simplifications'];
         console.log(simplifications);
-        var header = document.getElementById("ezread");
+        var header = document.getElementById("ezread_header");
         header.textContent = "Simplifications loaded. " +
             "Click on highlighted words to simplify them.";
         // Add submit feedback button
@@ -165,15 +165,16 @@ function load_simplifications(usr) {
 function add_ezread_header() {
     var header_height = "30px";
     var header = document.createElement("div");
-    header.id = "ezread";
-    var firstElem = document.body.firstElementChild;
+    header.id = "ezread_header";
+    header.className = "ezread";
     console.log(document.body);
-    console.log(document.body.firstElementChild);
     header.style.height = header_height;
-    firstElem.style.marginTop = '200px';
-    // header.css('height', header_height);
-    // firstElem.css('margin-top', header_height);
-    document.body.insertBefore(header, document.body.firstElementChild);
+    // var firstElem = document.body.firstElementChild;
+    // firstElem.style.marginTop = '30px';
+    var bodyStyle = document.body.style;
+    var cssTransform = 'transform' in bodyStyle ? 'transform' : 'webkitTransform';
+    bodyStyle[cssTransform] = 'translateY(' + header_height + ')';
+    document.documentElement.appendChild(header);
     console.log(document.documentElement.innerHTML);
 }
 
@@ -182,7 +183,7 @@ chrome.storage.sync.get('ezread_user', function (usr_object) {
     console.log("Started EZRead extension. User: "+usr);
     // register_styles();
     add_ezread_header();
-    document.getElementById("ezread").textContent = "Loading simplifications...";
+    document.getElementById("ezread_header").textContent = "Loading simplifications...";
     load_simplifications(usr);
 });
 

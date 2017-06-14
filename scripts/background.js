@@ -27,15 +27,21 @@ chrome.runtime.onMessage.addListener(function(request) {
                 tabId: tab.id,
                 type: 'popup',
                 focused: true,
-                height: 200, width:500
-                // incognito, top, left, ...
+                height: 135, width:500,
             });
         });
     }
-    // sendResponse({"a": 2});
+    // sendResponse({"a": 2});  // TODO send response if everything worked out
     return true;
 });
 
+
+chrome.runtime.onMessage.addListener(function (request) {
+    if (request.type === "user_logged_on") {
+        // now start the simplifier
+        chrome.tabs.executeScript(null, {file: "scripts/smplfy.js"});
+    }
+});
 
 
 chrome.storage.sync.clear();
@@ -49,7 +55,7 @@ chrome.browserAction.onClicked.addListener(function(tabId) {
         //     check_user_login(function () {
                 chrome.tabs.executeScript(null, {file: "scripts/user_management.js"},
                     function () {
-                        chrome.tabs.executeScript(null, {file: "scripts/smplfy.js"});
+                        // chrome.tabs.executeScript(null, {file: "scripts/smplfy.js"});
                 });
                 /* Now that we're sure the userId is set, we can launch the simplifier */
 
