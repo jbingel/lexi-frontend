@@ -1,21 +1,24 @@
 {
   "manifest_version": 2,
-
   "name": "EZRead",
   "description": "Records difficult passages in texts and simplifies them.",
   "version": "0.1",
   "background": {
-    "page": "background.html"
+//    "page": "background.html"
+//    "scripts": ["require.js", "user_management.js", "background.js"],
+    "scripts": ["scripts/require.js", "scripts/background.js"],
+    "persistent": false
   },
   "browser_action": {
     "default_icon": "logo.png",
     "default_title": "Launch EZRead extension."
+//    "default_popup": "user_cred.html"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "css": ["ezread.css"]
-//      "js": ["user_management.js", "util.js", "smplfy.js"]
+//      , "js": ["open-login-dialog.js", "user_management.js"]
     }
   ],
   "permissions": [

@@ -163,18 +163,28 @@ function load_simplifications(usr) {
  *
  */
 function add_ezread_header() {
+    var header_height = "30px";
     var header = document.createElement("div");
     header.id = "ezread";
-    document.body.insertBefore(header, document.body.firstChild);
+    var firstElem = document.body.firstElementChild;
+    console.log(document.body);
+    console.log(document.body.firstElementChild);
+    header.style.height = header_height;
+    firstElem.style.marginTop = '200px';
+    // header.css('height', header_height);
+    // firstElem.css('margin-top', header_height);
+    document.body.insertBefore(header, document.body.firstElementChild);
     console.log(document.documentElement.innerHTML);
 }
 
-var usr = "xyz";  // TODO: get user ID
-console.log("Started EZRead extension. User: "+usr);
-// register_styles();
-add_ezread_header();
-document.getElementById("ezread").textContent = "Loading simplifications...";
-load_simplifications(usr);
+chrome.storage.sync.get('ezread_user', function (usr_object) {
+    var usr = usr_object.ezread_user.userId;
+    console.log("Started EZRead extension. User: "+usr);
+    // register_styles();
+    add_ezread_header();
+    document.getElementById("ezread").textContent = "Loading simplifications...";
+    load_simplifications(usr);
+});
 
 
 
