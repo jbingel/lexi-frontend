@@ -6,13 +6,6 @@ require.config({
     baseUrl: "."
 });
 
-function login_user(userId) {
-    // chrome.storage.sync.set({"ezread_userId": userId});
-    console.log("USERNAME: "+userId);
-    alert(userId);
-    alert(chrome.storage.sync);
-}
-
 var SERVER_URL = "http://127.0.0.1:5000";
 
 // Handle requests for passwords
