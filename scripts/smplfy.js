@@ -10,6 +10,7 @@
   * @type {{}}
  */
 var simplifications = {};
+var clicked_simplifications = [];
 
 SERVER_URL = "http://127.0.0.1:5000";
 
@@ -66,7 +67,7 @@ function feedbackAjaxCall(url, usr) {
  *
  * @param {string} elemId
  */
-function changeText(elemId) {
+function change_text(elemId) {
     var elem = document.getElementById(elemId);
     var orig = simplifications[elemId].original;
     var simple = simplifications[elemId].simple;
@@ -79,7 +80,21 @@ function changeText(elemId) {
         simplifications[elemId].is_simplified = true;
     }
     console.log(simplifications[elemId]);
+    console.log(clicked_simplifications);
 }
+
+
+function toggle_bad_feedback(element, img) {
+    var ref = element.getAttribute("data-reference");
+    simplifications[ref].bad_feedback = ! simplifications[ref].bad_feedback;
+    console.log(simplifications[ref]);
+    if (simplifications[ref].bad_feedback) {
+        img.src = chrome.runtime.getURL("img/bad_feedback_selected.png");
+    } else {
+        img.src = chrome.runtime.getURL("img/bad_feedback.png");
+    }
+}
+
 
 /**
  *
@@ -87,11 +102,50 @@ function changeText(elemId) {
 function make_simplification_listeners() {
     $(".simplify").each(function () {
         this.addEventListener('click', function () {
-            // changeText(this.id, this.dataset.alt1, this.dataset.alt2);
-            changeText(this.id);
-        })
+            // change_text(this.id, this.dataset.alt1, this.dataset.alt2);
+            change_text(this.id);
+            if (jQuery.inArray(this.id, clicked_simplifications) == -1) {
+                add_bad_feedback_icon(this);
+                clicked_simplifications.push(this.id);
+                console.log(clicked_simplifications);
+            }
+        });
     })
 }
+
+/**
+ *
+ */
+function add_bad_feedback_icon(element) {
+    var elemId = element.id;
+    var feedback_span = document.createElement("span");
+    feedback_span.setAttribute("class", "bad_feedback");
+    feedback_span.setAttribute("data-reference", elemId);
+    var img = document.createElement("img");
+    img.src = chrome.runtime.getURL("img/bad_feedback.png");
+    img.setAttribute("class", "bad_feedback_icon");
+    element.insertAdjacentElement("afterend", feedback_span);
+
+    feedback_span.appendChild(img);
+    feedback_span.addEventListener('click', function () {
+        // change_text(this.id, this.dataset.alt1, this.dataset.alt2);
+        toggle_bad_feedback(feedback_span, img);
+    })
+}
+// /**
+//  *
+//  */
+// function make_bad_feedback_images() {
+//     $(".bad_feedback").each(function () {
+//         var img = document.createElement("img");
+//         img.src = chrome.runtime.getURL("img/bad_feedback.png");
+//         this.appendChild(img);
+//         this.addEventListener('click', function () {
+//             // change_text(this.id, this.dataset.alt1, this.dataset.alt2);
+//             toggle_bad_feedback(this, img);
+//         })
+//     })
+// }
 
 /**
  *
@@ -103,8 +157,7 @@ function load_simplifications(usr) {
         simplifications = result['simplifications'];
         console.log(simplifications);
         var header = document.getElementById("ezread_header");
-        header.textContent = "Simplifications loaded. " +
-            "Click on highlighted words to simplify them.";
+        header.textContent = "Click on underlined words to simplify them.";
         // Add submit feedback button
         var button = document.createElement("button");
         button.innerHTML = "Click when done!";
@@ -114,6 +167,7 @@ function load_simplifications(usr) {
             feedbackAjaxCall(SERVER_URL+"/feedback", usr);
         });
         make_simplification_listeners();
+        // make_bad_feedback_images();
     });
 }
 

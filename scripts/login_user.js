@@ -11,6 +11,7 @@ var fields_container = document.getElementById("input_fields");
 var form = document.getElementById("login_form");
 var buttons = document.getElementById("buttons");
 
+// TODO provide option for password recovery?
 
 /* ******************************* *
  * ******************************* *

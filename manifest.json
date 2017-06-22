@@ -23,7 +23,10 @@
   ],
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "<all_urls>",
+    "tabs"
   ],
-  "content_security_policy":"script-src 'self'; object-src 'self'"
+  "content_security_policy":"script-src 'self'; object-src 'self'",
+  "web_accessible_resources": ["img/bad_feedback.png", "img/*png"]
 }

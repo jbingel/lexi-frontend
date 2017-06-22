@@ -24,10 +24,11 @@ chrome.runtime.onMessage.addListener(function(request) {
             });
         });
     }
-    // sendResponse({"a": 2});  // TODO send response if everything worked out
     return true;
 });
 
+
+// TODO make main context menu for app (change user)
 
 chrome.runtime.onMessage.addListener(function (request) {
     if (request.type === "user_logged_on") {
@@ -37,7 +38,7 @@ chrome.runtime.onMessage.addListener(function (request) {
 });
 
 
-chrome.storage.sync.clear();
+// chrome.storage.sync.clear();
 console.log(chrome.storage.sync);
 
 // Listen on browser action (click on icon), then check user is logged on, and finally simplify.
