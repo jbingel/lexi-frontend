@@ -11,17 +11,8 @@ var SERVER_URL = "http://127.0.0.1:5000";
 // Handle requests for passwords
 chrome.runtime.onMessage.addListener(function(request) {
     if (request.type === 'request_password') {
-        chrome.tabs.create({
-            url: chrome.extension.getURL('pages/user_cred.html'),
-            active: false
-        }, function(tab) {
-            // After the tab has been created, open a window to inject the tab
-            chrome.windows.create({
-                tabId: tab.id,
-                type: 'popup',
-                focused: true,
-                height: 135, width:500,
-            });
+        chrome.tabs.executeScript(null, {file: "scripts/inject_login_form.js"}, function() {
+            return true;
         });
     }
     return true;
@@ -38,7 +29,7 @@ chrome.runtime.onMessage.addListener(function (request) {
 });
 
 
-// chrome.storage.sync.clear();
+chrome.storage.sync.clear();
 console.log(chrome.storage.sync);
 
 // Listen on browser action (click on icon), then check user is logged on, and finally simplify.

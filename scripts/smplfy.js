@@ -3,13 +3,20 @@
  */
 
 /**
- * Stores all simplifications as returned from backend. Each simplification has an ID starting with
- * `ezread_'. This object maps an ID to another object containing the fields: (i) `original': the original
- * text, (ii) `simple': the simple version, (iii): `is_simplified': a boolean var indicating whether the
- * sentence has been selected for simplification.
+ * Stores all simplifications as returned from backend. Each simplification
+ * has an ID starting with `ezread_'. This object maps an ID to another
+ * object containing the fields: (i) `original': the original text,
+ * (ii) `simple': the simple version, (iii): `is_simplified': a boolean
+ * var indicating whether the sentence has been selected for simplification.
   * @type {{}}
  */
 var simplifications = {};
+
+/**
+ * Stores simplification element IDs for simplifications that have been
+ * clicked (e.g. to find out whether or not to add a bad_feedback_icon).
+ * @type {Array}
+ */
 var clicked_simplifications = [];
 
 SERVER_URL = "http://127.0.0.1:5000";
@@ -84,6 +91,11 @@ function change_text(elemId) {
 }
 
 
+/**
+ *
+ * @param element
+ * @param img
+ */
 function toggle_bad_feedback(element, img) {
     var ref = element.getAttribute("data-reference");
     simplifications[ref].bad_feedback = ! simplifications[ref].bad_feedback;
@@ -91,7 +103,7 @@ function toggle_bad_feedback(element, img) {
     if (simplifications[ref].bad_feedback) {
         img.src = chrome.runtime.getURL("img/bad_feedback_selected.png");
     } else {
-        img.src = chrome.runtime.getURL("img/bad_feedback.png");
+        img.src = chrome.runtime.getURL("img/bad_feedback_deselected.png");
     }
 }
 
@@ -114,7 +126,9 @@ function make_simplification_listeners() {
 }
 
 /**
- *
+ * Creates a 'bad feedback' icon next to the simplification span when
+ * it's clicked for the first time.
+ * @param element The element in question.
  */
 function add_bad_feedback_icon(element) {
     var elemId = element.id;
@@ -122,7 +136,7 @@ function add_bad_feedback_icon(element) {
     feedback_span.setAttribute("class", "bad_feedback");
     feedback_span.setAttribute("data-reference", elemId);
     var img = document.createElement("img");
-    img.src = chrome.runtime.getURL("img/bad_feedback.png");
+    img.src = chrome.runtime.getURL("img/bad_feedback_deselected.png");
     img.setAttribute("class", "bad_feedback_icon");
     element.insertAdjacentElement("afterend", feedback_span);
 
@@ -132,33 +146,23 @@ function add_bad_feedback_icon(element) {
         toggle_bad_feedback(feedback_span, img);
     })
 }
-// /**
-//  *
-//  */
-// function make_bad_feedback_images() {
-//     $(".bad_feedback").each(function () {
-//         var img = document.createElement("img");
-//         img.src = chrome.runtime.getURL("img/bad_feedback.png");
-//         this.appendChild(img);
-//         this.addEventListener('click', function () {
-//             // change_text(this.id, this.dataset.alt1, this.dataset.alt2);
-//             toggle_bad_feedback(this, img);
-//         })
-//     })
-// }
 
 /**
- *
- * @param {string} usr
+ *  Sends an AJAX call to the server to ask for all simplifications. To this end,
+ *  the entire document's <body> HTML is sent to the backend, which returns the
+ *  HTML enriched with certain <span> elements that denote the simplifications.
+ *  Adds feedback button to app toolbar.
+ * @param {string} usr User identifier expected by the backend (currently the email).
  */
 function load_simplifications(usr) {
     simplifyAjaxCall(SERVER_URL+"/post", document.body.outerHTML, usr).then(function (result) {
         document.body.outerHTML = result['html'];
         simplifications = result['simplifications'];
         console.log(simplifications);
+
+        // Modify toolbar
         var header = document.getElementById("ezread_header");
         header.textContent = "Click on underlined words to simplify them.";
-        // Add submit feedback button
         var button = document.createElement("button");
         button.innerHTML = "Click when done!";
         button.id = "feedback_button";
@@ -166,8 +170,9 @@ function load_simplifications(usr) {
         button.addEventListener('click', function() {
             feedbackAjaxCall(SERVER_URL+"/feedback", usr);
         });
+
+        // Create listeners for clicks on simplification spans
         make_simplification_listeners();
-        // make_bad_feedback_images();
     });
 }
 
@@ -214,7 +219,8 @@ function load_simplifications(usr) {
 // }
 
 /**
- *
+ * Adds a header/toolbar to the page that informs about the
+ * app's status and holds the button for sending feedback.
  */
 function add_ezread_header() {
     var header_height = "30px";
@@ -235,7 +241,6 @@ function add_ezread_header() {
 chrome.storage.sync.get('ezread_user', function (usr_object) {
     var usr = usr_object.ezread_user.userId;
     console.log("Started EZRead extension. User: "+usr);
-    // register_styles();
     add_ezread_header();
     document.getElementById("ezread_header").textContent = "Loading simplifications...";
     load_simplifications(usr);

@@ -12,14 +12,19 @@
 .bad_feedback_icon {
     height: 15px;
     width: 15px;
-    margin-top: -30px;
-    margin-left: 8px;
+    /*margin-top: -30px;*/
+    margin-left: 5px;
+}
+
+.bad_feedback_icon:hover {
+    -webkit-filter: drop-shadow(0px 3px 3px #79b3ea);
+    filter: drop-shadow(0px 3px 3px #79b3ea);
 }
 
 /* EZREAD INTERFACE */
 
 .ezread {
-    color: white;
+    color: #584461;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     z-index: 100000;
     background: #333333;
@@ -39,8 +44,8 @@
     margin-bottom: 50px;
 }
 
-#login_form input {
-    color: white;
+#ezread_login_form input {
+    color: #584461;
     width: 95%;
     background: transparent;
     border: none;
@@ -48,42 +53,106 @@
     outline: none;
 }
 
-#login_form input:focus {
+#ezread_login_form input:focus {
     border-bottom: 1px dashed #fe9276;
 }
 
-#login_form .buttons {
+#ezread_login_form .buttons {
     position: relative;
     margin-top: 10px;
 }
 
-#login_form .buttons button {
+#ezread_login_form .buttons button {
     color: white;
     width: 95%;
     padding: 6px;
     margin-bottom: 5px;
 }
 
-button {
+#ezread_login_modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+#ezread_login_form {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 60%; /* Could be more or less, depending on screen size */
+}
+
+    .ezread_button {
+    /*cursor: pointer;*/
+    /*font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    /*color: #fe9276;*/
+    /*z-index: 100001;*/
+    /*!*background: #616161;*!*/
+    /*background: #333333;*/
+    /*height: 25px;*/
+    /*border: 1px solid transparent;*/
+    /*border-color: #fe9276;*/
+    /*border-radius: 5px;*/
+    /*margin: 0;*/
+    /*align-items: flex-start;*/
+    /*text-align: center;*/
+    /*display: inline-block;*/
+    /*padding: 0 20px;*/
+
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
     cursor: pointer;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #fe9276;
-    z-index: 100001;
-    /*background: #616161;*/
-    background: #333333;
-    height: 25px;
-    border: 1px solid transparent;
-    border-color: #fe9276;
-    border-radius: 5px;
-    margin: 0;
-    align-items: flex-start;
-    text-align: center;
-    display: inline-block;
-    padding: 0 20px;
+    width: 100%;
 }
 
 #feedback_button {
     position: absolute;
     right: 10px;
     top: 2px;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+
+/* The Close Button */
+.close {
+    /* Position it in the top right corner outside of the modal */
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+/* Close button on hover */
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
 }

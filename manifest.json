@@ -6,7 +6,7 @@
   "background": {
 //    "page": "background.html"
 //    "scripts": ["require.js", "user_management.js", "background.js"],
-    "scripts": ["scripts/require.js", "scripts/background.js"],
+    "scripts": ["scripts/require.js", "scripts/background.js", "scripts/md5.js"],
     "persistent": false
   },
   "browser_action": {
@@ -18,7 +18,7 @@
     {
       "matches": ["<all_urls>"],
       "css": ["ezread.css"]
-//      , "js": ["open-login-dialog.js", "user_management.js"]
+      ,"js": ["scripts/md5.js"]
     }
   ],
   "permissions": [
@@ -28,5 +28,5 @@
     "tabs"
   ],
   "content_security_policy":"script-src 'self'; object-src 'self'",
-  "web_accessible_resources": ["img/bad_feedback.png", "img/*png"]
+  "web_accessible_resources": ["img/*png"]
 }

@@ -1,17 +1,70 @@
 /**
- * Created by joachim on 6/7/17.
+ * Created by joachim on 8/17/17.
  */
+
 
 SERVER_URL = "http://127.0.0.1:5000";
 
-// var login_button = document.getElementById("login_button");
-// var new_user_button = document.getElementById("new_user_button");
-// var register_button = document.getElementById("register_button");
-// var fields_container = document.getElementById("input_fields");
-// var form = document.getElementById("ezread_login_form");
-// var buttons = document.getElementById("buttons");
+// var ezread_login_modal = document.createElement("div");
+// ezread_login_modal.id = "ezread_login_modal"; ezread_login_modal.class = "ezread";
+// ezread_login_modal.style.display='block';
 //
-// alert(login_button);
+// var form = document.createElement("form");
+// form.id = "ezread_login_form"; form.class = "modal-content animate";
+//
+// var input_fields = document.createElement("div");
+// input_fields.id = "input_fields";
+// input_fields.innerHTML += 'Email-adresse: <br/>';
+// input_fields.innerHTML += '<input type="email" id="email">';
+// input_fields.innerHTML += 'Password: <br/>';
+// input_fields.innerHTML += '<input type="password" id="password">';
+//
+// var buttons = document.createElement("div");
+// buttons.id = "buttons"; buttons.class="buttons";
+// var login_button = document.createElement("button");
+// login_button.id = "login_button"; login_button.type = "submit"; login_button.value= "Login";
+
+
+var form_html = "";
+
+form_html += '<div id="ezread_login_modal" class="ezread" style="display: block">';
+form_html += '    <form id="ezread_login_form" class="modal-content animate">';
+form_html += '<div id="input_fields">';
+form_html += 'Email-adresse: <br/>';
+form_html += '<input type="email" id="email">';
+form_html += '<br/> Password: <br/>';
+form_html += '<input type="password" id="password">';
+form_html += '</div>';
+form_html += '<div class="buttons" id="buttons">';
+form_html += '<button id="login_button" type="submit" value="Login" class="ezread_button">Login</button>';
+form_html += '<br/>';
+form_html += '<button id="new_user_button" type="submit" value="Create new user" class="ezread_button">Create new user</button>';
+form_html += '<br/>';
+form_html += '<button id="register_button" type="submit" value="Register" style="visibility: hidden;" class="ezread_button">Register</button>';
+form_html += '</div>';
+form_html += '</form>';
+form_html += '</div>';
+
+document.body.innerHTML += form_html;
+
+var ezread_login_modal = document.getElementById("ezread_login_modal");
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == ezread_login_modal) {
+        ezread_login_modal.style.display = "none";
+    }
+};
+
+
+
+var login_button = document.getElementById("login_button");
+var new_user_button = document.getElementById("new_user_button");
+var register_button = document.getElementById("register_button");
+var fields_container = document.getElementById("input_fields");
+var form = document.getElementById("ezread_login_form");
+var buttons = document.getElementById("buttons");
+
 // // TODO provide option for password recovery
 
 /* ******************************* *
@@ -57,6 +110,7 @@ function registerAjaxCall(url, email, pw_hash, year_of_birth, education) {
  * @returns {Promise}
  */
 function loginAjaxCall(url, email, pw_hash) {
+    alert("logging in...");
     var request = {};
     request['email'] = email;
     request['pw_hash'] = pw_hash;
@@ -72,31 +126,6 @@ function loginAjaxCall(url, email, pw_hash) {
         xhr.send(JSON.stringify(request));
     })
 }
-//
-// function ezread_loginbutton_click() {
-//     alert('clicked login button');
-//     e.preventDefault(); // Prevent submission
-//     var email = document.getElementById('email').value;
-//     var pw = document.getElementById('password').value;
-//     if (email && pw) {
-//         var pw_hash = md5(pw);
-//         loginAjaxCall(SERVER_URL+"/login", email, pw_hash).then(function (result) {
-//             if (result.status == 200) {
-//                 chrome.storage.sync.set({
-//                     "ezread_user": {
-//                         "userId": email
-//                     }
-//                 });
-//                 window.close();
-//             } else {
-//                 // TODO here and later, also register: don't just revert form to beginning (also buttons get inactive then)
-//                 form.innerHTML += result.message + "<br/>"
-//             }
-//         });
-//     } else {
-//         form.innerHTML += "Need to set email and password.<br/>"
-//     }
-// }
 
 /* ******************************* *
  * ******************************* *
@@ -122,7 +151,10 @@ login_button.onclick = function(e) {
                         "userId": email
                     }
                 });
-                window.close();
+                chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+
+                });
+                ezread_login_modal.style.display = "none";
             } else {
                 // TODO here and later, also register: don't just revert form to beginning (also buttons get inactive then)
                 form.innerHTML += result.message + "<br/>"
@@ -157,11 +189,14 @@ register_button.onclick = function (e) {
                                 "userId": email
                             }
                         });
-                        window.close();
+                        chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+
+                        });
+                        ezread_login_modal.style.display = "none";
                     } else {
                         form.innerHTML += result.message + "<br/>";
                     }
-            });
+                });
         }
     } else {
         form.innerHTML += "Need to set all fields.<br/>";
@@ -174,8 +209,7 @@ register_button.onclick = function (e) {
  */
 new_user_button.onclick = function(e) {
     e.preventDefault(); // Prevent submission
-    window.resizeTo(500,300);
-
+    // TODO resize?
     // add additional inputs
     // add_input_field(fields_container, "email");
     // add_input_field(fields_container, "pw");
@@ -195,7 +229,6 @@ new_user_button.onclick = function(e) {
         "ezread_user": {
             "userId": email
         }});
-    // window.close();     // Close dialog
 };
 
 
@@ -204,4 +237,4 @@ function add_input_field(fields, name) {
     field.id = name;
     fields.innerHTML += "<br>"+name+": <br>";
     fields.appendChild(field);
-}
+};

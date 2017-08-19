@@ -28,7 +28,7 @@ function check_user_login() {
                 // });
                 chrome.runtime.sendMessage({type:'request_password'}, function () {  // TODO work with response here, check if login actually worked
                     chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
-                        // alert("Message sent");
+                        alert("Message sent");
                         return true;
                     });
                 });
