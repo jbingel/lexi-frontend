@@ -4,7 +4,7 @@
 
 /**
  * Stores all simplifications as returned from backend. Each simplification
- * has an ID starting with `ezread_'. This object maps an ID to another
+ * has an ID starting with `lexi_'. This object maps an ID to another
  * object containing the fields: (i) `original': the original text,
  * (ii) `simple': the simple version, (iii): `is_simplified': a boolean
  * var indicating whether the sentence has been selected for simplification.
@@ -38,7 +38,7 @@ function simplifyAjaxCall(url, html, usr) {
             resolve(JSON.parse(this.responseText));
         };
         xhr.onerror = function(e){
-            var lexi_header = document.getElementById("ezread_header");
+            var lexi_header = document.getElementById("lexi_header");
             lexi_header.innerHTML = "Unknown Error Occured. Server response not received.";
         };
         xhr.open("POST", url, true);
@@ -164,7 +164,7 @@ function load_simplifications(usr) {
         console.log(simplifications);
 
         // Modify toolbar
-        var header = document.getElementById("ezread_header");
+        var header = document.getElementById("lexi_header");
         header.textContent = "Click on underlined words to simplify them.";
         var button = document.createElement("button");
         button.innerHTML = "Click when done!";
@@ -225,11 +225,11 @@ function load_simplifications(usr) {
  * Adds a header/toolbar to the page that informs about the
  * app's status and holds the button for sending feedback.
  */
-function add_ezread_header() {
+function add_lexi_header() {
     var header_height = "30px";
     var header = document.createElement("div");
-    header.id = "ezread_header";
-    header.className = "ezread";
+    header.id = "lexi_header";
+    header.className = "lexi";
     console.log(document.body);
     header.style.height = header_height;
     // var firstElem = document.body.firstElementChild;
@@ -241,11 +241,11 @@ function add_ezread_header() {
     console.log(document.documentElement.innerHTML);
 }
 
-chrome.storage.sync.get('ezread_user', function (usr_object) {
-    var usr = usr_object.ezread_user.userId;
-    console.log("Started EZRead extension. User: "+usr);
-    add_ezread_header();
-    document.getElementById("ezread_header").textContent = "Loading simplifications...";
+chrome.storage.sync.get('lexi_user', function (usr_object) {
+    var usr = usr_object.lexi_user.userId;
+    console.log("Started lexi extension. User: "+usr);
+    add_lexi_header();
+    document.getElementById("lexi_header").textContent = "Loading simplifications...";
     load_simplifications(usr);
 });
 

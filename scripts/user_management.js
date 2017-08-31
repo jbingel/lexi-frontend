@@ -13,36 +13,26 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function check_user_login() {
     var userId;
-    chrome.storage.sync.get('ezread_user',
-        function(uId) {
-            console.log(uId);
-            if (isEmpty(uId)) {
-                console.log("User not logged on. Requesting credentials...");
-                // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                //     alert("sending msg... "+ tabs[0].id);
-                //     alert(tabs[0].id);
-                //     chrome.tabs.sendMessage(tabs[0].id, {type: 'request_password'}, function (response) {
-                //         alert("response: "+response);
-                //         // callback();
-                //     });
-                // });
-                chrome.runtime.sendMessage({type:'request_password'}, function () {  // TODO work with response here, check if login actually worked
-                    chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
-                        alert("Message sent");
-                        return true;
-                    });
-                });
-            } else {
-                userId = uId.ezread_user.userId;
-                console.log("User ID: "+userId);
-                // here we can assume user is logged on just fine
+    chrome.storage.sync.get('lexi_user', function(uId) {
+        console.log(uId);
+        if (isEmpty(uId)) {
+            console.log("User not logged on. Requesting credentials...");
+            chrome.runtime.sendMessage({type:'request_password'}, function () {  // TODO work with response here, check if login actually worked
                 chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
-                    // alert("Message sent");
+                    alert("Message sent");
                     return true;
                 });
-                // callback();
-            }
-        })
+            });
+        } else {
+            userId = uId.lexi_user.userId;
+            console.log("User ID: "+userId);
+            // here we can assume user is logged on just fine
+            chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+                return true;
+            });
+            // callback();
+        }
+    })
 }
 
 // from https://stackoverflow.com/questions/4994201/is-object-empty

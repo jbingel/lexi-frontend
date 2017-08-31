@@ -21,13 +21,13 @@
     filter: drop-shadow(0px 3px 3px #79b3ea);
 }
 
-/* EZREAD INTERFACE */
+/* lexi INTERFACE */
 
 .container {
     padding: 16px;
 }
 
-.ezread {
+.lexi {
     color: #000000;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     z-index: 100000;
@@ -35,7 +35,7 @@
     margin: 0;
 }
 
-#ezread_header {
+#lexi_header {
     position: fixed;
     top: 0;
     left: 0;
@@ -48,7 +48,7 @@
     margin-bottom: 50px;
 }
 
-/*#ezread_login_form input {*/
+/*#lexi_login_form input {*/
     /*color: #000000;*/
     /*width: 95%;*/
     /*background: transparent;*/
@@ -57,24 +57,24 @@
     /*outline: none;*/
 /*}*/
 
-/*#ezread_login_form input:focus {*/
+/*#lexi_login_form input:focus {*/
     /*border-bottom: 1px dashed #4CAF50;*/
 /*}*/
 
 
-/*#ezread_login_form .buttons {*/
+/*#lexi_login_form .buttons {*/
     /*position: relative;*/
     /*margin-top: 10px;*/
 /*}*/
 
-/*#ezread_login_form .buttons button {*/
+/*#lexi_login_form .buttons button {*/
     /*color: white;*/
     /*width: 95%;*/
     /*padding: 6px;*/
     /*margin-bottom: 5px;*/
 /*}*/
 
-#ezread_login_modal {
+#lexi_login_modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -88,7 +88,7 @@
     padding-top: 60px;
 }
 
-#ezread_login_form {
+#lexi_login_form {
     background-color: #fefefe;
     padding-top: 10px;
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
@@ -97,7 +97,7 @@
 }
 
 
-#ezread_login_form input, #ezread_login_form select {
+#lexi_login_form input, #lexi_login_form select {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;

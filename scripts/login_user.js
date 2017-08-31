@@ -8,7 +8,7 @@ SERVER_URL = "http://127.0.0.1:5000";
 // var new_user_button = document.getElementById("new_user_button");
 // var register_button = document.getElementById("register_button");
 // var fields_container = document.getElementById("input_fields");
-// var form = document.getElementById("ezread_login_form");
+// var form = document.getElementById("lexi_login_form");
 // var buttons = document.getElementById("buttons");
 //
 // alert(login_button);
@@ -73,7 +73,7 @@ function loginAjaxCall(url, email, pw_hash) {
     })
 }
 //
-// function ezread_loginbutton_click() {
+// function lexi_loginbutton_click() {
 //     alert('clicked login button');
 //     e.preventDefault(); // Prevent submission
 //     var email = document.getElementById('email').value;
@@ -83,7 +83,7 @@ function loginAjaxCall(url, email, pw_hash) {
 //         loginAjaxCall(SERVER_URL+"/login", email, pw_hash).then(function (result) {
 //             if (result.status == 200) {
 //                 chrome.storage.sync.set({
-//                     "ezread_user": {
+//                     "lexi_user": {
 //                         "userId": email
 //                     }
 //                 });
@@ -118,7 +118,7 @@ login_button.onclick = function(e) {
         loginAjaxCall(SERVER_URL+"/login", email, pw_hash).then(function (result) {
             if (result.status == 200) {
                 chrome.storage.sync.set({
-                    "ezread_user": {
+                    "lexi_user": {
                         "userId": email
                     }
                 });
@@ -153,7 +153,7 @@ register_button.onclick = function (e) {
                 function (result) {
                     if (result.status == 200) {
                         chrome.storage.sync.set({
-                            "ezread_user": {
+                            "lexi_user": {
                                 "userId": email
                             }
                         });
@@ -192,7 +192,7 @@ new_user_button.onclick = function(e) {
 
     var userId = document.getElementById('email').value;
     chrome.storage.sync.set({
-        "ezread_user": {
+        "lexi_user": {
             "userId": email
         }});
     // window.close();     // Close dialog

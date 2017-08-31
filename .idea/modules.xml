@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ezread.iml" filepath="$PROJECT_DIR$/.idea/ezread.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/lexi-frontend.iml" filepath="$PROJECT_DIR$/.idea/lexi-frontend.iml" />
     </modules>
   </component>
 </project>

@@ -1,1 +1,1 @@
-# EZREAD Frontend #
+# Frontend for the lexi browser plugin #

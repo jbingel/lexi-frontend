@@ -2,34 +2,14 @@
  * Created by joachim on 8/17/17.
  */
 
-
 SERVER_URL = "http://127.0.0.1:5000";
-
-// var ezread_login_modal = document.createElement("div");
-// ezread_login_modal.id = "ezread_login_modal"; ezread_login_modal.class = "ezread";
-// ezread_login_modal.style.display='block';
-//
-// var form = document.createElement("form");
-// form.id = "ezread_login_form"; form.class = "modal-content animate";
-//
-// var input_fields = document.createElement("div");
-// input_fields.id = "input_fields";
-// input_fields.innerHTML += 'Email-adresse: <br/>';
-// input_fields.innerHTML += '<input type="email" id="email">';
-// input_fields.innerHTML += 'Password: <br/>';
-// input_fields.innerHTML += '<input type="password" id="password">';
-//
-// var buttons = document.createElement("div");
-// buttons.id = "buttons"; buttons.class="buttons";
-// var login_button = document.createElement("button");
-// login_button.id = "login_button"; login_button.type = "submit"; login_button.value= "Login";
 var logo_url = chrome.runtime.getURL("img/lexi.png");
 
 var form_html = "";
 
-form_html += '<div id="ezread_login_modal" class="ezread" style="display: block">';
-form_html += '<form id="ezread_login_form" class="modal-content animate">';
-form_html += '<span onclick="document.getElementById(\'ezread_login_modal\').style.display=\'none\'" style="float: right" class="close" title="Close">&times;</span>';
+form_html += '<div id="lexi_login_modal" class="lexi-frontend" style="display: block">';
+form_html += '<form id="lexi_login_form" class="modal-content animate">';
+form_html += '<span onclick="document.getElementById(\'lexi_login_modal\').style.display=\'none\'" style="float: right" class="close" title="Close">&times;</span>';
 
 form_html += '<div id="input_fields" class="container">';
 form_html += '<img id="lexi_logo" src="'+logo_url+'" /><br/>';
@@ -70,12 +50,12 @@ for (i = new Date().getFullYear(); i > 1900; i--)
     $('#year_of_birth').append($('<option />').val(i).html(i));
 }
 
-var ezread_login_modal = document.getElementById("ezread_login_modal");
+var lexi_login_modal = document.getElementById("lexi_login_modal");
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    if (event.target == ezread_login_modal) {
-        ezread_login_modal.style.display = "none";
+    if (event.target == lexi_login_modal) {
+        lexi_login_modal.style.display = "none";
     }
 };
 
@@ -86,7 +66,7 @@ var new_user_button = document.getElementById("new_user_button");
 var register_button = document.getElementById("register_button");
 var fields_container = document.getElementById("input_fields");
 var expanded_inputs =  document.getElementById("lexi_expanded_inputs");
-var form = document.getElementById("ezread_login_form");
+var form = document.getElementById("lexi_login_form");
 var buttons = document.getElementById("buttons");
 
 
@@ -170,14 +150,14 @@ login_button.onclick = function(e) {
         loginAjaxCall(SERVER_URL+"/login", email).then(function (result) {
             if (result.status == 200) {
                 chrome.storage.sync.set({
-                    "ezread_user": {
+                    "lexi_user": {
                         "userId": email
                     }
                 });
                 chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
 
                 });
-                ezread_login_modal.style.display = "none";
+                lexi_login_modal.style.display = "none";
             } else {
                 // TODO here and later, also register: don't just revert form to beginning (also buttons get inactive then)
                 form.innerHTML += result.message + "<br/>"
@@ -209,14 +189,14 @@ register_button.onclick = function (e) {
                 console.log(result.status);
                 if (result.status == 200) {
                     chrome.storage.sync.set({
-                        "ezread_user": {
+                        "lexi_user": {
                             "userId": email
                         }
                     });
                     chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
 
                     });
-                    ezread_login_modal.style.display = "none";
+                    lexi_login_modal.style.display = "none";
                 } else {
                     form.innerHTML += result.message + "<br/>";
                 }

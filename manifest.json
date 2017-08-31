@@ -3,21 +3,23 @@
   "name": "lexi",
   "description": "Records difficult passages in texts and simplifies them.",
   "version": "0.1",
+  "icons": {
+      "16": "img/l16.png",
+      "48": "img/lexi48.png",
+      "128": "img/lexi128.png"
+  },
   "background": {
-//    "page": "background.html"
-//    "scripts": ["require.js", "user_management.js", "background.js"],
     "scripts": ["scripts/require.js", "scripts/background.js", "scripts/md5.js"],
     "persistent": false
   },
   "browser_action": {
-    "default_icon": "l.png",
+    "default_icon": "img/l.png",
     "default_title": "Launch lexi extension."
-//    "default_popup": "user_cred.html"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "css": ["ezread.css"]
+      "css": ["lexi.css"]
       ,"js": ["scripts/md5.js"]
     }
   ],
