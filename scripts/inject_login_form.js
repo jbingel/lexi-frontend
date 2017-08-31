@@ -23,29 +23,52 @@ SERVER_URL = "http://127.0.0.1:5000";
 // buttons.id = "buttons"; buttons.class="buttons";
 // var login_button = document.createElement("button");
 // login_button.id = "login_button"; login_button.type = "submit"; login_button.value= "Login";
-
+var logo_url = chrome.runtime.getURL("img/lexi.png");
 
 var form_html = "";
 
 form_html += '<div id="ezread_login_modal" class="ezread" style="display: block">';
-form_html += '    <form id="ezread_login_form" class="modal-content animate">';
-form_html += '<div id="input_fields">';
-form_html += 'Email-adresse: <br/>';
+form_html += '<form id="ezread_login_form" class="modal-content animate">';
+form_html += '<span onclick="document.getElementById(\'ezread_login_modal\').style.display=\'none\'" style="float: right" class="close" title="Close">&times;</span>';
+
+form_html += '<div id="input_fields" class="container">';
+form_html += '<img id="lexi_logo" src="'+logo_url+'" /><br/>';
+form_html += 'Email-adresse<br/>';
 form_html += '<input type="email" id="email">';
-form_html += '<br/> Password: <br/>';
-form_html += '<input type="password" id="password">';
+
+form_html += '<div id="lexi_expanded_inputs" style="display: none;">';
+form_html += 'Year of birth<br/>';
+form_html += '<select name="yearpicker" id="year_of_birth"></select>';
+
+form_html += 'Education<br/>';
+form_html += '<select name="education" id="education">';
+form_html += '<option value="primary">Primary school</option>';
+form_html += '<option value="secondary">Secondary school</option>';
+form_html += '<option value="higher">Higher Education</option>';
+form_html += '</select>';
 form_html += '</div>';
-form_html += '<div class="buttons" id="buttons">';
-form_html += '<button id="login_button" type="submit" value="Login" class="ezread_button">Login</button>';
+
+
+// form_html += '<div id="lexi_buttons_container" class="buttons">';
+// form_html += '<div class="buttons" id="buttons">';
+form_html += '<button id="login_button" type="submit" value="Login" class="lexi_button">Login</button>';
 form_html += '<br/>';
-form_html += '<button id="new_user_button" type="submit" value="Create new user" class="ezread_button">Create new user</button>';
+
+form_html += '<button id="new_user_button" type="submit" value="Create new user" class="lexi_button">Create new user</button>';
 form_html += '<br/>';
-form_html += '<button id="register_button" type="submit" value="Register" style="visibility: hidden;" class="ezread_button">Register</button>';
-form_html += '</div>';
+form_html += '<button id="register_button" type="submit" value="Register" style="display: none;" class="lexi_button">Register</button>';
+
+form_html += '</div>';  // container
+
 form_html += '</form>';
 form_html += '</div>';
 
 document.body.innerHTML += form_html;
+
+for (i = new Date().getFullYear(); i > 1900; i--)
+{
+    $('#year_of_birth').append($('<option />').val(i).html(i));
+}
 
 var ezread_login_modal = document.getElementById("ezread_login_modal");
 
@@ -62,10 +85,10 @@ var login_button = document.getElementById("login_button");
 var new_user_button = document.getElementById("new_user_button");
 var register_button = document.getElementById("register_button");
 var fields_container = document.getElementById("input_fields");
+var expanded_inputs =  document.getElementById("lexi_expanded_inputs");
 var form = document.getElementById("ezread_login_form");
 var buttons = document.getElementById("buttons");
 
-// // TODO provide option for password recovery
 
 /* ******************************* *
  * ******************************* *
@@ -77,15 +100,14 @@ var buttons = document.getElementById("buttons");
  *
  * @param {string} url
  * @param {string} email
- * @param {string} pw_hash
  * @param {string} year_of_birth
  * @param {string} education
  * @returns {Promise}
  */
-function registerAjaxCall(url, email, pw_hash, year_of_birth, education) {
+function registerAjaxCall(url, email, year_of_birth, education) {
     var request = {};
     request['email'] = email;
-    request['pw_hash'] = pw_hash;
+    // request['pw_hash'] = pw_hash;
     request['year_of_birth'] = year_of_birth;
     request['education'] = education;
     return new Promise(function(resolve, reject) {
@@ -94,7 +116,9 @@ function registerAjaxCall(url, email, pw_hash, year_of_birth, education) {
             resolve(JSON.parse(this.responseText));
             // console.log(this.responseText);
         };
-        xhr.onerror = reject;
+        xhr.onerror = function(e){
+            form.innerHTML += "Unknown Error Occured. Server response not received.<br/>"
+        };
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhr.setRequestHeader("access-control-allow-origin", "*");
@@ -106,20 +130,20 @@ function registerAjaxCall(url, email, pw_hash, year_of_birth, education) {
  *
  * @param {string} url
  * @param {string} email
- * @param {string} pw_hash
  * @returns {Promise}
  */
-function loginAjaxCall(url, email, pw_hash) {
-    alert("logging in...");
+function loginAjaxCall(url, email) {
     var request = {};
     request['email'] = email;
-    request['pw_hash'] = pw_hash;
+    // request['pw_hash'] = pw_hash;
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function () {
             resolve(JSON.parse(this.responseText));
         };
-        xhr.onerror = reject;
+        xhr.onerror = function(e){
+            form.innerHTML += "Unknown Error Occured. Server response not received.<br/>"
+        };
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhr.setRequestHeader("access-control-allow-origin", "*");
@@ -138,13 +162,12 @@ function loginAjaxCall(url, email, pw_hash) {
  credentials.
  */
 login_button.onclick = function(e) {
-    alert('clicked login button');
     e.preventDefault(); // Prevent submission
     var email = document.getElementById('email').value;
-    var pw = document.getElementById('password').value;
-    if (email && pw) {
-        var pw_hash = md5(pw);
-        loginAjaxCall(SERVER_URL+"/login", email, pw_hash).then(function (result) {
+    // var pw = document.getElementById('password').value;
+    if (email) {
+        // var pw_hash = md5(pw);
+        loginAjaxCall(SERVER_URL+"/login", email).then(function (result) {
             if (result.status == 200) {
                 chrome.storage.sync.set({
                     "ezread_user": {
@@ -161,7 +184,7 @@ login_button.onclick = function(e) {
             }
         });
     } else {
-        form.innerHTML += "Need to set email and password.<br/>"
+        form.innerHTML += "Need to provide email.<br/>"
     }
 };
 
@@ -172,32 +195,32 @@ login_button.onclick = function(e) {
 register_button.onclick = function (e) {
     e.preventDefault(); // Prevent submission
     var email = document.getElementById('email').value;
-    var pw = document.getElementById('password').value;
-    var pw_repeat = document.getElementById('password_repeat').value;
+    // var pw = document.getElementById('password').value;
+    // var pw_repeat = document.getElementById('password_repeat').value;
     var year_of_birth = document.getElementById('year_of_birth').value;
     var education = document.getElementById('education').value;
-    if (email && pw && pw_repeat && year_of_birth && education) {
-        if (pw != pw_repeat) {
-            form.innerHTML += "Passwords do not match.<br/>";
-        } else {
-            var pw_hash = md5(pw);
-            registerAjaxCall(SERVER_URL+"/register_user", email, pw_hash, year_of_birth, education).then(
-                function (result) {
-                    if (result.status == 200) {
-                        chrome.storage.sync.set({
-                            "ezread_user": {
-                                "userId": email
-                            }
-                        });
-                        chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+    if (email && year_of_birth && education) {
+        // var email_hash = md5(email);
+        var email_hash = email;
+        registerAjaxCall(SERVER_URL+"/register_user", email_hash, year_of_birth, education).then(
+            function (result) {
+                alert(result);
+                console.log(result);
+                console.log(result.status);
+                if (result.status == 200) {
+                    chrome.storage.sync.set({
+                        "ezread_user": {
+                            "userId": email
+                        }
+                    });
+                    chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
 
-                        });
-                        ezread_login_modal.style.display = "none";
-                    } else {
-                        form.innerHTML += result.message + "<br/>";
-                    }
-                });
-        }
+                    });
+                    ezread_login_modal.style.display = "none";
+                } else {
+                    form.innerHTML += result.message + "<br/>";
+                }
+            });
     } else {
         form.innerHTML += "Need to set all fields.<br/>";
     }
@@ -209,32 +232,10 @@ register_button.onclick = function (e) {
  */
 new_user_button.onclick = function(e) {
     e.preventDefault(); // Prevent submission
-    // TODO resize?
-    // add additional inputs
-    // add_input_field(fields_container, "email");
-    // add_input_field(fields_container, "pw");
-    add_input_field(fields_container, "password_repeat");
-    add_input_field(fields_container, "year_of_birth");
-    add_input_field(fields_container, "education");
-
+    expanded_inputs.style.display = "block";
     // remove unused buttons and make register button visible
-    console.log(buttons);
-    buttons.removeChild(login_button);
-    buttons.removeChild(new_user_button);
-    register_button.style.visibility = "visible";
-    console.log(buttons);
+    login_button.style.display = "none";
+    new_user_button.style.display = "none";
+    register_button.style.display = "block";
 
-    var userId = document.getElementById('email').value;
-    chrome.storage.sync.set({
-        "ezread_user": {
-            "userId": email
-        }});
-};
-
-
-function add_input_field(fields, name) {
-    var field = document.createElement("input");
-    field.id = name;
-    fields.innerHTML += "<br>"+name+": <br>";
-    fields.appendChild(field);
 };

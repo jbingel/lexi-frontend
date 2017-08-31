@@ -37,7 +37,10 @@ function simplifyAjaxCall(url, html, usr) {
         xhr.onload = function () {
             resolve(JSON.parse(this.responseText));
         };
-        xhr.onerror = reject;
+        xhr.onerror = function(e){
+            var lexi_header = document.getElementById("ezread_header");
+            lexi_header.innerHTML = "Unknown Error Occured. Server response not received.";
+        };
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhr.setRequestHeader("access-control-allow-origin", "*");
