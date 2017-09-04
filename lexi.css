@@ -107,6 +107,10 @@
     max-width: 800px;
 }
 
+#lexi_error_message_field {
+    color: #000000;
+}
+
 #lexi_logo {
     width: 15%;
     padding-bottom: 20px;

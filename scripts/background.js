@@ -37,15 +37,14 @@ chrome.browserAction.onClicked.addListener(function(tabId) {
     chrome.tabs.executeScript(null, {file: "scripts/jquery-3.1.1.js"}, function(){
         /* First, make sure user is logged on (aka if userId is set in chrome.storage */
         // require(['user_management'], function(user_management) {
-        //     check_user_login(function () {
-                chrome.tabs.executeScript(null, {file: "scripts/user_management.js"},
-                    function () {
-                        // chrome.tabs.executeScript(null, {file: "scripts/smplfy.js"});
-                });
-                /* Now that we're sure the userId is set, we can launch the simplifier */
+        chrome.tabs.executeScript(null, {file: "scripts/user_management.js"},
+            function () {
+                // chrome.tabs.executeScript(null, {file: "scripts/smplfy.js"});
+            });
+            /* Now that we're sure the userId is set, we can launch the simplifier */
 
-                // chrome.tabs.executeScript(null, {file: "smplfy.js"});
-            // });
+            // chrome.tabs.executeScript(null, {file: "smplfy.js"});
+        // });
         // });
     });
 });

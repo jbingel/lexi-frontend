@@ -8,7 +8,7 @@ SERVER_URL = "http://127.0.0.1:5000";
 // var new_user_button = document.getElementById("new_user_button");
 // var register_button = document.getElementById("register_button");
 // var fields_container = document.getElementById("input_fields");
-// var form = document.getElementById("lexi_login_form");
+// var lexi_login_form = document.getElementById("lexi_login_form");
 // var buttons = document.getElementById("buttons");
 //
 // alert(login_button);
@@ -89,12 +89,12 @@ function loginAjaxCall(url, email, pw_hash) {
 //                 });
 //                 window.close();
 //             } else {
-//                 // TODO here and later, also register: don't just revert form to beginning (also buttons get inactive then)
-//                 form.innerHTML += result.message + "<br/>"
+//                 // TODO here and later, also register: don't just revert lexi_login_form to beginning (also buttons get inactive then)
+//                 lexi_login_form.innerHTML += result.message + "<br/>"
 //             }
 //         });
 //     } else {
-//         form.innerHTML += "Need to set email and password.<br/>"
+//         lexi_login_form.innerHTML += "Need to set email and password.<br/>"
 //     }
 // }
 
@@ -124,12 +124,12 @@ login_button.onclick = function(e) {
                 });
                 window.close();
             } else {
-                // TODO here and later, also register: don't just revert form to beginning (also buttons get inactive then)
-                form.innerHTML += result.message + "<br/>"
+                // TODO here and later, also register: don't just revert lexi_login_form to beginning (also buttons get inactive then)
+                lexi_login_form.innerHTML += result.message + "<br/>"
             }
         });
     } else {
-        form.innerHTML += "Need to set email and password.<br/>"
+        lexi_login_form.innerHTML += "Need to set email and password.<br/>"
     }
 };
 
@@ -146,7 +146,7 @@ register_button.onclick = function (e) {
     var education = document.getElementById('education').value;
     if (email && pw && pw_repeat && year_of_birth && education) {
         if (pw != pw_repeat) {
-            form.innerHTML += "Passwords do not match.<br/>";
+            lexi_login_form.innerHTML += "Passwords do not match.<br/>";
         } else {
             var pw_hash = md5(pw);
             registerAjaxCall(SERVER_URL+"/register_user", email, pw_hash, year_of_birth, education).then(
@@ -157,24 +157,23 @@ register_button.onclick = function (e) {
                                 "userId": email
                             }
                         });
-                        window.close();
+                        // window.close();
                     } else {
-                        form.innerHTML += result.message + "<br/>";
+                        lexi_login_form.innerHTML += result.message + "<br/>";
                     }
             });
         }
     } else {
-        form.innerHTML += "Need to set all fields.<br/>";
+        lexi_login_form.innerHTML += "Need to set all fields.<br/>";
     }
 };
 
 /*
- If new_user button is clicked, rework form to register new user
+ If new_user button is clicked, rework lexi_login_form to register new user
  (enter email, password, year of birth, education status).
  */
 new_user_button.onclick = function(e) {
     e.preventDefault(); // Prevent submission
-    window.resizeTo(500,300);
 
     // add additional inputs
     // add_input_field(fields_container, "email");
@@ -195,7 +194,6 @@ new_user_button.onclick = function(e) {
         "lexi_user": {
             "userId": email
         }});
-    // window.close();     // Close dialog
 };
 
 

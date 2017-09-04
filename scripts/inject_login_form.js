@@ -5,52 +5,59 @@
 SERVER_URL = "http://127.0.0.1:5000";
 var logo_url = chrome.runtime.getURL("img/lexi.png");
 
-var form_html = "";
 
-form_html += '<div id="lexi_login_modal" class="lexi-frontend" style="display: block">';
-form_html += '<form id="lexi_login_form" class="modal-content animate">';
-form_html += '<span onclick="document.getElementById(\'lexi_login_modal\').style.display=\'none\'" style="float: right" class="close" title="Close">&times;</span>';
+function inject_login_modal() {
+    var form_html = "";
+    form_html += '<div id="lexi_login_modal" class="lexi-frontend" style="display: block">';
+    form_html += '<form id="lexi_login_form" class="modal-content animate">';
+    form_html += '<span onclick="document.getElementById(\'lexi_login_modal\').style.display=\'none\'" style="float: right" class="close" title="Close">&times;</span>';
 
-form_html += '<div id="input_fields" class="container">';
-form_html += '<img id="lexi_logo" src="'+logo_url+'" /><br/>';
-form_html += 'Email-adresse<br/>';
-form_html += '<input type="email" id="email">';
+    form_html += '<div id="input_fields" class="container">';
+    form_html += '<img id="lexi_logo" src="'+logo_url+'" /><br/>';
+    form_html += 'Email-adresse<br/>';
+    form_html += '<input type="email" id="email">';
 
-form_html += '<div id="lexi_expanded_inputs" style="display: none;">';
-form_html += 'Year of birth<br/>';
-form_html += '<select name="yearpicker" id="year_of_birth"></select>';
+    form_html += '<div id="lexi_expanded_inputs" style="display: none;">';
+    form_html += 'Year of birth<br/>';
+    form_html += '<select name="yearpicker" id="year_of_birth"></select>';
 
-form_html += 'Education<br/>';
-form_html += '<select name="education" id="education">';
-form_html += '<option value="primary">Primary school</option>';
-form_html += '<option value="secondary">Secondary school</option>';
-form_html += '<option value="higher">Higher Education</option>';
-form_html += '</select>';
-form_html += '</div>';
-
+    form_html += 'Education<br/>';
+    form_html += '<select name="education" id="education">';
+    form_html += '<option value="primary">Primary school</option>';
+    form_html += '<option value="secondary">Secondary school</option>';
+    form_html += '<option value="higher">Higher Education</option>';
+    form_html += '</select>';
+    form_html += '</div>';
 
 // form_html += '<div id="lexi_buttons_container" class="buttons">';
 // form_html += '<div class="buttons" id="buttons">';
-form_html += '<button id="login_button" type="submit" value="Login" class="lexi_button">Login</button>';
-form_html += '<br/>';
+    form_html += '<button id="login_button" type="button" value="Login" class="lexi_button">Login</button>';
+    form_html += '<button id="new_user_button" type="button" value="Create new user" class="lexi_button">Create new user</button>';
+    form_html += '<button id="back_to_login_button" type="button" value="back" style="display: none;" class="lexi_button">Back to Login</button>';
+    form_html += '<button id="register_button" type="button" value="Register" style="display: none;" class="lexi_button">Register</button>';
+    form_html += '<div id="lexi_error_message_field" style="display: none;"></div>';
+    form_html += '</div>';  // container
 
-form_html += '<button id="new_user_button" type="submit" value="Create new user" class="lexi_button">Create new user</button>';
-form_html += '<br/>';
-form_html += '<button id="register_button" type="submit" value="Register" style="display: none;" class="lexi_button">Register</button>';
+    form_html += '</form>';  // login form
+    form_html += '</div>';  // login modal
 
-form_html += '</div>';  // container
+    document.body.innerHTML += form_html;
 
-form_html += '</form>';
-form_html += '</div>';
+    for (i = new Date().getFullYear(); i > 1900; i--)
+    {
+        $('#year_of_birth').append($('<option />').val(i).html(i));
+    }
 
-document.body.innerHTML += form_html;
-
-for (i = new Date().getFullYear(); i > 1900; i--)
-{
-    $('#year_of_birth').append($('<option />').val(i).html(i));
+    return document.getElementById("lexi_login_modal");
 }
 
 var lexi_login_modal = document.getElementById("lexi_login_modal");
+
+if (lexi_login_modal) {
+    lexi_login_modal.style.display = "block";
+} else {
+    lexi_login_modal = inject_login_modal();
+}
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -59,14 +66,21 @@ window.onclick = function(event) {
     }
 };
 
-
+function display_error(message) {
+    var msg_field = document.getElementById("lexi_error_message_field");
+    if (msg_field) {
+        msg_field.style.display = "block";
+        msg_field.innerHTML = message;
+    }
+}
 
 var login_button = document.getElementById("login_button");
 var new_user_button = document.getElementById("new_user_button");
 var register_button = document.getElementById("register_button");
+var back_to_login_button = document.getElementById("back_to_login_button");
 var fields_container = document.getElementById("input_fields");
 var expanded_inputs =  document.getElementById("lexi_expanded_inputs");
-var form = document.getElementById("lexi_login_form");
+var lexi_login_form = document.getElementById("lexi_login_form");
 var buttons = document.getElementById("buttons");
 
 
@@ -97,7 +111,7 @@ function registerAjaxCall(url, email, year_of_birth, education) {
             // console.log(this.responseText);
         };
         xhr.onerror = function(e){
-            form.innerHTML += "Unknown Error Occured. Server response not received.<br/>"
+            display_error("Unknown Error Occured. Server response not received.");
         };
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -122,7 +136,7 @@ function loginAjaxCall(url, email) {
             resolve(JSON.parse(this.responseText));
         };
         xhr.onerror = function(e){
-            form.innerHTML += "Unknown Error Occured. Server response not received.<br/>"
+            display_error("Unknown Error Occured. Server response not received.<br/>");
         };
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -141,8 +155,8 @@ function loginAjaxCall(url, email) {
  If login button is clicked, try to log in user with provided
  credentials.
  */
-login_button.onclick = function(e) {
-    e.preventDefault(); // Prevent submission
+function loginbuttonclick () {
+    // e.preventDefault(); // Prevent submission
     var email = document.getElementById('email').value;
     // var pw = document.getElementById('password').value;
     if (email) {
@@ -159,21 +173,26 @@ login_button.onclick = function(e) {
                 });
                 lexi_login_modal.style.display = "none";
             } else {
-                // TODO here and later, also register: don't just revert form to beginning (also buttons get inactive then)
-                form.innerHTML += result.message + "<br/>"
+                display_error(result.message + "<br/>");
             }
         });
     } else {
-        form.innerHTML += "Need to provide email.<br/>"
-    }
-};
+        display_error("Need to provide email.<br/>");
+    };
+    console.log("login button: ");
+    console.log(document.getElementById("login_button"));
+}
+
+login_button.addEventListener('click',
+    function() {loginbuttonclick()},
+    false
+);
 
 /*
  If register button is clicked, submit fields to server and
  ask if registration in database has worked
  */
-register_button.onclick = function (e) {
-    e.preventDefault(); // Prevent submission
+function registerbuttonclick () {
     var email = document.getElementById('email').value;
     // var pw = document.getElementById('password').value;
     // var pw_repeat = document.getElementById('password_repeat').value;
@@ -198,24 +217,41 @@ register_button.onclick = function (e) {
                     });
                     lexi_login_modal.style.display = "none";
                 } else {
-                    form.innerHTML += result.message + "<br/>";
+                    display_error(result.message + "<br/>");
                 }
             });
     } else {
-        form.innerHTML += "Need to set all fields.<br/>";
+        display_error("Need to set all fields.<br/>");
     }
-};
+}
+
+register_button.addEventListener('click',
+    function() {registerbuttonclick()},
+    false
+);
+
+
+back_to_login_button.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent submission
+    expanded_inputs.style.display = "none";
+    login_button.style.display = "block";
+    new_user_button.style.display = "block";
+    register_button.style.display = "none";
+    back_to_login_button.style.display = "none";
+});
+
 
 /*
- If new_user button is clicked, rework form to register new user
+ If new_user button is clicked, rework lexi_login_form to register new user
  (enter email, password, year of birth, education status).
  */
-new_user_button.onclick = function(e) {
+new_user_button.addEventListener('click', function(e) {
     e.preventDefault(); // Prevent submission
     expanded_inputs.style.display = "block";
     // remove unused buttons and make register button visible
     login_button.style.display = "none";
     new_user_button.style.display = "none";
+    back_to_login_button.style.display = "block";
     register_button.style.display = "block";
 
-};
+});
