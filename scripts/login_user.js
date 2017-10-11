@@ -2,7 +2,14 @@
  * Created by joachim on 6/7/17.
  */
 
-SERVER_URL = "http://127.0.0.1:5000";
+
+window.browser = (function () {
+    return window.msBrowser ||
+        window.chrome ||
+        window.browser;
+})();
+
+var SERVER_URL = "https://www.readwithlexi.net/lexi/";
 
 // var login_button = document.getElementById("login_button");
 // var new_user_button = document.getElementById("new_user_button");
@@ -82,7 +89,7 @@ function loginAjaxCall(url, email, pw_hash) {
 //         var pw_hash = md5(pw);
 //         loginAjaxCall(SERVER_URL+"/login", email, pw_hash).then(function (result) {
 //             if (result.status == 200) {
-//                 chrome.storage.sync.set({
+//                 browser.storage.sync.set({
 //                     "lexi_user": {
 //                         "userId": email
 //                     }
@@ -117,7 +124,7 @@ login_button.onclick = function(e) {
         var pw_hash = md5(pw);
         loginAjaxCall(SERVER_URL+"/login", email, pw_hash).then(function (result) {
             if (result.status == 200) {
-                chrome.storage.sync.set({
+                browser.storage.sync.set({
                     "lexi_user": {
                         "userId": email
                     }
@@ -152,7 +159,7 @@ register_button.onclick = function (e) {
             registerAjaxCall(SERVER_URL+"/register_user", email, pw_hash, year_of_birth, education).then(
                 function (result) {
                     if (result.status == 200) {
-                        chrome.storage.sync.set({
+                        browser.storage.sync.set({
                             "lexi_user": {
                                 "userId": email
                             }
@@ -190,7 +197,7 @@ new_user_button.onclick = function(e) {
     console.log(buttons);
 
     var userId = document.getElementById('email').value;
-    chrome.storage.sync.set({
+    browser.storage.sync.set({
         "lexi_user": {
             "userId": email
         }});

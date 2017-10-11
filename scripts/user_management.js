@@ -2,23 +2,31 @@
  * Created by joachim on 6/6/17.
  */
 
+
+window.browser = (function () {
+    return window.msBrowser ||
+        window.chrome ||
+        window.browser;
+})();
+
 // Speed up calls to hasOwnProperty
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 
-// chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+// browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 //     alert(tabs[0].id);
-//     chrome.tabs.sendMessage(tabs[0].id, {type:'request_password'});
+//     browser.tabs.sendMessage(tabs[0].id, {type:'request_password'});
 // });
 
 function check_user_login() {
     var userId;
-    chrome.storage.sync.get('lexi_user', function(uId) {
+    browser.storage.sync.get('lexi_user', function(uId) {
         console.log(uId);
         if (isEmpty(uId)) {
             console.log("User not logged on. Requesting credentials...");
-            chrome.runtime.sendMessage({type:'request_password'}, function () {  // TODO work with response here, check if login actually worked
-                chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+            browser.runtime.sendMessage({type:'request_login'}, function () {  // TODO work with response here, check if login actually worked
+                console.log("Sending message to request login...");
+                browser.runtime.sendMessage({type:'user_logged_on'}, function () {
                     alert("Message sent");
                     return true;
                 });
@@ -27,7 +35,7 @@ function check_user_login() {
             userId = uId.lexi_user.userId;
             console.log("User ID: "+userId);
             // here we can assume user is logged on just fine
-            chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+            browser.runtime.sendMessage({type:'user_logged_on'}, function () {
                 return true;
             });
             // callback();

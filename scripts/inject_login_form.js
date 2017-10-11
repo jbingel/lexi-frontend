@@ -2,39 +2,59 @@
  * Created by joachim on 8/17/17.
  */
 
-SERVER_URL = "http://127.0.0.1:5000";
-var logo_url = chrome.runtime.getURL("img/lexi.png");
+var lang = "da";
+// var i18n =  self.port("_locales/da.json");
+
+window.browser = (function () {
+    return window.msBrowser ||
+        window.chrome ||
+        window.browser;
+})();
+
+var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+
+var logo_url = browser.runtime.getURL("img/lexi.png");
 
 
 function inject_login_modal() {
     var form_html = "";
     form_html += '<div id="lexi_login_modal" class="lexi-frontend" style="display: block">';
     form_html += '<form id="lexi_login_form" class="modal-content animate">';
-    form_html += '<span onclick="document.getElementById(\'lexi_login_modal\').style.display=\'none\'" style="float: right" class="close" title="Close">&times;</span>';
+    form_html += '<span onclick="document.getElementById(\'lexi_login_modal\').style.display=\'none\'" style="float: right; height: 35px;" class="close" title="Close">&times;</span>';
 
     form_html += '<div id="input_fields" class="container">';
+
+    // form_html += '<div id="lexi-lang-select"> \
+    //     <form action="scripts/langswitch.js"> \
+    //     <select id="country-options" name="country-options">\
+    //     <option selected="selected" title="http://www.yoursite.com" value="us">United States</option> \
+    //     </select> \
+    //     <input value="Select" type="submit" /> \
+    //     </form> \
+    //     </div>';
+
     form_html += '<img id="lexi_logo" src="'+logo_url+'" /><br/>';
-    form_html += 'Email-adresse<br/>';
+    form_html += browser.i18n.getMessage("lexi_login_email")+ '<br/>';
     form_html += '<input type="email" id="email">';
 
     form_html += '<div id="lexi_expanded_inputs" style="display: none;">';
-    form_html += 'Year of birth<br/>';
+    form_html += browser.i18n.getMessage("lexi_login_yearofbirth")+'<br/>';
     form_html += '<select name="yearpicker" id="year_of_birth"></select>';
 
-    form_html += 'Education<br/>';
+    form_html += browser.i18n.getMessage("lexi_login_education")+'<br/>';
     form_html += '<select name="education" id="education">';
-    form_html += '<option value="primary">Primary school</option>';
-    form_html += '<option value="secondary">Secondary school</option>';
-    form_html += '<option value="higher">Higher Education</option>';
+    form_html += '<option value="primary">'+browser.i18n.getMessage("lexi_login_education_primary")+'</option>';
+    form_html += '<option value="secondary">'+browser.i18n.getMessage("lexi_login_education_secondary")+'</option>'
+    form_html += '<option value="higher">'+browser.i18n.getMessage("lexi_login_education_higher")+'</option>'
     form_html += '</select>';
     form_html += '</div>';
 
 // form_html += '<div id="lexi_buttons_container" class="buttons">';
 // form_html += '<div class="buttons" id="buttons">';
-    form_html += '<button id="login_button" type="button" value="Login" class="lexi_button">Login</button>';
-    form_html += '<button id="new_user_button" type="button" value="Create new user" class="lexi_button">Create new user</button>';
-    form_html += '<button id="back_to_login_button" type="button" value="back" style="display: none;" class="lexi_button">Back to Login</button>';
-    form_html += '<button id="register_button" type="button" value="Register" style="display: none;" class="lexi_button">Register</button>';
+    form_html += '<button id="login_button" type="button" value="Login" class="lexi_button">'+browser.i18n.getMessage("lexi_login_button")+'</button>';
+    form_html += '<button id="new_user_button" type="button" value="Create new user" class="lexi_button">'+browser.i18n.getMessage("lexi_login_newuser")+'</button>';
+    form_html += '<button id="back_to_login_button" type="button" value="back" style="display: none;" class="lexi_button">'+browser.i18n.getMessage("lexi_login_backtologin")+'</button>';
+    form_html += '<button id="register_button" type="button" value="Register" style="display: none;" class="lexi_button">'+browser.i18n.getMessage("lexi_login_register")+'</button>';
     form_html += '<div id="lexi_error_message_field" style="display: none;"></div>';
     form_html += '</div>';  // container
 
@@ -163,13 +183,13 @@ function loginbuttonclick () {
         // var pw_hash = md5(pw);
         loginAjaxCall(SERVER_URL+"/login", email).then(function (result) {
             if (result.status == 200) {
-                chrome.storage.sync.set({
+                browser.storage.sync.set({
                     "lexi_user": {
                         "userId": email
                     }
                 });
-                chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
-
+                console.log("Sending message that user is logged on...");
+                browser.runtime.sendMessage({type:'user_logged_on'}, function () {
                 });
                 lexi_login_modal.style.display = "none";
             } else {
@@ -178,9 +198,7 @@ function loginbuttonclick () {
         });
     } else {
         display_error("Need to provide email.<br/>");
-    };
-    console.log("login button: ");
-    console.log(document.getElementById("login_button"));
+    }
 }
 
 login_button.addEventListener('click',
@@ -203,16 +221,15 @@ function registerbuttonclick () {
         var email_hash = email;
         registerAjaxCall(SERVER_URL+"/register_user", email_hash, year_of_birth, education).then(
             function (result) {
-                alert(result);
                 console.log(result);
                 console.log(result.status);
                 if (result.status == 200) {
-                    chrome.storage.sync.set({
+                    browser.storage.sync.set({
                         "lexi_user": {
                             "userId": email
                         }
                     });
-                    chrome.runtime.sendMessage({type:'user_logged_on'}, function () {
+                    browser.runtime.sendMessage({type:'user_logged_on'}, function () {
 
                     });
                     lexi_login_modal.style.display = "none";

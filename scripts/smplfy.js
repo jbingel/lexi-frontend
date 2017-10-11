@@ -2,6 +2,13 @@
  * Created by joachim on 10/12/16.
  */
 
+
+window.browser = (function () {
+    return window.msBrowser ||
+        window.chrome ||
+        window.browser;
+})();
+
 /**
  * Stores all simplifications as returned from backend. Each simplification
  * has an ID starting with `lexi_'. This object maps an ID to another
@@ -19,7 +26,7 @@ var simplifications = {};
  */
 var clicked_simplifications = [];
 
-SERVER_URL = "http://127.0.0.1:5000";
+var SERVER_URL = "https://www.readwithlexi.net/lexi/";
 
 /**
  * Makes an AJAX call to backend requesting simplifications based on some HTML.
@@ -104,9 +111,9 @@ function toggle_bad_feedback(element, img) {
     simplifications[ref].bad_feedback = ! simplifications[ref].bad_feedback;
     console.log(simplifications[ref]);
     if (simplifications[ref].bad_feedback) {
-        img.src = chrome.runtime.getURL("img/bad_feedback_selected.png");
+        img.src = browser.runtime.getURL("img/bad_feedback_selected.png");
     } else {
-        img.src = chrome.runtime.getURL("img/bad_feedback_deselected.png");
+        img.src = browser.runtime.getURL("img/bad_feedback_deselected.png");
     }
 }
 
@@ -139,7 +146,7 @@ function add_bad_feedback_icon(element) {
     feedback_span.setAttribute("class", "bad_feedback");
     feedback_span.setAttribute("data-reference", elemId);
     var img = document.createElement("img");
-    img.src = chrome.runtime.getURL("img/bad_feedback_deselected.png");
+    img.src = browser.runtime.getURL("img/bad_feedback_deselected.png");
     img.setAttribute("class", "bad_feedback_icon");
     element.insertAdjacentElement("afterend", feedback_span);
 
@@ -241,7 +248,7 @@ function add_lexi_header() {
     console.log(document.documentElement.innerHTML);
 }
 
-chrome.storage.sync.get('lexi_user', function (usr_object) {
+browser.storage.sync.get('lexi_user', function (usr_object) {
     var usr = usr_object.lexi_user.userId;
     console.log("Started lexi extension. User: "+usr);
     add_lexi_header();

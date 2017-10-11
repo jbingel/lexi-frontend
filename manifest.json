@@ -3,13 +3,14 @@
   "name": "lexi",
   "description": "Records difficult passages in texts and simplifies them.",
   "version": "0.1",
+  "default_locale": "da",
   "icons": {
       "16": "img/l16.png",
       "48": "img/lexi48.png",
       "128": "img/lexi128.png"
   },
   "background": {
-    "scripts": ["scripts/require.js", "scripts/background.js", "scripts/md5.js"],
+    "scripts": ["global_vars.js", "scripts/require.js", "scripts/background.js", "scripts/md5.js"],
     "persistent": false
   },
   "browser_action": {
@@ -20,7 +21,7 @@
     {
       "matches": ["<all_urls>"],
       "css": ["lexi.css"]
-      ,"js": ["scripts/md5.js"]
+      ,"js": ["global_vars.js", "scripts/md5.js", "scripts/i18n.js"]
     }
   ],
   "permissions": [
@@ -28,7 +29,11 @@
     "storage",
     "<all_urls>",
     "tabs",
-    "notifications"
+    "notifications",
+    "contextMenus"
+//    "http://*",
+//    "https://*",
+//    "chrome-devtools://*"
   ],
   "content_security_policy":"script-src 'self'; object-src 'self'",
   "web_accessible_resources": ["img/*png"]

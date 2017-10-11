@@ -1,0 +1,34 @@
+{
+  "lexi_login_email": {
+    "message": "Email-adresse",
+    "description": "Tast ind din email-adresse"
+  },
+  "lexi_login_yearofbirth": {
+    "message": "Hvornår er du født?",
+    "description": "Tast ind dit fødelseår."
+  },
+  "lexi_login_education": {
+    "message": "Hvad er din højest opnåede uddannelse?"
+  },
+  "lexi_login_education_primary": {
+    "message": "Grundskole"
+  },
+  "lexi_login_education_secondary": {
+    "message": "Gymnasiet"
+  },
+  "lexi_login_education_higher": {
+    "message": "Højskole/Universitet"
+  },
+  "lexi_login_button": {
+    "message": "Log ind"
+  },
+  "lexi_login_newuser": {
+    "message": "Ny bruger"
+  },
+  "lexi_login_backtologin": {
+    "message": "Tilbage til login"
+  },
+  "lexi_login_register": {
+    "message": "Opret"
+  }
+}
