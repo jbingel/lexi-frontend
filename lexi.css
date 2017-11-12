@@ -1,54 +1,132 @@
-/* CONTENT */
+/* CSS RESET (to override page HTML/) */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    /*display: none !important;*/
+}
 
-.simplify {
+
+/* CONTENT */
+.lexi-simplify {
     /*background-color: #e6ffff,*/
     text-decoration:underline;
     text-decoration-style: dotted;
     /*text-decoration-color: #a44fff;*/
-    text-decoration-color: #4CAF50;
+    text-decoration-color: #288520;
 }
-.simplify:hover {background: #87de87;}
+.lexi-simplify:hover {background: #87de87;}
 
-.bad_feedback_icon {
+.lexi-bad-feedback-icon {
     height: 15px;
     width: 15px;
     /*margin-top: -30px;*/
     margin-left: 5px;
 }
 
-.bad_feedback_icon:hover {
+.lexi-bad-feedback-icon:hover {
     -webkit-filter: drop-shadow(0px 3px 3px #79b3ea);
     filter: drop-shadow(0px 3px 3px #79b3ea);
 }
 
 /* lexi INTERFACE */
 
-.container {
-    padding: 16px;
-}
-
-.lexi {
+.lexi-frontend {
     color: #000000;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    z-index: 100000;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: medium !important;
+    /*z-index: 100000;*/
     background: #ffffff;
     margin: 0;
+    text-transform: none !important;
 }
 
-#lexi_header {
+.lexi-frontend p {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.lexi-frontend p, .lexi-frontend select {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: medium !important;
+    font-style: normal; !important;
+    font-weight: normal; !important;
+}
+
+.lexi-frontend select {
+    border-radius: 0 !important;
+    height: 45px !important;
+    line-height: 30px !important;
+}
+
+.lexi-modal-container {
+    padding: 16px;
+    margin: auto;
+}
+
+#lexi-notifier {
+    position: fixed;
+    top: 0;
+    left: 0;
+    /*margin: auto;*/
+    color: white;
+    background-color: #4CAF50;
+    /*width:300px;*/
+    max-width: 300px;
+    /*text-align: center;*/
+    vertical-align: middle;
+    padding: 10px;
+    z-index: 100000;
+    -moz-box-shadow: 0 3px 7px rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);
+    opacity: 1;
+    border-bottom-right-radius: 0.3em;
+}
+
+#lexi-notifier:hover {
+    opacity: 0;
+    /*pointer-events: none;*/
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+#lexi-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     /*background: #43314b;*/
-    border-bottom: 2px solid #4CAF50;
+    /*background-color: #4CAF50;*/
+    color: white;
+    background-color: #2b9028;
+    /*background-color: #4CAF50;*/
+    /*border-bottom: 2px solid #288520;*/
+    /*border-bottom: 2px solid #4CAF50;*/
+    border-bottom: 2px solid white;
     /*height: 30px;*/
     padding-top: 5px;
-    padding-left: 5px;
+    padding-left: 40px;
+    /*padding-right: 40px;*/
     margin-bottom: 50px;
+    text-align: center;
+    vertical-align: middle;
 }
 
-/*#lexi_login_form input {*/
+/*#lexi-login-form input {*/
     /*color: #000000;*/
     /*width: 95%;*/
     /*background: transparent;*/
@@ -57,27 +135,27 @@
     /*outline: none;*/
 /*}*/
 
-/*#lexi_login_form input:focus {*/
+/*#lexi-login-form input:focus {*/
     /*border-bottom: 1px dashed #4CAF50;*/
 /*}*/
 
 
-/*#lexi_login_form .buttons {*/
+/*#lexi-login-form .buttons {*/
     /*position: relative;*/
     /*margin-top: 10px;*/
 /*}*/
 
-/*#lexi_login_form .buttons button {*/
+/*#lexi-login-form .buttons button {*/
     /*color: white;*/
     /*width: 95%;*/
     /*padding: 6px;*/
     /*margin-bottom: 5px;*/
 /*}*/
 
-#lexi_login_modal {
+.lexi-modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 1000001; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -88,16 +166,17 @@
     padding-top: 60px;
 }
 
-#lexi_login_form {
+.lexi-modal-content {
     background-color: #fefefe;
     padding-top: 10px;
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 1px solid #888;
-    width: 30%; /* Could be more or less, depending on screen size */
+    width: 480px; /* Could be more or less, depending on screen size */
+    overflow: auto; /* Enable scroll if needed */
 }
 
 
-#lexi_login_form input, #lexi_login_form select {
+.lexi-frontend #lexi-login-form input, .lexi-frontend #lexi-login-form select {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -105,39 +184,52 @@
     border: 1px solid #ccc;
     box-sizing: border-box;
     max-width: 800px;
-}
+    }
 
-#lexi_error_message_field {
+.lexi-frontend #lexi-error-message-field {
     color: #000000;
 }
 
-#lexi_logo {
-    width: 15%;
+.lexi-frontend #lexi-logo {
+    width: 67px;
+    height: 67px;
     padding-bottom: 20px;
 }
 
-.lexi_button {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+.lexi-button {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     background-color: #4CAF50;
     color: white;
     padding: 5px 5px;
     margin: 5px 0;
     border: none;
+    border-radius: 0;
     cursor: pointer;
     width: 100%;
-    height: 30px
+    height: 30px;
+    line-height: 25px;
+    text-transform: none !important;
 }
 
-.lexi_button:hover {
+.lexi-button:hover {
     opacity: 0.8;
 }
 
-#lexi_buttons_container {
+
+.lexi-frontend #lexi-back-to-login-button {
+    margin-top: 15px;
+    background-color: white;
+    color: black;
+    text-align: left;
+}
+
+
+.lexi-frontend #lexi-buttons-container {
     text-align: center;
     padding: 16px;
 }
 
-#lexi_buttons_container button {
+.lexi-frontend #lexi-buttons-container button {
     color: white;
     width: 95%;
     padding: 6px;
@@ -145,7 +237,7 @@
 }
 
 
-#lexi-lang-select {
+.lexi-frontend #lexi-lang-select {
     /*position: absolute;*/
     /*top: 13px;*/
     /*right: 0;*/
@@ -171,106 +263,106 @@
     margin: 0;
 }
 
-/* JS-created definition list */
+/*!* JS-created definition list *!*/
 
-.dropdown dd { position: relative; }
+/*.dropdown dd { position: relative; }*/
 
-.dropdown a {
-    text-decoration: none;
-    outline: 0;
-    font: 12px Arial, Helvetica, sans-serif;
-    display: block;
-    width: 130px;
-    overflow: hidden;
-}
+/*.dropdown a {*/
+    /*text-decoration: none;*/
+    /*outline: 0;*/
+    /*font: 12px Arial, Helvetica, sans-serif;*/
+    /*display: block;*/
+    /*width: 130px;*/
+    /*overflow: hidden;*/
+/*}*/
 
-.dropdown dt a {
-    background: #c45618;
-    border: 1px solid #964315;
-    padding: 3px 10px 4px 10px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    color: #fff;
-}
+/*.dropdown dt a {*/
+    /*background: #c45618;*/
+    /*border: 1px solid #964315;*/
+    /*padding: 3px 10px 4px 10px;*/
+    /*-webkit-border-radius: 5px;*/
+    /*-moz-border-radius: 5px;*/
+    /*border-radius: 5px;*/
+    /*color: #fff;*/
+/*}*/
 
-.dropdown dt a.active {
-    background: #db5e18;
-    -webkit-border-bottom-left-radius: 0;
-    -webkit-border-bottom-right-radius: 0;
-    -moz-border-radius-bottomleft: 0;
-    -moz-border-radius-bottomright: 0;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom: 1px dotted #676768;
-    -moz-box-shadow: 0 3px 7px rgba(0,0,0,.5);
-    -webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);
-    box-shadow: 0 3px 7px rgba(0,0,0,.5);
-    color: #fff;
-}
+/*.dropdown dt a.active {*/
+    /*background: #db5e18;*/
+    /*-webkit-border-bottom-left-radius: 0;*/
+    /*-webkit-border-bottom-right-radius: 0;*/
+    /*-moz-border-radius-bottomleft: 0;*/
+    /*-moz-border-radius-bottomright: 0;*/
+    /*border-bottom-left-radius: 0;*/
+    /*border-bottom-right-radius: 0;*/
+    /*border-bottom: 1px dotted #676768;*/
+    /*-moz-box-shadow: 0 3px 7px rgba(0,0,0,.5);*/
+    /*-webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);*/
+    /*box-shadow: 0 3px 7px rgba(0,0,0,.5);*/
+    /*color: #fff;*/
+/*}*/
 
-.dropdown dd ul {
-    background: #814f33;
-    border: 1px solid #676768;
-    color: #C5C0B0;
-    display: none;
-    position: absolute;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    padding: 2px 0 5px 0;
-    list-style: none;
-    border-top: none;
-    margin: 0;
-    -webkit-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -moz-border-radius-bottomright: 5px;
-    -moz-border-radius-bottomleft: 5px;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    -moz-box-shadow: 0 3px 7px rgba(0,0,0,.5);
-    -webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);
-    box-shadow: 0 3px 7px rgba(0,0,0,.5);
-}
+/*.dropdown dd ul {*/
+    /*background: #814f33;*/
+    /*border: 1px solid #676768;*/
+    /*color: #C5C0B0;*/
+    /*display: none;*/
+    /*position: absolute;*/
+    /*z-index: 999;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*padding: 2px 0 5px 0;*/
+    /*list-style: none;*/
+    /*border-top: none;*/
+    /*margin: 0;*/
+    /*-webkit-border-bottom-right-radius: 5px;*/
+    /*-webkit-border-bottom-left-radius: 5px;*/
+    /*-moz-border-radius-bottomright: 5px;*/
+    /*-moz-border-radius-bottomleft: 5px;*/
+    /*border-bottom-right-radius: 5px;*/
+    /*border-bottom-left-radius: 5px;*/
+    /*-moz-box-shadow: 0 3px 7px rgba(0,0,0,.5);*/
+    /*-webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);*/
+    /*box-shadow: 0 3px 7px rgba(0,0,0,.5);*/
+/*}*/
 
-.dropdown dd ul li a {
-    padding: 2px 10px;
-}
+/*.dropdown dd ul li a {*/
+    /*padding: 2px 10px;*/
+/*}*/
 
-.dropdown dd ul li a span,
-.dropdown dt a span {
-    float: left;
-    width: 16px;
-    height: 11px;
-    margin: 2px 6px 0 0;
-    background-image: url(flags.png);
-    background-repeat: no-repeat;
-    cursor: pointer;
-}
+/*.dropdown dd ul li a span,*/
+/*.dropdown dt a span {*/
+    /*float: left;*/
+    /*width: 16px;*/
+    /*height: 11px;*/
+    /*margin: 2px 6px 0 0;*/
+    /*background-image: url(flags.png);*/
+    /*background-repeat: no-repeat;*/
+    /*cursor: pointer;*/
+/*}*/
 
-.us a span { background-position: 0 0 }
-.uk a span { background-position: -16px 0 }
-.fr a span { background-position: -32px 0 }
-.de a span { background-position: -48px 0 }
-.nl a span { background-position: -64px 0 }
+/*.us a span { background-position: 0 0 }*/
+/*.uk a span { background-position: -16px 0 }*/
+/*.fr a span { background-position: -32px 0 }*/
+/*.de a span { background-position: -48px 0 }*/
+/*.nl a span { background-position: -64px 0 }*/
 
-.dropdown dd ul li a em,
-.dropdown dt a em {
-    font-style: normal;
-    float: left;
-    width: 100px;
-    cursor: pointer;
-}
+/*.dropdown dd ul li a em,*/
+/*.dropdown dt a em {*/
+    /*font-style: normal;*/
+    /*float: left;*/
+    /*width: 100px;*/
+    /*cursor: pointer;*/
+/*}*/
 
-.dropdown dd ul li a em {
-    color: #dbc3b5;
-}
+/*.dropdown dd ul li a em {*/
+    /*color: #dbc3b5;*/
+/*}*/
 
-.dropdown dd ul li a:hover { background-color: rgba(255,255,255,.1); }
-.dropdown dd ul li a:hover em { color: #fff; }
+/*.dropdown dd ul li a:hover { background-color: rgba(255,255,255,.1); }*/
+/*.dropdown dd ul li a:hover em { color: #fff; }*/
 
 
-#feedback_button {
+.lexi-frontend #lexi-feedback-button {
     position: absolute;
     right: 10px;
     top: 2px;
@@ -294,9 +386,8 @@
 
 
 /* The Close Button */
-.close {
-
-    margin-right: 25px;
+.lexi-frontend .close {
+    /*margin-right: 25px;*/
     top: 0;
     color: #000;
     font-size: 35px;
@@ -304,8 +395,171 @@
 }
 
 /* Close button on hover */
-.close:hover,
-.close:focus {
+.lexi-frontend .close:hover,
+.lexi-frontend .close:focus {
     color: red;
     cursor: pointer;
 }
+
+/* FEEDBACK MODAL */
+
+/*#lexi-feedback-modal {*/
+    /*position: fixed; !* Stay in place *!*/
+    /*z-index: 1; !* Sit on top *!*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*width: 100%; !* Full width *!*/
+    /*height: 100%; !* Full height *!*/
+    /*overflow: auto; !* Enable scroll if needed *!*/
+    /*background-color: rgb(0,0,0); !* Fallback color *!*/
+    /*background-color: rgba(0,0,0,0.3); !* Black w/ opacity *!*/
+    /*padding-top: 60px;*/
+/*}*/
+
+/*.lexi-modal .lexi-rate-area {*/
+    /*margin: auto;*/
+    /*background-color: white;*/
+/*}*/
+
+
+/*.lexi-rate-area:not(:checked)  input {*/
+    /*position: absolute;*/
+    /*top: -9999px;*/
+    /*clip: rect(0,0,0,0);*/
+/*}*/
+
+/*.lexi-rate-area:not(:checked)  label {*/
+    /*!*float: right;*!*/
+    /*width: 1em;*/
+    /*padding: 0 .1em;*/
+    /*overflow: hidden;*/
+    /*white-space: nowrap;*/
+    /*cursor: pointer;*/
+    /*font-size: 400%;*/
+    /*line-height: 1.2;*/
+    /*color: lightgrey;*/
+    /*text-shadow: 1px 1px #bbb;*/
+/*}*/
+
+/*!*.lexi-rate-area:not(:checked)  label:before { content: '★ '; }*!*/
+
+/*.lexi-rate-area  input:checked  label {*/
+    /*color: gold;*/
+    /*text-shadow: 1px 1px #c60;*/
+    /*!*font-size: 450% !important;*!*/
+/*}*/
+
+/*.lexi-rate-area:not(:checked)  label:hover, .lexi-rate-area:not(:checked) > label:hover ~ label { color: gold; }*/
+
+/*.lexi-rate-area  input:checked  label:hover, .lexi-rate-area  input:checked  label:hover  label, .lexi-rate-area  input:checked  label:hover, .lexi-rate-area  input:checked  label:hover  label, .lexi-rate-area  label:hover  input:checked  label {*/
+    /*color: gold;*/
+    /*text-shadow: 1px 1px goldenrod;*/
+/*}*/
+
+/*.lexi-rate-area  label:active {*/
+    /*position: relative;*/
+    /*top: 2px;*/
+    /*left: 2px;*/
+/*}*/
+
+#lexi-feedback-rating {
+    margin: auto;
+}
+
+#lexi-feedback-rating-stars {
+    margin: auto;
+    width: 90%;
+}
+
+.lexi-rate-area input[type="text"] {
+    width: 100%;
+    height: 150px;
+    margin: 20px 0;
+}
+
+.lexi-rate-area textarea {
+    width: 100%;
+    height: 150px;
+    margin: 20px 0;
+}
+
+.lexi-rate-area:not(:checked)  input[type="radio"] {
+    position: absolute;
+    top: -9999px;
+    clip: rect(0,0,0,0);
+}
+
+.lexi-rate-area:not(:checked)  label {
+    float: right;
+    width: 1em;
+    padding: 0 .1em;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 400%;
+    line-height: 1.2;
+    color: lightgrey;
+    text-shadow: 1px 1px #bbb;
+}
+
+/*.lexi-rate-area:not(:checked)  label:before { content: '★ '; }*/
+
+.lexi-rate-area  input:checked ~ label {
+    color: gold;
+    text-shadow: 1px 1px #c60;
+    /*font-size: 450% !important;*/
+}
+
+.lexi-rate-area:not(:checked)  label:hover, .lexi-rate-area:not(:checked)  label:hover ~ label { color: gold; }
+
+.lexi-rate-area  input:checked + label:hover, .lexi-rate-area  input:checked + label:hover ~ label, .lexi-rate-area  input:checked ~ label:hover, .lexi-rate-area  input:checked ~ label:hover ~ label, .lexi-rate-area  label:hover ~ input:checked ~ label {
+    color: gold;
+    text-shadow: 1px 1px goldenrod;
+}
+
+.lexi-rate-area  label:active {
+    position: relative;
+    top: 2px;
+    left: 2px;
+}
+
+
+/*.lexi-rate-area:not(:checked) > input {*/
+    /*position: absolute;*/
+    /*top: -9999px;*/
+    /*clip: rect(0,0,0,0);*/
+/*}*/
+
+/*.lexi-rate-area:not(:checked) > label {*/
+    /*float: right;*/
+    /*width: 1em;*/
+    /*padding: 0 .1em;*/
+    /*overflow: hidden;*/
+    /*white-space: nowrap;*/
+    /*cursor: pointer;*/
+    /*font-size: 400%;*/
+    /*line-height: 1.2;*/
+    /*color: lightgrey;*/
+    /*text-shadow: 1px 1px #bbb;*/
+/*}*/
+
+/*.lexi-rate-area:not(:checked) > label:before { content: '★ '; }*/
+
+/*.lexi-rate-area > input:checked ~ label {*/
+    /*color: gold;*/
+    /*text-shadow: 1px 1px #c60;*/
+    /*!*font-size: 450% !important;*!*/
+/*}*/
+
+/*.lexi-rate-area:not(:checked) > label:hover, .lexi-rate-area:not(:checked) > label:hover ~ label { color: gold; }*/
+
+/*.lexi-rate-area > input:checked + label:hover, .lexi-rate-area > input:checked + label:hover ~ label, .lexi-rate-area > input:checked ~ label:hover, .lexi-rate-area > input:checked ~ label:hover ~ label, .lexi-rate-area > label:hover ~ input:checked ~ label {*/
+    /*color: gold;*/
+    /*text-shadow: 1px 1px goldenrod;*/
+/*}*/
+
+/*.lexi-rate-area > label:active {*/
+    /*position: relative;*/
+    /*top: 2px;*/
+    /*left: 2px;*/
+/*}*/

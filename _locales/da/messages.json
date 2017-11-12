@@ -30,5 +30,32 @@
   },
   "lexi_login_register": {
     "message": "Opret"
+  },
+  "lexi_simplifications_loaded": {
+    "message": "Klik på de understregede ord for at simplificere dem."
+  },
+  "lexi_simplifications_loading": {
+    "message": "Henter simplificeringer..."
+  },
+  "lexi_simplifications_loading_longtext": {
+    "message": "Dette er en særlig lang side. Beklager hvis det tager lang tid. Henter simplificeringer..."
+  },
+  "lexi_simplifications_error": {
+    "message": "Hov! Der opstod en fejl. Lexi kan desværre ikke simplificere denne side."
+  },
+  "lexi_feedback_solicit": {
+    "message": "Gjorde Lexi det godt?"
+  },
+  "lexi_feedback_solicit_freetext": {
+    "message": "Har du nogle kommentarer?"
+  },
+  "lexi_feedback_readon": {
+    "message": "Læs videre"
+  },
+  "lexi_feedback_submitted": {
+    "message": "Tak for din bedømmelse!"
+  },
+  "lexi_": {
+    "message": ""
   }
 }

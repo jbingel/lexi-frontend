@@ -1,0 +1,61 @@
+{
+  "lexi_login_email": {
+    "message": "E-mail address",
+    "description": "Type in your email address"
+  },
+  "lexi_login_yearofbirth": {
+    "message": "Year of birth",
+    "description": "Select when you were born."
+  },
+  "lexi_login_education": {
+    "message": "What is your highest obtained education?"
+  },
+  "lexi_login_education_primary": {
+    "message": "Primary school"
+  },
+  "lexi_login_education_secondary": {
+    "message": "Secondary/high school"
+  },
+  "lexi_login_education_higher": {
+    "message": "College/university"
+  },
+  "lexi_login_button": {
+    "message": "Log in"
+  },
+  "lexi_login_newuser": {
+    "message": "New user"
+  },
+  "lexi_login_backtologin": {
+    "message": "Back to login"
+  },
+  "lexi_login_register": {
+    "message": "Register"
+  },
+  "lexi_simplifications_loaded": {
+    "message": "Click on underlined words to simplify them."
+  },
+  "lexi_simplifications_loading": {
+    "message": "Loading simplifications..."
+  },
+  "lexi_simplifications_loading_longtext": {
+    "message": "This site contains a lot of text. Lexi may take some time. Loading..."
+  },
+  "lexi_simplifications_error": {
+    "message": "Oops, something went wrong. Lexi could not simplify this page."
+  },
+  "lexi_feedback_solicit": {
+    "message": "Did Lexi do a good job?"
+  },
+  "lexi_feedback_solicit_freetext": {
+    "message": "Do you have any comments?"
+  },
+  "lexi_feedback_readon": {
+    "message": "I want to read on"
+  },
+  "lexi_feedback_submitted": {
+    "message": "Thanks for your feedback!"
+  },
+  "lexi_": {
+    "message": ""
+  }
+}

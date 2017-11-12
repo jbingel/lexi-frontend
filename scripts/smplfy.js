@@ -2,12 +2,24 @@
  * Created by joachim on 10/12/16.
  */
 
-
 window.browser = (function () {
     return window.msBrowser ||
         window.chrome ||
         window.browser;
 })();
+
+/**
+ * Id of current user
+ * @type {string}
+ */
+var USER = "default"; // will be overwritten
+
+/**
+ * stores whether feedback has been submitted, to decide whether to open
+ * feedback modal again
+ * @type {boolean}
+ */
+var feedback_submitted = false;
 
 /**
  * Stores all simplifications as returned from backend. Each simplification
@@ -26,18 +38,23 @@ var simplifications = {};
  */
 var clicked_simplifications = [];
 
+/* Useful URLs */
 var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+var SERVER_URL_FEEDBACK = SERVER_URL+"/feedback";
+var SERVER_URL_SIMPLIFY = SERVER_URL+"/simplify";
+
+/* Lexi logo */
+var logo_url = browser.runtime.getURL("img/lexi.png");
 
 /**
  * Makes an AJAX call to backend requesting simplifications based on some HTML.
  * @param {string} url -
  * @param {string} html -
- * @param {string} usr -
  * @returns {Promise}
  */
-function simplifyAjaxCall(url, html, usr) {
+function simplifyAjaxCall(url, html) {
     var request = {};
-    request['user'] = usr;
+    request['user'] = USER;
     request['html'] = html;
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
@@ -55,16 +72,37 @@ function simplifyAjaxCall(url, html, usr) {
     })
 }
 
+function debugsimplify(html) {
+    return {
+        "html": html,
+        "simplifications": ["foo"]
+    }
+}
+
+function sendFeedback(rating) {
+    // sleep(5); //TODO find out what goes here.
+    var feedback_txt = $("#lexi_feedback_text").val();
+    feedbackAjaxCall(SERVER_URL_FEEDBACK, rating, feedback_txt);
+    feedback_submitted = true;
+    setTimeout(toggle_feedback_modal(), 1000);
+    // toggle_feedback_modal();
+    display_message(browser.i18n.getMessage("lexi_feedback_submitted"));
+}
+
 /**
  *
  * @param {string} url
- * @param {string} usr
+ * @param {string} rating
  * @returns {Promise}
  */
-function feedbackAjaxCall(url, usr) {
+function feedbackAjaxCall(url, rating, feedback_txt) {
     var request = {};
-    request['user'] = usr;
+    request['user'] = USER;
     request['simplifications'] = simplifications;
+    request['rating'] = rating;
+    request['feedback_txt'] = feedback_txt;
+    request['url'] = window.location.href;
+    console.log(request);
     return new Promise(function(resolve, reject) {
         // console.log(html.slice(0, 20));
         var xhr = new XMLHttpRequest();
@@ -72,11 +110,12 @@ function feedbackAjaxCall(url, usr) {
             resolve(JSON.parse(this.responseText));
             // console.log(this.responseText);
         };
-        xhr.onerror = reject;
+        // xhr.onerror = reject;
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhr.setRequestHeader("access-control-allow-origin", "*");
         xhr.send(JSON.stringify(request));
+        feedback_submitted = true;
     })
 }
 
@@ -88,13 +127,16 @@ function change_text(elemId) {
     var elem = document.getElementById(elemId);
     var orig = simplifications[elemId].original;
     var simple = simplifications[elemId].simple;
-    var is_simplified = simplifications[elemId].is_simplified;
-    if (is_simplified) {
-        elem.innerHTML = orig;
-        simplifications[elemId].is_simplified = false;
-    } else {
+    var selection = simplifications[elemId].selection;
+    // var is_simplified = simplifications[elemId].is_simplified;
+    if (selection == 0 || selection == 1) {
         elem.innerHTML = simple;
-        simplifications[elemId].is_simplified = true;
+        // simplifications[elemId].is_simplified = true;
+        simplifications[elemId].selection = 2;
+    } else if (selection == 2) {
+        elem.innerHTML = orig;
+        // simplifications[elemId].is_simplified = false;
+        simplifications[elemId].selection = 1;
     }
     console.log(simplifications[elemId]);
     console.log(clicked_simplifications);
@@ -122,7 +164,7 @@ function toggle_bad_feedback(element, img) {
  *
  */
 function make_simplification_listeners() {
-    $(".simplify").each(function () {
+    $(".lexi-simplify").each(function () {
         this.addEventListener('click', function () {
             // change_text(this.id, this.dataset.alt1, this.dataset.alt2);
             change_text(this.id);
@@ -143,11 +185,11 @@ function make_simplification_listeners() {
 function add_bad_feedback_icon(element) {
     var elemId = element.id;
     var feedback_span = document.createElement("span");
-    feedback_span.setAttribute("class", "bad_feedback");
+    feedback_span.setAttribute("class", "lexi-bad-feedback");
     feedback_span.setAttribute("data-reference", elemId);
     var img = document.createElement("img");
     img.src = browser.runtime.getURL("img/bad_feedback_deselected.png");
-    img.setAttribute("class", "bad_feedback_icon");
+    img.setAttribute("class", "lexi-bad-feedback-icon");
     element.insertAdjacentElement("afterend", feedback_span);
 
     feedback_span.appendChild(img);
@@ -157,33 +199,92 @@ function add_bad_feedback_icon(element) {
     })
 }
 
+function create_lexi_notifier(){
+    var ln = document.createElement("div");
+    ln.setAttribute("id", "lexi-notifier");
+    ln.setAttribute("class", "lexi-frontend");
+    // ln.setAttribute("style", "width: 30px; height: 30px; background: blue; position: fixed; z-index:1000; " +
+    //     "margin:0 auto; top: 80px");
+    // ln.style.display = 'none';
+    // $("#lexi_notifier").on({
+    //     mouseleave: function() {
+    //         $(this).delay(200).fadeTo(500, 1);
+    //         // $(this).style.display='block';
+    //     },
+    //     mouseenter: function() {
+    //         alert("mouse enter");
+    //         $(this).stop().fadeTo(500, 0);
+    //         // $(this).style.display='none';
+    //     }
+    // });
+    document.body.appendChild(ln);
+}
+
+function display_message(msg) {
+    // Modify toolbar
+    // var header = document.getElementById("lexi_header");
+    // header.textContent = msg;
+    var notify_elem = document.getElementById("lexi-notifier");
+    // notify_elem.style.display = 'block';
+    notify_elem.innerHTML = '<p>'+msg+'</p>';
+}
+
 /**
  *  Sends an AJAX call to the server to ask for all simplifications. To this end,
  *  the entire document's <body> HTML is sent to the backend, which returns the
  *  HTML enriched with certain <span> elements that denote the simplifications.
  *  Adds feedback button to app toolbar.
- * @param {string} usr User identifier expected by the backend (currently the email).
  */
-function load_simplifications(usr) {
-    simplifyAjaxCall(SERVER_URL+"/post", document.body.outerHTML, usr).then(function (result) {
-        document.body.outerHTML = result['html'];
+function load_simplifications() {
+    var site_html = document.body.outerHTML;
+    var site_text = document.body.textContent;
+    if (site_text.length > 10000) {
+        display_message(browser.i18n.getMessage("lexi_simplifications_loading_longtext"));
+    }
+    simplifyAjaxCall(SERVER_URL_SIMPLIFY, site_html).then(function (result) {
         simplifications = result['simplifications'];
         console.log(simplifications);
 
-        // Modify toolbar
-        var header = document.getElementById("lexi_header");
-        header.textContent = "Click on underlined words to simplify them.";
-        var button = document.createElement("button");
-        button.innerHTML = "Click when done!";
-        button.id = "feedback_button";
-        header.appendChild(button);
-        button.addEventListener('click', function() {
-            feedbackAjaxCall(SERVER_URL+"/feedback", usr);
-        });
+        if (simplifications) {
+            document.body.outerHTML = result['html'];
+            display_message(browser.i18n.getMessage("lexi_simplifications_loaded"));
+            // var header = document.getElementById("lexi_header");
+            // var button = document.createElement("button");
+            // button.innerHTML = "Click when done!";
+            // button.id = "feedback_button";
+            // header.appendChild(button);
+            // button.addEventListener('click', function() {
+            //     feedbackAjaxCall(SERVER_URL+"/feedback", USER);
+            // });
+            // Create listeners for clicks on simplification spans
+            make_simplification_listeners();
 
-        // Create listeners for clicks on simplification spans
-        make_simplification_listeners();
-    });
+            insert_feedback_js(); // TODO this works, but move this somewhere it makes more sense conceptually
+            // prepare for feedback
+            register_feedback_action();
+        } else {
+            display_message(browser.i18n.getMessage("lexi_simplifications_error"));
+        }
+    })
+}
+
+function insert_feedback_js() {
+    var modal = document.getElementById("lexi-feedback-modal");
+    var close_button = document.getElementById("lexi-feedback-modal-close-btn");
+    var close_x = document.getElementById("lexi-feedback-modal-close-x");
+    close_x.onclick = close_button.onclick = function () {
+        modal.style.display = "none";
+    };
+    // var form = document.getElementById("lexi-feedback-rating");
+    var stars = document.getElementsByName("lexi-rating");
+    console.log(stars.length.toString()+" stars");
+    console.log(stars);
+    // stars[0].bind("onchange", )
+    stars[0].onchange = function(){sendFeedback(1)};
+    stars[1].onchange = function(){sendFeedback(2)};
+    stars[2].onchange = function(){sendFeedback(3)};
+    stars[3].onchange = function(){sendFeedback(4)};
+    stars[4].onchange = function(){sendFeedback(5)};
 }
 
 // /**
@@ -233,29 +334,120 @@ function load_simplifications(usr) {
  * app's status and holds the button for sending feedback.
  */
 function add_lexi_header() {
-    var header_height = "30px";
+    var header_height = "25px";
     var header = document.createElement("div");
     header.id = "lexi_header";
-    header.className = "lexi";
+    header.className = "lexi-frontend";
     console.log(document.body);
     header.style.height = header_height;
     // var firstElem = document.body.firstElementChild;
     // firstElem.style.marginTop = '30px';
+    // TODO insert button again (See earlier version), when clicked toggle feedback
     var bodyStyle = document.body.style;
     var cssTransform = 'transform' in bodyStyle ? 'transform' : 'webkitTransform';
     bodyStyle[cssTransform] = 'translateY(' + header_height + ')';
+    // document.body.appendChild(header);
     document.documentElement.appendChild(header);
-    console.log(document.documentElement.innerHTML);
+    console.log(document.documentElement.innerHTML.substr(0, 1000)+" ...");
+    return header;
+}
+
+function insert_feedback_modal() {
+    var form_html = "";
+    form_html += '<div id="lexi-feedback-modal" class="lexi-frontend lexi-modal">';
+    form_html += '<div class="lexi-modal-content animate">';
+    form_html += '<div class="lexi-rate-area lexi-modal-container">';
+    form_html += '<span id="lexi-feedback-modal-close-x" title="Close" style="float: right; " class="close">&times;</span>';
+    form_html += '<img id="lexi-logo" src="'+logo_url+'" /><br/>';
+    // form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
+    form_html += '<form id="lexi-feedback-rating" >';
+    form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit_freetext")+'</p>';
+    form_html += '<textarea id = "lexi_feedback_text"></textarea>';
+    form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
+    form_html += '<div id="lexi-feedback-rating-stars">';
+    form_html += '<input type="radio" id="5-star" name="lexi-rating" value="5" /><label for="5-star" title="Amazing">★ </label>';
+    form_html += '<input type="radio" id="4-star" name="lexi-rating" value="4" /><label for="4-star" title="Good">★ </label>';
+    form_html += '<input type="radio" id="3-star" name="lexi-rating" value="3" /><label for="3-star" title="Average">★ </label>';
+    form_html += '<input type="radio" id="2-star" name="lexi-rating" value="2" /><label for="2-star" title="Not Good">★ </label>';
+    form_html += '<input type="radio" id="1-star" name="lexi-rating" value="1" /><label for="1-star" title="Bad">★ </label>';
+    form_html += '</div>';
+    form_html += '<button id="lexi-feedback-modal-close-btn" type="button" class="lexi-button">';
+    form_html += browser.i18n.getMessage("lexi_feedback_readon");
+    form_html += '</button>';
+    form_html += '</form>';
+    form_html += '</div>';
+    form_html += '</div>';
+    form_html += '</div>';
+    document.body.innerHTML += form_html;
+    return document.getElementById("lexi-feedback-modal");
+}
+
+// function feedback_modal_isopen() {
+//     var feedback_modal = document.getElementById("lexi_feedback_modal");
+//     if (!feedback_modal) {
+//         return false;
+//     } else {
+//         if (feedback_modal.style.display == "none") {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
+
+function toggle_feedback_modal() {
+    var feedback_modal = document.getElementById("lexi-feedback-modal");
+    if (simplifications) {
+        if (!feedback_modal) {
+            // feedback_modal = insert_feedback_modal();
+            // feedback_modal.style.display = "block";
+        } else {
+            if (feedback_submitted) {
+                feedback_modal.style.display = "none";
+            } else {
+                feedback_modal.style.display = "block";
+            }
+        }
+    }
+    // feedback_modal.style.display = "block";
+}
+
+
+// function solicit_feedback() {
+//     if (!feedback_modal_isopen() && !feedback_submitted){
+//         console.log("opening feedback form");
+//         insert_feedback_modal();
+//         var feedback_modal = document.getElementById("lexi_feedback_modal");
+//         feedback_modal.style.display = "block";
+//         console.log("feedback form now open");
+//     } else {
+//         console.log("feedback form already open, or feedback already submitted");
+//     }
+// }
+
+function register_feedback_action() {
+    // insert_feedback_modal();
+    $("html").bind("mouseleave", function () {
+        console.log("mouse leaving HTML body area...");
+        toggle_feedback_modal();
+    });
 }
 
 browser.storage.sync.get('lexi_user', function (usr_object) {
-    var usr = usr_object.lexi_user.userId;
-    console.log("Started lexi extension. User: "+usr);
-    add_lexi_header();
-    document.getElementById("lexi_header").textContent = "Loading simplifications...";
-    load_simplifications(usr);
+    USER = usr_object.lexi_user.userId;
+    console.log("Started lexi extension. User: "+USER);
+    // add_lexi_header();
+    create_lexi_notifier();
+    insert_feedback_modal();
+    display_message(browser.i18n.getMessage("lexi_simplifications_loading"));
+    load_simplifications(USER);
+    insert_feedback_js();
 });
 
 
-
-
+// var links = document.getElementsByTagName("a");
+// for (var i=0, link; link=links[i]; i++) {
+//     link.onmouseover = function() {
+//         // solicit_feedback();
+//         toggle_feedback_modal();
+//     };
+// }
