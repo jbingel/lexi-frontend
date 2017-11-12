@@ -8,6 +8,8 @@ window.browser = (function () {
         window.browser;
 })();
 
+var frontend_version = browser.runtime.getManifest().version;
+
 /**
  * Id of current user
  * @type {string}
@@ -54,6 +56,7 @@ var logo_url = browser.runtime.getURL("img/lexi.png");
  */
 function simplifyAjaxCall(url, html) {
     var request = {};
+    request['frontend_version'] = frontend_version;
     request['user'] = USER;
     request['html'] = html;
     return new Promise(function(resolve, reject) {
@@ -97,6 +100,7 @@ function sendFeedback(rating) {
  */
 function feedbackAjaxCall(url, rating, feedback_txt) {
     var request = {};
+    request['frontend_version'] = frontend_version;
     request['user'] = USER;
     request['simplifications'] = simplifications;
     request['rating'] = rating;

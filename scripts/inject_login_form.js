@@ -8,6 +8,8 @@ window.browser = (function () {
         window.browser;
 })();
 
+var frontend_version = browser.runtime.getManifest().version;
+
 var SERVER_URL = "https://www.readwithlexi.net/lexi/";
 var SERVER_URL_LOGIN = SERVER_URL+"/login";
 var SERVER_URL_REGISTER = SERVER_URL+"/register_user";
@@ -124,6 +126,7 @@ var buttons = document.getElementById("lexi-buttons");
  */
 function registerAjaxCall(email, year_of_birth, education) {
     var request = {};
+    request['frontend_version'] = frontend_version;
     request['email'] = email;
     // request['pw_hash'] = pw_hash;
     request['year_of_birth'] = year_of_birth;
@@ -152,6 +155,7 @@ function registerAjaxCall(email, year_of_birth, education) {
  */
 function loginAjaxCall(email) {
     var request = {};
+    request['frontend_version'] = frontend_version;
     request['email'] = email;
     // request['pw_hash'] = pw_hash;
     return new Promise(function(resolve, reject) {
