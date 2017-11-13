@@ -23,7 +23,6 @@ browser.runtime.onMessage.addListener(function(request) {
     return true;
 });
 
-
 // TODO make main context menu for app (change user)
 
 browser.runtime.onMessage.addListener(function (request) {
@@ -34,23 +33,15 @@ browser.runtime.onMessage.addListener(function (request) {
     }
 });
 
-
-browser.storage.sync.clear();
-console.log(browser.storage.sync);
+// browser.storage.sync.clear();
+// console.log(browser.storage.sync);
 
 // Listen on browser action (click on icon), then check user is logged on, and finally simplify.
 browser.browserAction.onClicked.addListener(function(tabId) {
     browser.tabs.executeScript(null, {file: "scripts/jquery-3.1.1.js"}, function(){
         /* First, make sure user is logged on (aka if userId is set in browser.storage */
-        // require(['user_management'], function(user_management) {
         browser.tabs.executeScript(null, {file: "scripts/user_management.js"},
             function () {
-                // browser.tabs.executeScript(null, {file: "scripts/smplfy.js"});
             });
-            /* Now that we're sure the userId is set, we can launch the simplifier */
-
-            // browser.tabs.executeScript(null, {file: "smplfy.js"});
-        // });
-        // });
     });
 });

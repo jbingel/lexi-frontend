@@ -159,6 +159,7 @@ function loginAjaxCall(email) {
     request['email'] = email;
     // request['pw_hash'] = pw_hash;
     return new Promise(function(resolve, reject) {
+        console.log(request);
         var xhr = new XMLHttpRequest();
         xhr.onload = function () {
             resolve(JSON.parse(this.responseText));
