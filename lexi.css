@@ -24,10 +24,10 @@ time, mark, audio, video {
 
 /* CONTENT */
 .lexi-simplify {
-    /*background-color: #e6ffff,*/
-    text-decoration:underline;
-    text-decoration-style: dotted;
-    /*text-decoration-color: #a44fff;*/
+    background-color: #b3f4aa;
+    color: black;
+    /*text-decoration:underline;*/
+    /*text-decoration-style: dotted;*/
     text-decoration-color: #288520;
 }
 .lexi-simplify:hover {background: #87de87;}
@@ -35,7 +35,7 @@ time, mark, audio, video {
 .lexi-bad-feedback-icon {
     height: 15px;
     width: 15px;
-    /*margin-top: -30px;*/
+    margin-top: -5px;
     margin-left: 5px;
 }
 
@@ -47,7 +47,7 @@ time, mark, audio, video {
 /* lexi INTERFACE */
 
 .lexi-frontend {
-    color: #000000;
+    /*color: #000000 !important;*/
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: medium !important;
     /*z-index: 100000;*/
@@ -77,6 +77,10 @@ time, mark, audio, video {
 .lexi-modal-container {
     padding: 16px;
     margin: auto;
+}
+
+.lexi-modal p {
+    color: #000000 !important;
 }
 
 #lexi-notifier {
@@ -153,6 +157,7 @@ time, mark, audio, video {
 /*}*/
 
 .lexi-modal {
+    color: black !important;
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1000001; /* Sit on top */
@@ -193,7 +198,10 @@ time, mark, audio, video {
 .lexi-frontend #lexi-logo {
     width: 67px;
     height: 67px;
-    padding-bottom: 20px;
+}
+
+.lexi-frontend #inputs {
+    padding-top: 20px;
 }
 
 .lexi-button {

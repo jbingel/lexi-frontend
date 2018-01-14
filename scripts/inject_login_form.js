@@ -10,7 +10,8 @@ window.browser = (function () {
 
 var frontend_version = browser.runtime.getManifest().version;
 
-var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+// var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+var SERVER_URL = "http://localhost:5000";
 var SERVER_URL_LOGIN = SERVER_URL+"/login";
 var SERVER_URL_REGISTER = SERVER_URL+"/register_user";
 
@@ -23,7 +24,8 @@ function inject_login_modal() {
     form_html += '<form id="lexi-login-form" class="lexi-modal-content animate">';
 
     form_html += '<div id="lexi-input-fields" class="lexi-modal-container">';
-    form_html += '<span onclick="document.getElementById(\'lexi-login-modal\').style.display=\'none\'" style="float: right;" class="close" title="Close">&times;</span>';
+    form_html += '<span onclick="document.getElementById(\'lexi-login-modal\').style.display=\'none\'" ' +
+        'style="float: right;" class="close" title="Close">&times;</span>';
 
 
     // form_html += '<div id="lexi-lang-select"> \
@@ -36,6 +38,7 @@ function inject_login_modal() {
     //     </div>';
 
     form_html += '<img id="lexi-logo" src="'+logo_url+'" /><br/>';
+    form_html += '<div id="inputs">';
     form_html += '<p>'+browser.i18n.getMessage("lexi_login_email")+ '</p>';
     form_html += '<input type="email" id="lexi-email">';
 
@@ -50,16 +53,20 @@ function inject_login_modal() {
     form_html += '<option value="higher">'+browser.i18n.getMessage("lexi_login_education_higher")+'</option>'
     form_html += '</select>';
     form_html += '</div>';
+    form_html += '</div>';
 
 // form_html += '<div id="lexi-buttons_container" class="buttons">';
 // form_html += '<div class="buttons" id="buttons">';
-    form_html += '<button id="lexi-login-button" type="button" value="Login" class="lexi-button">'+browser.i18n.getMessage("lexi_login_button")+'</button>';
-    form_html += '<button id="lexi-new-user-button" type="button" value="Create new user" class="lexi-button">'+browser.i18n.getMessage("lexi_login_newuser")+'</button>';
-    form_html += '<button id="lexi-register-button" type="button" value="Register" style="display: none !important;" class="lexi-button">'+browser.i18n.getMessage("lexi_login_register")+'</button>';
-    form_html += '<button id="lexi-back-to-login-button" type="button" value="back" class="lexi-button" style="display: none !important;">' +
-        '<img src="'+backarrow_url+'" style="height: 15px; padding-right: 5px; vertical-align:middle"/>'+
-        browser.i18n.getMessage("lexi_login_backtologin")+
-        '</button>';
+    form_html += '<button id="lexi-login-button" type="button" value="Login" class="lexi-button">'
+        +browser.i18n.getMessage("lexi_login_button")+'</button>';
+    form_html += '<button id="lexi-new-user-button" type="button" value="Create new user" class="lexi-button">'
+        +browser.i18n.getMessage("lexi_login_newuser")+'</button>';
+    form_html += '<button id="lexi-register-button" type="button" value="Register" style="display: none !important;" class="lexi-button">'
+        +browser.i18n.getMessage("lexi_login_register")+'</button>';
+    form_html += '<button id="lexi-back-to-login-button" type="button" value="back" class="lexi-button" style="display: none !important;">'
+        +'<img src="'+backarrow_url+'" style="height: 15px; padding-right: 5px; vertical-align:middle"/>'
+        +browser.i18n.getMessage("lexi_login_backtologin")
+        +'</button>';
     form_html += '<div id="lexi-error-message-field" style="display: none;"></div>';
     form_html += '</div>';  // container
 
@@ -68,10 +75,26 @@ function inject_login_modal() {
 
     document.body.innerHTML += form_html;
 
-    $('#lexi-year-of-birth').append($('<option />').val('').html(''));
+    // var path = browser.runtime.getURL("pages/login_form.html");
+    // var htmlFile = new XMLHttpRequest();
+    // htmlFile.open("GET", path, true);
+    // // htmlFile.open("GET", "../pages/login_form.html", true);
+    // htmlFile.onreadystatechange = function() {
+    //     if (htmlFile.readyState === 4) {  // Makes sure the document is ready to parse.
+    //         if (htmlFile.status === 200) {  // Makes sure it's found the file.
+    //             document.body.innerHTML += htmlFile.responseText;
+    //             console.log(htmlFile.responseText);
+    //         }
+    //     }
+    // };
+    // htmlFile.send(null);
+
+
+    var yob_selector = $('#lexi-year-of-birth')
+    yob_selector.append($('<option />').val('').html(''));
     for (i = new Date().getFullYear()-6; i > 1900; i--)
     {
-        $('#lexi-year-of-birth').append($('<option />').val(i).html(i));
+        yob_selector.append($('<option />').val(i).html(i));
     }
 
     return document.getElementById("lexi-login-modal");
@@ -95,7 +118,7 @@ window.onclick = function(event) {
 function display_error(message) {
     if (msg_field) {
         msg_field.style.display = "block";
-        msg_field.innerHTML = message;
+        msg_field.innerHTML = message+"<br/>";
     }
 }
 
@@ -127,7 +150,7 @@ var buttons = document.getElementById("lexi-buttons");
 function registerAjaxCall(email, year_of_birth, education) {
     var request = {};
     request['frontend_version'] = frontend_version;
-    request['email'] = email;
+    request['email'] = email.toLowerCase();
     // request['pw_hash'] = pw_hash;
     request['year_of_birth'] = year_of_birth;
     request['education'] = education;
@@ -156,16 +179,17 @@ function registerAjaxCall(email, year_of_birth, education) {
 function loginAjaxCall(email) {
     var request = {};
     request['frontend_version'] = frontend_version;
-    request['email'] = email;
+    request['email'] = email.toLowerCase();
     // request['pw_hash'] = pw_hash;
     return new Promise(function(resolve, reject) {
         console.log(request);
+        console.log(SERVER_URL_LOGIN);
         var xhr = new XMLHttpRequest();
         xhr.onload = function () {
             resolve(JSON.parse(this.responseText));
         };
         xhr.onerror = function(e){
-            display_error("Unknown Error Occured. Server response not received.<br/>");
+            display_error(browser.i18n.getMessage("lexi_unknown_server_error"));
         };
         xhr.open("POST", SERVER_URL_LOGIN, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -179,17 +203,6 @@ function loginAjaxCall(email) {
  * ****** BUTTON LISTENERS ******* *
  * ******************************* *
  * ******************************* */
-
-// function debugloginbuttonclick() {
-//     browser.storage.sync.set({
-//         "lexi_user": {
-//             "userId": "joabingel@gmail.com"
-//         }
-//     });
-//     browser.runtime.sendMessage({type:'user_logged_on'}, function () {});
-//     lexi_login_modal.style.display = "none";
-//
-// }
 
 /*
  If login button is clicked, try to log in user with provided
@@ -217,13 +230,12 @@ function loginbuttonclick () {
             }
         });
     } else {
-        display_error("Need to provide email.<br/>");
+        display_error(browser.i18n.getMessage("lexi_no_email_error"));
     }
 }
 
 login_button.addEventListener('click',
     function() {loginbuttonclick()},
-    // function() {debugloginbuttonclick()},
     false
 );
 
@@ -259,7 +271,7 @@ function registerbuttonclick () {
                 }
             });
     } else {
-        display_error("Need to set all fields.<br/>");
+        display_error(browser.i18n.getMessage("lexi_fields_not_set_error"));
     }
 }
 

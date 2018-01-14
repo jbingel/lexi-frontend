@@ -50,12 +50,22 @@
     "message": "Do you have any comments?"
   },
   "lexi_feedback_readon": {
-    "message": "I want to read on"
+    "message": "Rate later"
   },
   "lexi_feedback_submitted": {
     "message": "Thanks for your feedback!"
   },
+  "lexi_unknown_server_error": {
+    "message":  "Unknown Error Occurred. Server response not received."
+  },
+  "lexi_no_email_error": {
+    "message":  "Login Error. Please provide an email address."
+  },
+  "lexi_fields_not_set_error": {
+    "message":  "All fields must be set."
+  },
   "lexi_": {
     "message": ""
   }
+
 }

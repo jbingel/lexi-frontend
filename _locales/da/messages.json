@@ -50,10 +50,19 @@
     "message": "Har du nogle kommentarer?"
   },
   "lexi_feedback_readon": {
-    "message": "Læs videre"
+    "message": "Bedøm senere"
   },
   "lexi_feedback_submitted": {
     "message": "Tak for din bedømmelse!"
+  },
+  "lexi_unknown_server_error": {
+    "message":  "Der opstod en ukendt fejl. Intet svar fra serveren."
+  },
+  "lexi_no_email_error": {
+    "message":  "Fejl ved login. Venligst tast ind en email-adresse."
+  },
+  "lexi_fields_not_set_error": {
+    "message":  "Alle skal udfyldes."
   },
   "lexi_": {
     "message": ""

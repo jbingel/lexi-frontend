@@ -33,5 +33,5 @@
     "contextMenus"
   ],
   "content_security_policy":"script-src 'self'; object-src 'self'",
-  "web_accessible_resources": ["img/*png"]
+  "web_accessible_resources": ["pages/login_form.html", "pages/*.html", "img/*png"]
 }

@@ -41,7 +41,8 @@ var simplifications = {};
 var clicked_simplifications = [];
 
 /* Useful URLs */
-var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+// var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+var SERVER_URL = "http://localhost:5000";
 var SERVER_URL_FEEDBACK = SERVER_URL+"/feedback";
 var SERVER_URL_SIMPLIFY = SERVER_URL+"/simplify";
 
@@ -157,9 +158,9 @@ function toggle_bad_feedback(element, img) {
     simplifications[ref].bad_feedback = ! simplifications[ref].bad_feedback;
     console.log(simplifications[ref]);
     if (simplifications[ref].bad_feedback) {
-        img.src = browser.runtime.getURL("img/bad_feedback_selected.png");
+        img.src = browser.runtime.getURL("img/thumbsdown_selected.png");
     } else {
-        img.src = browser.runtime.getURL("img/bad_feedback_deselected.png");
+        img.src = browser.runtime.getURL("img/thumbsdown_deselected.png");
     }
 }
 
@@ -192,7 +193,7 @@ function add_bad_feedback_icon(element) {
     feedback_span.setAttribute("class", "lexi-bad-feedback");
     feedback_span.setAttribute("data-reference", elemId);
     var img = document.createElement("img");
-    img.src = browser.runtime.getURL("img/bad_feedback_deselected.png");
+    img.src = browser.runtime.getURL("img/thumbsdown_deselected.png");
     img.setAttribute("class", "lexi-bad-feedback-icon");
     element.insertAdjacentElement("afterend", feedback_span);
 
@@ -270,6 +271,45 @@ function load_simplifications() {
             display_message(browser.i18n.getMessage("lexi_simplifications_error"));
         }
     })
+}
+
+$.fn.isInViewport = function() {
+    var elementTop = $(this).offset().top;
+    var elementBottom = elementTop + $(this).outerHeight();
+
+    var viewportTop = $(window).scrollTop();
+    var viewportBottom = viewportTop + $(window).height();
+
+    return elementBottom > viewportTop && elementTop < viewportBottom;
+};
+
+var updated_elems = [];
+
+function incremental_load_simplifications() {
+    $(window).on('resize scroll', function(){
+        $('p:visible').each(function () {
+            console.log($(this).html());
+            // if visible and not simplified yet
+            if ($(this).isInViewport() && updated_elems.indexOf($(this)) == -1) {
+                console.log('getting simplification for '+($(this).html()));
+                simplifyAjaxCall(SERVER_URL_SIMPLIFY, $(this).html()).then(function (result) {
+                    var this_simplifications = result['simplifications'];
+                    if (this_simplifications) {
+                        // update simplifications obj
+                        simplifications = $.extend(simplifications, this_simplifications);
+                        // replace HTML
+                        $(this).outerHTML = result['html'];
+                        // Create listeners for clicks on simplification spans
+                        make_simplification_listeners();
+                        console.log(simplifications);
+                    }
+
+                })
+            };
+            updated_elems.push($(this));
+        })
+    })
+
 }
 
 function insert_feedback_js() {
@@ -443,6 +483,7 @@ browser.storage.sync.get('lexi_user', function (usr_object) {
     create_lexi_notifier();
     insert_feedback_modal();
     display_message(browser.i18n.getMessage("lexi_simplifications_loading"));
+    // incremental_load_simplifications();
     load_simplifications(USER);
     insert_feedback_js();
 });

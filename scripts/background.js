@@ -29,12 +29,12 @@ browser.runtime.onMessage.addListener(function (request) {
     if (request.type === "user_logged_on") {
         // now start the simplifier
         console.log("Received message that user is logged on, running simplifications script now.");
-        browser.tabs.executeScript(null, {file: "scripts/smplfy.js"});
+        browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
     }
 });
 
-// browser.storage.sync.clear();
-// console.log(browser.storage.sync);
+browser.storage.sync.clear();
+console.log(browser.storage.sync);
 
 // Listen on browser action (click on icon), then check user is logged on, and finally simplify.
 browser.browserAction.onClicked.addListener(function(tabId) {
