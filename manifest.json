@@ -21,7 +21,8 @@
     {
       "matches": ["<all_urls>"],
       "css": ["lexi.css"]
-      ,"js": ["scripts/jquery-3.1.1.js", "scripts/feedback.js", "global_vars.js", "scripts/md5.js"]
+      ,"js": ["scripts/jquery-3.1.1.js", "global_vars.js", "scripts/md5.js"],
+      "all_frames": true
     }
   ],
   "permissions": [
@@ -33,5 +34,5 @@
     "contextMenus"
   ],
   "content_security_policy":"script-src 'self'; object-src 'self'",
-  "web_accessible_resources": ["pages/login_form.html", "pages/*.html", "img/*png"]
+  "web_accessible_resources": ["img/loading.gif", "img/*png", "pages/login_form.html", "pages/feedback_form.html"]
 }

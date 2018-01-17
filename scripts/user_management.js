@@ -25,11 +25,10 @@ function check_user_login() {
         if (isEmpty(uId)) {
             console.log("User not logged on. Requesting credentials...");
             browser.runtime.sendMessage({type:'request_login'}, function () {  // TODO work with response here, check if login actually worked
-                console.log("Sending message to request login...");
-                browser.runtime.sendMessage({type:'user_logged_on'}, function () {
-                    alert("Message sent");
-                    return true;
-                });
+                // console.log("Sending message to request login...");
+                // browser.runtime.sendMessage({type:'user_logged_on'}, function () {
+                //     return true;
+                // });
             });
         } else {
             userId = uId.lexi_user.userId;

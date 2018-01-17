@@ -38,7 +38,7 @@
     "message": "Henter simplificeringer..."
   },
   "lexi_simplifications_loading_longtext": {
-    "message": "Dette er en særlig lang side. Beklager hvis det tager lang tid. Henter simplificeringer..."
+    "message": "Henter simplificeringer - det kan tage lidt tid."
   },
   "lexi_simplifications_error": {
     "message": "Hov! Der opstod en fejl. Lexi kan desværre ikke simplificere denne side."

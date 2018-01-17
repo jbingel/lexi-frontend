@@ -12,26 +12,41 @@ window.browser = (function () {
         window.browser;
 })();
 
-// Handle requests for passwords
-browser.runtime.onMessage.addListener(function(request) {
+// Handle requests
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // Request login
     if (request.type === 'request_login') {
         console.log("Received message to request login.");
         browser.tabs.executeScript(null, {file: "scripts/inject_login_form.js"}, function() {
             return true;
         });
     }
-    return true;
-});
 
-// TODO make main context menu for app (change user)
+    // Close login form (by deleting login iframe)
+    if (request.type === 'delete_login_iframe') {
+        // send message to all tabs  TODO this is really ugly... but how to know the right tab ID?
+        browser.tabs.query({}, function(tabs) {
+            for (var i=0; i<tabs.length; ++i) {
+                browser.tabs.sendMessage(tabs[i].id, {type:'delete_login_iframe_echo'}, function () {
+                    return true;
+                });
+            }
+        });
+    }
 
-browser.runtime.onMessage.addListener(function (request) {
+    // Simplification
     if (request.type === "user_logged_on") {
         // now start the simplifier
-        console.log("Received message that user is logged on, running simplifications script now.");
+        console.log("Received message that user is logged on, " +
+            "running simplifications script now.");
         browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
     }
 });
+
+
+
+// TODO make main context menu for app (change user)
+
 
 browser.storage.sync.clear();
 console.log(browser.storage.sync);

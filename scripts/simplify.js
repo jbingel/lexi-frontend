@@ -76,7 +76,14 @@ function simplifyAjaxCall(url, html) {
     })
 }
 
-function debugsimplify(html) {
+function debugsimplify(latency) {
+    var site_html = document.body.outerHTML;
+    var site_text = document.body.textContent;
+    if (site_text.length > 10000) {
+        display_message(browser.i18n.getMessage("lexi_simplifications_loading_longtext"));
+    }
+    display_loading_animation();
+    sleep(latency);
     return {
         "html": html,
         "simplifications": ["foo"]
@@ -85,7 +92,7 @@ function debugsimplify(html) {
 
 function sendFeedback(rating) {
     // sleep(5); //TODO find out what goes here.
-    var feedback_txt = $("#lexi_feedback_text").val();
+    var feedback_txt = $("#lexi-feedback-text").val();
     feedbackAjaxCall(SERVER_URL_FEEDBACK, rating, feedback_txt);
     feedback_submitted = true;
     setTimeout(toggle_feedback_modal(), 1000);
@@ -174,7 +181,7 @@ function make_simplification_listeners() {
             // change_text(this.id, this.dataset.alt1, this.dataset.alt2);
             change_text(this.id);
             if (jQuery.inArray(this.id, clicked_simplifications) == -1) {
-                add_bad_feedback_icon(this);
+                insert_thumbsdown_icon(this);
                 clicked_simplifications.push(this.id);
                 console.log(clicked_simplifications);
             }
@@ -187,7 +194,7 @@ function make_simplification_listeners() {
  * it's clicked for the first time.
  * @param element The element in question.
  */
-function add_bad_feedback_icon(element) {
+function insert_thumbsdown_icon(element) {
     var elemId = element.id;
     var feedback_span = document.createElement("span");
     feedback_span.setAttribute("class", "lexi-bad-feedback");
@@ -208,30 +215,22 @@ function create_lexi_notifier(){
     var ln = document.createElement("div");
     ln.setAttribute("id", "lexi-notifier");
     ln.setAttribute("class", "lexi-frontend");
-    // ln.setAttribute("style", "width: 30px; height: 30px; background: blue; position: fixed; z-index:1000; " +
-    //     "margin:0 auto; top: 80px");
-    // ln.style.display = 'none';
-    // $("#lexi_notifier").on({
-    //     mouseleave: function() {
-    //         $(this).delay(200).fadeTo(500, 1);
-    //         // $(this).style.display='block';
-    //     },
-    //     mouseenter: function() {
-    //         alert("mouse enter");
-    //         $(this).stop().fadeTo(500, 0);
-    //         // $(this).style.display='none';
-    //     }
-    // });
     document.body.appendChild(ln);
 }
 
 function display_message(msg) {
-    // Modify toolbar
-    // var header = document.getElementById("lexi_header");
-    // header.textContent = msg;
+    // Modify notifier
     var notify_elem = document.getElementById("lexi-notifier");
-    // notify_elem.style.display = 'block';
     notify_elem.innerHTML = '<p>'+msg+'</p>';
+}
+
+function display_loading_animation() {
+    var notify_elem = document.getElementById("lexi-notifier");
+    var loading_animation = browser.runtime.getURL("img/loading.gif");
+    var current_notifier_msg = notify_elem.textContent;
+    var msg_plus_loading = "<p><span>"+current_notifier_msg+"</span>" +
+        "  <img id='lexi-loading-animation' src="+loading_animation+" /></p>";
+    display_message(msg_plus_loading);
 }
 
 /**
@@ -246,6 +245,7 @@ function load_simplifications() {
     if (site_text.length > 10000) {
         display_message(browser.i18n.getMessage("lexi_simplifications_loading_longtext"));
     }
+    display_loading_animation();
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, site_html).then(function (result) {
         simplifications = result['simplifications'];
         console.log(simplifications);
@@ -313,22 +313,24 @@ function incremental_load_simplifications() {
 }
 
 function insert_feedback_js() {
-    var modal = document.getElementById("lexi-feedback-modal");
-    var close_button = document.getElementById("lexi-feedback-modal-close-btn");
-    var close_x = document.getElementById("lexi-feedback-modal-close-x");
-    close_x.onclick = close_button.onclick = function () {
-        modal.style.display = "none";
-    };
-    // var form = document.getElementById("lexi-feedback-rating");
-    var stars = document.getElementsByName("lexi-rating");
-    console.log(stars.length.toString()+" stars");
-    console.log(stars);
-    // stars[0].bind("onchange", )
-    stars[0].onchange = function(){sendFeedback(1)};
-    stars[1].onchange = function(){sendFeedback(2)};
-    stars[2].onchange = function(){sendFeedback(3)};
-    stars[3].onchange = function(){sendFeedback(4)};
-    stars[4].onchange = function(){sendFeedback(5)};
+    // var modal = document.getElementById("lexi-feedback-modal");
+    // var close_button = document.getElementById("lexi-feedback-modal-close-btn");
+    // var close_x = document.getElementById("lexi-feedback-modal-close-x");
+    // close_x.onclick = close_button.onclick = function () {
+    //     modal.style.display = "none";
+    // };
+    // // var form = document.getElementById("lexi-feedback-rating");
+    // var stars = document.getElementsByName("lexi-rating");
+    // console.log(stars.length.toString()+" stars");
+    // console.log(stars);
+    // // stars[0].bind("onchange", )
+    // stars[0].onchange = function(){sendFeedback(1)};
+    // stars[1].onchange = function(){sendFeedback(2)};
+    // stars[2].onchange = function(){sendFeedback(3)};
+    // stars[3].onchange = function(){sendFeedback(4)};
+    // stars[4].onchange = function(){sendFeedback(5)};
+
+
 }
 
 // /**
@@ -372,63 +374,71 @@ function insert_feedback_js() {
 //     console.log([startNode, start, endNode, end]);
 //     return [startNode, start, endNode, end];
 // }
+//
 
-/**
- * Adds a header/toolbar to the page that informs about the
- * app's status and holds the button for sending feedback.
- */
-function add_lexi_header() {
-    var header_height = "25px";
-    var header = document.createElement("div");
-    header.id = "lexi_header";
-    header.className = "lexi-frontend";
-    console.log(document.body);
-    header.style.height = header_height;
-    // var firstElem = document.body.firstElementChild;
-    // firstElem.style.marginTop = '30px';
-    // TODO insert button again (See earlier version), when clicked toggle feedback
-    var bodyStyle = document.body.style;
-    var cssTransform = 'transform' in bodyStyle ? 'transform' : 'webkitTransform';
-    bodyStyle[cssTransform] = 'translateY(' + header_height + ')';
-    // document.body.appendChild(header);
-    document.documentElement.appendChild(header);
-    console.log(document.documentElement.innerHTML.substr(0, 1000)+" ...");
-    return header;
-}
+// /**
+//  * Adds a header/toolbar to the page that informs about the
+//  * app's status and holds the button for sending feedback.
+//  */
+// function add_lexi_header() {
+//     var header_height = "25px";
+//     var header = document.createElement("div");
+//     header.id = "lexi_header";
+//     header.className = "lexi-frontend";
+//     console.log(document.body);
+//     header.style.height = header_height;
+//     // var firstElem = document.body.firstElementChild;
+//     // firstElem.style.marginTop = '30px';
+//     // TODO insert button again (See earlier version), when clicked toggle feedback
+//     var bodyStyle = document.body.style;
+//     var cssTransform = 'transform' in bodyStyle ? 'transform' : 'webkitTransform';
+//     bodyStyle[cssTransform] = 'translateY(' + header_height + ')';
+//     // document.body.appendChild(header);
+//     document.documentElement.appendChild(header);
+//     console.log(document.documentElement.innerHTML.substr(0, 1000)+" ...");
+//     return header;
+// }
 
-function insert_feedback_modal() {
-    var form_html = "";
-    form_html += '<div id="lexi-feedback-modal" class="lexi-frontend lexi-modal">';
-    form_html += '<div class="lexi-modal-content animate">';
-    form_html += '<div class="lexi-rate-area lexi-modal-container">';
-    form_html += '<span id="lexi-feedback-modal-close-x" title="Close" style="float: right; " class="close">&times;</span>';
-    form_html += '<img id="lexi-logo" src="'+logo_url+'" /><br/>';
-    // form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
-    form_html += '<form id="lexi-feedback-rating" >';
-    form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit_freetext")+'</p>';
-    form_html += '<textarea id = "lexi_feedback_text"></textarea>';
-    form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
-    form_html += '<div id="lexi-feedback-rating-stars">';
-    form_html += '<input type="radio" id="5-star" name="lexi-rating" value="5" /><label for="5-star" title="Amazing">★ </label>';
-    form_html += '<input type="radio" id="4-star" name="lexi-rating" value="4" /><label for="4-star" title="Good">★ </label>';
-    form_html += '<input type="radio" id="3-star" name="lexi-rating" value="3" /><label for="3-star" title="Average">★ </label>';
-    form_html += '<input type="radio" id="2-star" name="lexi-rating" value="2" /><label for="2-star" title="Not Good">★ </label>';
-    form_html += '<input type="radio" id="1-star" name="lexi-rating" value="1" /><label for="1-star" title="Bad">★ </label>';
-    form_html += '</div>';
-    form_html += '<button id="lexi-feedback-modal-close-btn" type="button" class="lexi-button">';
-    form_html += browser.i18n.getMessage("lexi_feedback_readon");
-    form_html += '</button>';
-    form_html += '</form>';
-    form_html += '</div>';
-    form_html += '</div>';
-    form_html += '</div>';
-    document.body.innerHTML += form_html;
-    return document.getElementById("lexi-feedback-modal");
-}
+// var lexi_feedback_iframe = document.createElement("iframe");
+// lexi_feedback_iframe.src = browser.extension.getURL("pages/feedback_form.html");
+// document.body.appendChild(lexi_feedback_iframe);
+
+
+
+//
+// function insert_feedback_modal() {
+//     var form_html = "";
+//     form_html += '<div id="lexi-feedback-modal" class="lexi-frontend lexi-modal">';
+//     form_html += '<div class="lexi-modal-content animate">';
+//     form_html += '<div class="lexi-rate-area lexi-modal-container">';
+//     form_html += '<span id="lexi-feedback-modal-close-x" title="Close" style="float: right; " class="close">&times;</span>';
+//     form_html += '<img id="lexi-logo" src="'+logo_url+'" /><br/>';
+//     // form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
+//     form_html += '<form id="lexi-feedback-rating" >';
+//     form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit_freetext")+'</p>';
+//     form_html += '<textarea id = "lexi_feedback_text"></textarea>';
+//     form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
+//     form_html += '<div id="lexi-feedback-rating-stars">';
+//     form_html += '<input type="radio" id="5-star" name="lexi-rating" value="5" /><label for="5-star" title="Amazing">★ </label>';
+//     form_html += '<input type="radio" id="4-star" name="lexi-rating" value="4" /><label for="4-star" title="Good">★ </label>';
+//     form_html += '<input type="radio" id="3-star" name="lexi-rating" value="3" /><label for="3-star" title="Average">★ </label>';
+//     form_html += '<input type="radio" id="2-star" name="lexi-rating" value="2" /><label for="2-star" title="Not Good">★ </label>';
+//     form_html += '<input type="radio" id="1-star" name="lexi-rating" value="1" /><label for="1-star" title="Bad">★ </label>';
+//     form_html += '</div>';
+//     form_html += '<button id="lexi-feedback-modal-close-btn" type="button" class="lexi-button">';
+//     form_html += browser.i18n.getMessage("lexi_feedback_readon");
+//     form_html += '</button>';
+//     form_html += '</form>';
+//     form_html += '</div>';
+//     form_html += '</div>';
+//     form_html += '</div>';
+//     document.body.innerHTML += form_html;
+//     return document.getElementById("lexi-feedback-modal");
+// }
 
 // function feedback_modal_isopen() {
 //     var feedback_modal = document.getElementById("lexi_feedback_modal");
-//     if (!feedback_modal) {
+//     if (!feedback_modal) {-feedback-text
 //         return false;
 //     } else {
 //         if (feedback_modal.style.display == "none") {
@@ -438,17 +448,33 @@ function insert_feedback_modal() {
 //     return true;
 // }
 
+var lexi_feedback_modal_iframe_container = document.createElement("div");
+lexi_feedback_modal_iframe_container.id = "lexi-feedback-modal-iframe-container";
+lexi_feedback_modal_iframe_container.style = "position:fixed; left: 0; right: 0; bottom: 0; top: 0px; z-index: 1000001; display: none;";
+var lexi_feedback_modal_iframe = document.createElement("iframe");
+lexi_feedback_modal_iframe.onload = function() {
+    console.log("lexi_feedback_modal_iframe loaded.");
+};
+lexi_feedback_modal_iframe.id = "lexi-feedback-modal-iframe";
+lexi_feedback_modal_iframe.src = browser.extension.getURL("pages/feedback_form.html");
+lexi_feedback_modal_iframe.height = "100%";
+lexi_feedback_modal_iframe.width = "100%";
+lexi_feedback_modal_iframe.frameBorder = "0";
+
+lexi_feedback_modal_iframe_container.appendChild(lexi_feedback_modal_iframe);
+document.body.appendChild(lexi_feedback_modal_iframe_container);
+
 function toggle_feedback_modal() {
-    var feedback_modal = document.getElementById("lexi-feedback-modal");
+    // var feedback_modal = document.getElementById("lexi-feedback-modal");
     if (simplifications) {
-        if (!feedback_modal) {
+        if (!lexi_feedback_modal_iframe_container) {
             // feedback_modal = insert_feedback_modal();
             // feedback_modal.style.display = "block";
         } else {
             if (feedback_submitted) {
-                feedback_modal.style.display = "none";
+                lexi_feedback_modal_iframe_container.style.display = "none";
             } else {
-                feedback_modal.style.display = "block";
+                lexi_feedback_modal_iframe_container.style.display = "block";
             }
         }
     }
@@ -481,10 +507,11 @@ browser.storage.sync.get('lexi_user', function (usr_object) {
     console.log("Started lexi extension. User: "+USER);
     // add_lexi_header();
     create_lexi_notifier();
-    insert_feedback_modal();
+    // insert_feedback_modal();
     display_message(browser.i18n.getMessage("lexi_simplifications_loading"));
     // incremental_load_simplifications();
-    load_simplifications(USER);
+    load_simplifications();
+    // debugsimplify(0);
     insert_feedback_js();
 });
 

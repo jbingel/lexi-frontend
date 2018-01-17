@@ -1,44 +1,62 @@
-<div id="lexi-login-modal" class="lexi-frontend lexi-modal" style="display: block">
-    <form id="lexi-login-form" class="lexi-modal-content animate">
-        <div id="lexi-input-fields" class="lexi-modal-container">
-            <span onclick="document.getElementById('lexi-login-modal').style.display='none'"
-                  style="float: right;" class="close" title="Close">&times;</span>
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../lexi.css">
+    <script src='../scripts/jquery-3.1.1.js' type="text/javascript"></script>
+    <!-- Script to handle button events and localization is at bottom of body
+    (need to load content first) -->
+</head>
+<body>
+    <div id="lexi-login-modal" class="lexi-frontend lexi-modal" style="display: block">
+        <form id="lexi-login-form" class="lexi-modal-content animate">
+            <div id="lexi-input-fields" class="lexi-modal-container">
+                <span id="lexi-login-modal-close"
+                      style="float: right;" class="close" title="Close">&times;</span>
 
-            <img id="lexi-logo" src="../img/lexi.png" /><br/>
-            <p><span class="lexi-localize" data-key="lexi_login_email"></span></p>
+                <img id="lexi-logo" src="../img/lexi.png" /><br/>
+                <p><span class="lexi-localize" data-key="lexi_login_email"></span></p>
 
-            <input type="email" id="lexi-email">
+                <input type="email" id="lexi-email">
 
-            <div id="lexi-expanded-inputs" style="display: none !important;">
-                <p><span class="lexi-localize" data-key="lexi_login_yearofbirth"></span></p>
-                <select name="yearpicker" id="lexi-year-of-birth"></select>
+                <div id="lexi-expanded-inputs" style="display: none !important;">
+                    <!-- Year of birth options are added dynamically in login_form.js -->
+                    <p><span class="lexi-localize" data-key="lexi_login_yearofbirth"></span></p>
+                    <select name="yearpicker" id="lexi-year-of-birth"></select>
 
-                <p>'+browser.i18n.getMessage("lexi_login_education")+'</p>
-                <select name="education" id="lexi-education">
-                    <option value="primary">
-                        <span class="lexi-localize" data-key="lexi_login_education_primary"></span></option>
-                    <option value="secondary">
-                        <span class="lexi-localize" data-key="lexi_login_education_secondary"></span></option>
-                    <option value="higher">
-                        <span class="lexi-localize" data-key="lexi_login_education_higher"></span></option>
-                </select>
-            </div>
+                    <p><span class="lexi-localize" data-key="lexi_login_education"></span></p>
+                    <select name="education" id="lexi-education">
+                        <option value="primary" class="lexi-localize"
+                                data-key="lexi_login_education_primary"></option>
+                        <option value="secondary" class="lexi-localize"
+                                data-key="lexi_login_education_secondary"></option>
+                        <option value="higher" class="lexi-localize"
+                                data-key="lexi_login_education_higher"></option>
+                    </select>
+                </div>
 
-            <div id="lexi-buttons_container" class="buttons">
-                <div class="buttons" id="buttons">
-                    <button id="lexi-login-button" type="button" value="Login" class="lexi-button">
-                        <span class="lexi-localize" data-key="lexi_login_button"></span></button>
-                    <button id="lexi-new-user-button" type="button" value="Create new user" class="lexi-button">
-                        <span class="lexi-localize" data-key="lexi_login_newuser"></span></button>
-                    <button id="lexi-register-button" type="button" value="Register" style="display: none !important;" class="lexi-button">
-                        <span class="lexi-localize" data-key="lexi_login_register"></span></button>
-                    <button id="lexi-back-to-login-button" type="button" value="back" class="lexi-button" style="display: none !important;">
-                        <img src="../img/backarrow.png" style="height: 15px; padding-right: 5px; vertical-align:middle"/>
-                        <span class="lexi-localize" data-key="lexi_login_backtologin"></span>
+                <div id="lexi-buttons_container" class="buttons">
+                    <div class="buttons" id="buttons">
+                        <button id="lexi-login-button" type="button" value="Login" class="lexi-button">
+                            <span class="lexi-localize" data-key="lexi_login_button"></span></button>
+                        <button id="lexi-new-user-button" type="button" value="Create new user" class="lexi-button">
+                            <span class="lexi-localize" data-key="lexi_login_newuser"></span></button>
+                        <button id="lexi-register-button" type="button" value="Register"
+                                style="display: none !important;" class="lexi-button">
+                            <span class="lexi-localize" data-key="lexi_login_register"></span></button>
+                        <button id="lexi-back-to-login-button" type="button" value="back" class="lexi-button"
+                                style="display: none !important;">
+                            <img src="../img/backarrow.png"
+                                 style="height: 15px; padding-right: 5px; vertical-align:middle"/>
+                            <span class="lexi-localize" data-key="lexi_login_backtologin"></span>
                         </button>
-                    <div id="lexi-error-message-field" style="display: none;"></div>
+                        <div id="lexi-error-message-field" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+    <!-- Load script with button click handlers and content localizers -->
+    <script src='../scripts/form_common.js' type="text/javascript"></script>
+    <script src='../scripts/login_form.js' type="text/javascript"></script>
+</body>
+</html>

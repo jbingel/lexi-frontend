@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../lexi.css">
+    <script src='../scripts/jquery-3.1.1.js' type="text/javascript"></script>
+    <!-- Script to handle button events is at bottom of body (need to load content first) -->
+</head>
+<body>
+    <div id="lexi-feedback-modal" class="lexi-frontend lexi-modal">
+    <div class="lexi-modal-content animate">
+        <div class="lexi-rate-area lexi-modal-container">
+            <span id="lexi-feedback-modal-close-x" title="Close" style="float: right; " class="close">&times;</span>
+            <img id="lexi-logo" src="../img/lexi.png" /><br/>
+            <form id="lexi-feedback-rating" >
+                <p class="lexi-localize" data-key="lexi_feedback_solicit_freetext"></p>
+                <textarea id = "lexi-feedback-text"></textarea>
+                <p class="lexi-localize" data-key="lexi_feedback_solicit"></p>
+                <div id="lexi-feedback-rating-stars">
+                    <input type="radio" id="5-star" name="lexi-rating" value="5" /><label for="5-star" title="Amazing">★ </label>
+                    <input type="radio" id="4-star" name="lexi-rating" value="4" /><label for="4-star" title="Good">★ </label>
+                    <input type="radio" id="3-star" name="lexi-rating" value="3" /><label for="3-star" title="Average">★ </label>
+                    <input type="radio" id="2-star" name="lexi-rating" value="2" /><label for="2-star" title="Not Good">★ </label>
+                    <input type="radio" id="1-star" name="lexi-rating" value="1" /><label for="1-star" title="Bad">★ </label>
+                    </div>
+                <button id="lexi-feedback-modal-close-btn" type="button" class="lexi-button">
+                    <span class="lexi-localize" data-key="lexi_feedback_readon"></span>
+                </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Load script with button click handlers and content localizers -->
+    <script src='../scripts/form_common.js' type="text/javascript"></script>
+    <script src='../scripts/feedback_form.js' type="text/javascript"></script>
+</body>
+</html>

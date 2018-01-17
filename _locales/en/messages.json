@@ -38,7 +38,7 @@
     "message": "Loading simplifications..."
   },
   "lexi_simplifications_loading_longtext": {
-    "message": "This site contains a lot of text. Lexi may take some time. Loading..."
+    "message": "Loading simplifications - may take some time..."
   },
   "lexi_simplifications_error": {
     "message": "Oops, something went wrong. Lexi could not simplify this page."

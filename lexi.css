@@ -108,6 +108,11 @@ time, mark, audio, video {
     -webkit-transition: all 0.3s ease-in-out;
 }
 
+#lexi-loading-animation {
+    height: 14pt;
+    /*vertical-align: middle;*/
+}
+
 #lexi-header {
     position: fixed;
     top: 0;
