@@ -16,6 +16,7 @@ window.browser = (function () {
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Request login
     if (request.type === 'request_login') {
+        alert('receiving msg');
         console.log("Received message to request login.");
         browser.tabs.executeScript(null, {file: "scripts/inject_login_form.js"}, function() {
             return true;
@@ -40,6 +41,33 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         console.log("Received message that user is logged on, " +
             "running simplifications script now.");
         browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
+    }
+
+    // Pass on feedback
+    if (request.type === 'feedback') {
+        // send message to all tabs  TODO this is really ugly... but how to know the right tab ID?
+        browser.tabs.query({}, function(tabs) {
+            for (var i=0; i<tabs.length; ++i) {
+                browser.tabs.sendMessage(tabs[i].id,
+                    {
+                        type:'feedback_echo',
+                        rating: request.rating,
+                        feedback_txt: request.feedback_txt
+                    }, function () { return true; });
+            }
+        });
+    }
+
+    // Close feedback form (by deleting feedback iframe)
+    if (request.type === 'delete_feedback_iframe') {
+        // send message to all tabs  TODO this is really ugly... but how to know the right tab ID?
+        browser.tabs.query({}, function(tabs) {
+            for (var i=0; i<tabs.length; ++i) {
+                browser.tabs.sendMessage(tabs[i].id, {type:'delete_feedback_iframe_echo'}, function () {
+                    return true;
+                });
+            }
+        });
     }
 });
 

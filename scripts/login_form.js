@@ -15,22 +15,7 @@ function send_close_login_message() {
     });
 }
 
-var frontend_version = browser.runtime.getManifest().version;
-
-// TODO read these from somewhere central
-// var SERVER_URL = "https://www.readwithlexi.net/lexi/";
-var SERVER_URL = "http://localhost:5000";
-var SERVER_URL_LOGIN = SERVER_URL+"/login";
-var SERVER_URL_REGISTER = SERVER_URL+"/register_user";
-
-
 var lexi_login_modal = document.getElementById("lexi-login-modal");
-
-if (lexi_login_modal) {
-    lexi_login_modal.style.display = "block";
-} else {
-    // lexi_login_modal = inject_login_modal();
-}
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -53,10 +38,8 @@ var login_button = document.getElementById("lexi-login-button");
 var new_user_button = document.getElementById("lexi-new-user-button");
 var register_button = document.getElementById("lexi-register-button");
 var back_to_login_button = document.getElementById("lexi-back-to-login-button");
-var fields_container = document.getElementById("lexi-input-fields");
 var expanded_inputs =  document.getElementById("lexi-expanded-inputs");
 var lexi_login_form = document.getElementById("lexi-login-form");
-var buttons = document.getElementById("lexi-buttons");
 var lexi_login_modal_close = document.getElementById("lexi-login-modal-close");
 
 lexi_login_modal_close.addEventListener('click', function () {

@@ -2,6 +2,8 @@
  * Created by joachim on 8/17/17.
  */
 
+alert('adding login');
+
 // div that contains iframe (mainly needed for CSS)
 var lexi_login_modal_iframe_container = document.createElement("div");
 lexi_login_modal_iframe_container.id = "lexi-login-modal-iframe-container";
@@ -22,6 +24,7 @@ document.body.appendChild(lexi_login_modal_iframe_container);
 browser.runtime.onMessage.addListener(function (request) {
     // Close login form (by deleting login iframe)
     if (request.type === 'delete_login_iframe_echo') {
+        console.log("Removing login iframe");
         var lexi_login_modal_iframe_container =
             document.getElementById("lexi-login-modal-iframe-container");
         document.body.removeChild(lexi_login_modal_iframe_container);

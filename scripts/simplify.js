@@ -46,89 +46,24 @@ var SERVER_URL = "http://localhost:5000";
 var SERVER_URL_FEEDBACK = SERVER_URL+"/feedback";
 var SERVER_URL_SIMPLIFY = SERVER_URL+"/simplify";
 
-/* Lexi logo */
-var logo_url = browser.runtime.getURL("img/lexi.png");
 
-/**
- * Makes an AJAX call to backend requesting simplifications based on some HTML.
- * @param {string} url -
- * @param {string} html -
- * @returns {Promise}
- */
-function simplifyAjaxCall(url, html) {
-    var request = {};
-    request['frontend_version'] = frontend_version;
-    request['user'] = USER;
-    request['html'] = html;
-    return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-            resolve(JSON.parse(this.responseText));
-        };
-        xhr.onerror = function(e){
-            var lexi_header = document.getElementById("lexi_header");
-            lexi_header.innerHTML = "Unknown Error Occured. Server response not received.";
-        };
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-        xhr.setRequestHeader("access-control-allow-origin", "*");
-        xhr.send(JSON.stringify(request));
-    })
-}
+/* ******************************* *
+ * ******************************* *
+ * ********* FUNCTIONS *********** *
+ * ******************************* *
+ * ******************************* */
 
-function debugsimplify(latency) {
+function debugsimplify() {
     var site_html = document.body.outerHTML;
     var site_text = document.body.textContent;
     if (site_text.length > 10000) {
         display_message(browser.i18n.getMessage("lexi_simplifications_loading_longtext"));
     }
     display_loading_animation();
-    sleep(latency);
     return {
         "html": html,
         "simplifications": ["foo"]
     }
-}
-
-function sendFeedback(rating) {
-    // sleep(5); //TODO find out what goes here.
-    var feedback_txt = $("#lexi-feedback-text").val();
-    feedbackAjaxCall(SERVER_URL_FEEDBACK, rating, feedback_txt);
-    feedback_submitted = true;
-    setTimeout(toggle_feedback_modal(), 1000);
-    // toggle_feedback_modal();
-    display_message(browser.i18n.getMessage("lexi_feedback_submitted"));
-}
-
-/**
- *
- * @param {string} url
- * @param {string} rating
- * @returns {Promise}
- */
-function feedbackAjaxCall(url, rating, feedback_txt) {
-    var request = {};
-    request['frontend_version'] = frontend_version;
-    request['user'] = USER;
-    request['simplifications'] = simplifications;
-    request['rating'] = rating;
-    request['feedback_txt'] = feedback_txt;
-    request['url'] = window.location.href;
-    console.log(request);
-    return new Promise(function(resolve, reject) {
-        // console.log(html.slice(0, 20));
-        var xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-            resolve(JSON.parse(this.responseText));
-            // console.log(this.responseText);
-        };
-        // xhr.onerror = reject;
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-        xhr.setRequestHeader("access-control-allow-origin", "*");
-        xhr.send(JSON.stringify(request));
-        feedback_submitted = true;
-    })
 }
 
 /**
@@ -153,7 +88,6 @@ function change_text(elemId) {
     console.log(simplifications[elemId]);
     console.log(clicked_simplifications);
 }
-
 
 /**
  *
@@ -264,7 +198,7 @@ function load_simplifications() {
             // Create listeners for clicks on simplification spans
             make_simplification_listeners();
 
-            insert_feedback_js(); // TODO this works, but move this somewhere it makes more sense conceptually
+            // insert_feedback_js(); // TODO this works, but move this somewhere it makes more sense conceptually
             // prepare for feedback
             register_feedback_action();
         } else {
@@ -283,8 +217,7 @@ $.fn.isInViewport = function() {
     return elementBottom > viewportTop && elementTop < viewportBottom;
 };
 
-var updated_elems = [];
-
+var updated_elems = [];  // belongs to below function (experimental)
 function incremental_load_simplifications() {
     $(window).on('resize scroll', function(){
         $('p:visible').each(function () {
@@ -309,190 +242,49 @@ function incremental_load_simplifications() {
             updated_elems.push($(this));
         })
     })
-
 }
 
-function insert_feedback_js() {
-    // var modal = document.getElementById("lexi-feedback-modal");
-    // var close_button = document.getElementById("lexi-feedback-modal-close-btn");
-    // var close_x = document.getElementById("lexi-feedback-modal-close-x");
-    // close_x.onclick = close_button.onclick = function () {
-    //     modal.style.display = "none";
-    // };
-    // // var form = document.getElementById("lexi-feedback-rating");
-    // var stars = document.getElementsByName("lexi-rating");
-    // console.log(stars.length.toString()+" stars");
-    // console.log(stars);
-    // // stars[0].bind("onchange", )
-    // stars[0].onchange = function(){sendFeedback(1)};
-    // stars[1].onchange = function(){sendFeedback(2)};
-    // stars[2].onchange = function(){sendFeedback(3)};
-    // stars[3].onchange = function(){sendFeedback(4)};
-    // stars[4].onchange = function(){sendFeedback(5)};
+function inject_feedback_form() {
+    var lexi_feedback_modal_iframe_container = document.createElement("div");
+    lexi_feedback_modal_iframe_container.id = "lexi-feedback-modal-iframe-container";
+    lexi_feedback_modal_iframe_container.style = "position:fixed; left: 0; right: 0; " +
+        "bottom: 0; top: 0px; z-index: 1000001; display: block;";
 
+    var lexi_feedback_modal_iframe = document.createElement("iframe");
+    lexi_feedback_modal_iframe.onload = function() {
+        console.log("lexi_feedback_modal_iframe loaded.");
+    };
+    lexi_feedback_modal_iframe.id = "lexi-feedback-modal-iframe";
+    lexi_feedback_modal_iframe.src = browser.extension.getURL("pages/feedback_form.html");
+    lexi_feedback_modal_iframe.style = "height: 100%; width: 100%; border: none;";
 
+    lexi_feedback_modal_iframe_container.appendChild(lexi_feedback_modal_iframe);
+    document.body.appendChild(lexi_feedback_modal_iframe_container);
 }
 
-// /**
-//  * Gets the char offset from the document start for a given node
-//  * @param node
-//  * @returns {Number} The char offset from the document start
-//  */
-// function getNodeOffset(node) {
-//     var range = document.createRange();
-//     range.selectNodeContents(document);
-//     range.setEnd(node, 0);
-//     return range.toString().length;
-// }
-//
-// /**
-//  * Gets the current selection and finds its start and end (nodes and char offsets)
-//  * @returns {*[]} startNode, offset_in_startNode, endNode, offset_in_endNode
-//  */
-// function getSelectionRange() {
-//     var sel = window.getSelection();
-//     var startNode = sel.anchorNode;
-//     var endNode = sel.focusNode;
-//     var start = sel.anchorOffset;
-//     var end = sel.focusOffset;
-//     // if selected from right to left within same node, flip start/end
-//     if (startNode == endNode && start > end) {
-//         start = sel.focusOffset;
-//         end = sel.anchorOffset;
-//     }
-//     // if selected bottom to top across nodes, flip start/end
-//     if (getNodeOffset(startNode) > getNodeOffset(endNode)) {
-//         startNode = sel.focusNode;
-//         endNode = sel.anchorNode;
-//         start = sel.focusOffset;
-//         end = sel.anchorOffset;
-//     }
-//     if (startNode == endNode && start == end) {
-//         alert("Please don't select using doubleclick. TODO do nothing.");
-//     //    TODO do nothing
-//     }
-//     console.log([startNode, start, endNode, end]);
-//     return [startNode, start, endNode, end];
-// }
-//
-
-// /**
-//  * Adds a header/toolbar to the page that informs about the
-//  * app's status and holds the button for sending feedback.
-//  */
-// function add_lexi_header() {
-//     var header_height = "25px";
-//     var header = document.createElement("div");
-//     header.id = "lexi_header";
-//     header.className = "lexi-frontend";
-//     console.log(document.body);
-//     header.style.height = header_height;
-//     // var firstElem = document.body.firstElementChild;
-//     // firstElem.style.marginTop = '30px';
-//     // TODO insert button again (See earlier version), when clicked toggle feedback
-//     var bodyStyle = document.body.style;
-//     var cssTransform = 'transform' in bodyStyle ? 'transform' : 'webkitTransform';
-//     bodyStyle[cssTransform] = 'translateY(' + header_height + ')';
-//     // document.body.appendChild(header);
-//     document.documentElement.appendChild(header);
-//     console.log(document.documentElement.innerHTML.substr(0, 1000)+" ...");
-//     return header;
-// }
-
-// var lexi_feedback_iframe = document.createElement("iframe");
-// lexi_feedback_iframe.src = browser.extension.getURL("pages/feedback_form.html");
-// document.body.appendChild(lexi_feedback_iframe);
-
-
-
-//
-// function insert_feedback_modal() {
-//     var form_html = "";
-//     form_html += '<div id="lexi-feedback-modal" class="lexi-frontend lexi-modal">';
-//     form_html += '<div class="lexi-modal-content animate">';
-//     form_html += '<div class="lexi-rate-area lexi-modal-container">';
-//     form_html += '<span id="lexi-feedback-modal-close-x" title="Close" style="float: right; " class="close">&times;</span>';
-//     form_html += '<img id="lexi-logo" src="'+logo_url+'" /><br/>';
-//     // form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
-//     form_html += '<form id="lexi-feedback-rating" >';
-//     form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit_freetext")+'</p>';
-//     form_html += '<textarea id = "lexi_feedback_text"></textarea>';
-//     form_html += '<p>'+browser.i18n.getMessage("lexi_feedback_solicit")+'</p>';
-//     form_html += '<div id="lexi-feedback-rating-stars">';
-//     form_html += '<input type="radio" id="5-star" name="lexi-rating" value="5" /><label for="5-star" title="Amazing">★ </label>';
-//     form_html += '<input type="radio" id="4-star" name="lexi-rating" value="4" /><label for="4-star" title="Good">★ </label>';
-//     form_html += '<input type="radio" id="3-star" name="lexi-rating" value="3" /><label for="3-star" title="Average">★ </label>';
-//     form_html += '<input type="radio" id="2-star" name="lexi-rating" value="2" /><label for="2-star" title="Not Good">★ </label>';
-//     form_html += '<input type="radio" id="1-star" name="lexi-rating" value="1" /><label for="1-star" title="Bad">★ </label>';
-//     form_html += '</div>';
-//     form_html += '<button id="lexi-feedback-modal-close-btn" type="button" class="lexi-button">';
-//     form_html += browser.i18n.getMessage("lexi_feedback_readon");
-//     form_html += '</button>';
-//     form_html += '</form>';
-//     form_html += '</div>';
-//     form_html += '</div>';
-//     form_html += '</div>';
-//     document.body.innerHTML += form_html;
-//     return document.getElementById("lexi-feedback-modal");
-// }
-
-// function feedback_modal_isopen() {
-//     var feedback_modal = document.getElementById("lexi_feedback_modal");
-//     if (!feedback_modal) {-feedback-text
-//         return false;
-//     } else {
-//         if (feedback_modal.style.display == "none") {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
-
-var lexi_feedback_modal_iframe_container = document.createElement("div");
-lexi_feedback_modal_iframe_container.id = "lexi-feedback-modal-iframe-container";
-lexi_feedback_modal_iframe_container.style = "position:fixed; left: 0; right: 0; bottom: 0; top: 0px; z-index: 1000001; display: none;";
-var lexi_feedback_modal_iframe = document.createElement("iframe");
-lexi_feedback_modal_iframe.onload = function() {
-    console.log("lexi_feedback_modal_iframe loaded.");
-};
-lexi_feedback_modal_iframe.id = "lexi-feedback-modal-iframe";
-lexi_feedback_modal_iframe.src = browser.extension.getURL("pages/feedback_form.html");
-lexi_feedback_modal_iframe.height = "100%";
-lexi_feedback_modal_iframe.width = "100%";
-lexi_feedback_modal_iframe.frameBorder = "0";
-
-lexi_feedback_modal_iframe_container.appendChild(lexi_feedback_modal_iframe);
-document.body.appendChild(lexi_feedback_modal_iframe_container);
+function remove_feedback_form() {
+    console.log("Removing feedback iframe.");
+    var _lexi_feedback_modal_iframe_container =
+        document.getElementById("lexi-feedback-modal-iframe-container");
+    console.log(_lexi_feedback_modal_iframe_container);
+    document.body.removeChild(_lexi_feedback_modal_iframe_container);
+}
 
 function toggle_feedback_modal() {
-    // var feedback_modal = document.getElementById("lexi-feedback-modal");
+    console.log("Toggling feedback modal");
     if (simplifications) {
-        if (!lexi_feedback_modal_iframe_container) {
-            // feedback_modal = insert_feedback_modal();
-            // feedback_modal.style.display = "block";
+        if (feedback_submitted) {
+            console.log("Feedback already submitted, doing nothing.");
         } else {
-            if (feedback_submitted) {
-                lexi_feedback_modal_iframe_container.style.display = "none";
+            if (document.getElementById("lexi-feedback-modal-iframe-container")) {
+                console.log("Form already there, doing nothing.")
             } else {
-                lexi_feedback_modal_iframe_container.style.display = "block";
+                console.log("Should display now...");
+                inject_feedback_form();
             }
         }
     }
-    // feedback_modal.style.display = "block";
 }
-
-
-// function solicit_feedback() {
-//     if (!feedback_modal_isopen() && !feedback_submitted){
-//         console.log("opening feedback form");
-//         insert_feedback_modal();
-//         var feedback_modal = document.getElementById("lexi_feedback_modal");
-//         feedback_modal.style.display = "block";
-//         console.log("feedback form now open");
-//     } else {
-//         console.log("feedback form already open, or feedback already submitted");
-//     }
-// }
 
 function register_feedback_action() {
     // insert_feedback_modal();
@@ -501,6 +293,101 @@ function register_feedback_action() {
         toggle_feedback_modal();
     });
 }
+
+function handle_feedback(rating, feedback_txt) {
+    feedbackAjaxCall(SERVER_URL_FEEDBACK, rating, feedback_txt);
+    setTimeout(remove_feedback_form(), 1000);
+    display_message(browser.i18n.getMessage("lexi_feedback_submitted"));
+
+}
+
+/* ******************************* *
+ * ******************************* *
+ * ****** MESSAGE LISTENERS ****** *
+ * ******************************* *
+ * ******************************* */
+
+browser.runtime.onMessage.addListener(function (request) {
+    // Close login form (by deleting login iframe)
+    if (request.type === 'delete_feedback_iframe_echo') {
+        remove_feedback_form()
+    }
+
+    if (request.type === 'feedback_echo') {
+        handle_feedback(request.rating, request.feedback_txt);
+    }
+});
+
+/* ******************************* *
+ * ******************************* *
+ * ********* AJAX CALLS ********** *
+ * ******************************* *
+ * ******************************* */
+
+/**
+ * Makes an AJAX call to backend requesting simplifications based on some HTML.
+ * @param {string} url -
+ * @param {string} html -
+ * @returns {Promise}
+ */
+function simplifyAjaxCall(url, html) {
+    var request = {};
+    request['frontend_version'] = frontend_version;
+    request['user'] = USER;
+    request['html'] = html;
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(JSON.parse(this.responseText));
+        };
+        xhr.onerror = function(e){
+            var lexi_header = document.getElementById("lexi_header");
+            lexi_header.innerHTML = "Unknown Error Occured. Server response not received.";
+        };
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+        xhr.setRequestHeader("access-control-allow-origin", "*");
+        xhr.send(JSON.stringify(request));
+    })
+}
+
+/**
+ *
+ * @param {string} url
+ * @param {string} rating
+ * @param {string} feedback_txt
+ * @returns {Promise}
+ */
+function feedbackAjaxCall(url, rating, feedback_txt) {
+    var request = {};
+    request['frontend_version'] = frontend_version;
+    request['user'] = USER;
+    request['simplifications'] = simplifications;
+    request['rating'] = rating;
+    request['feedback_txt'] = feedback_txt;
+    request['url'] = window.location.href;
+    console.log(request);
+    return new Promise(function(resolve, reject) {
+        // console.log(html.slice(0, 20));
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(JSON.parse(this.responseText));
+            // console.log(this.responseText);
+        };
+        // xhr.onerror = reject;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+        xhr.setRequestHeader("access-control-allow-origin", "*");
+        xhr.send(JSON.stringify(request));
+        feedback_submitted = true;
+    })
+}
+
+/* ******************************* *
+ * ******************************* *
+ * ************ MAIN ************* *
+ * ******************************* *
+ * ******************************* */
 
 browser.storage.sync.get('lexi_user', function (usr_object) {
     USER = usr_object.lexi_user.userId;
@@ -512,14 +399,4 @@ browser.storage.sync.get('lexi_user', function (usr_object) {
     // incremental_load_simplifications();
     load_simplifications();
     // debugsimplify(0);
-    insert_feedback_js();
 });
-
-
-// var links = document.getElementsByTagName("a");
-// for (var i=0, link; link=links[i]; i++) {
-//     link.onmouseover = function() {
-//         // solicit_feedback();
-//         toggle_feedback_modal();
-//     };
-// }
