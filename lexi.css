@@ -1,25 +1,25 @@
-/* CSS RESET (to override page HTML/) */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-    /*display: none !important;*/
-}
+/*!* CSS RESET (to override page HTML/) *!*/
+/*html, body, div, span, applet, object, iframe,*/
+/*h1, h2, h3, h4, h5, h6, p, blockquote, pre,*/
+/*a, abbr, acronym, address, big, cite, code,*/
+/*del, dfn, em, img, ins, kbd, q, s, samp,*/
+/*small, strike, strong, sub, sup, tt, var,*/
+/*b, u, i, center,*/
+/*dl, dt, dd, ol, ul, li,*/
+/*fieldset, form, label, legend,*/
+/*table, caption, tbody, tfoot, thead, tr, th, td,*/
+/*article, aside, canvas, details, embed,*/
+/*figure, figcaption, footer, header, hgroup,*/
+/*menu, nav, output, ruby, section, summary,*/
+/*time, mark, audio, video {*/
+    /*margin: 0;*/
+    /*padding: 0;*/
+    /*border: 0;*/
+    /*font-size: 100%;*/
+    /*font: inherit;*/
+    /*vertical-align: baseline;*/
+    /*!*display: none !important;*!*/
+/*}*/
 
 
 /* CONTENT */
@@ -54,25 +54,24 @@ time, mark, audio, video {
     background: #ffffff;
     margin: 0;
     text-transform: none !important;
-}
-
-.lexi-frontend p {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.lexi-frontend p, .lexi-frontend select {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    font-size: medium !important;
     font-style: normal; !important;
     font-weight: normal; !important;
 }
 
-.lexi-frontend select {
-    border-radius: 0 !important;
-    height: 45px !important;
-    line-height: 30px !important;
-}
+/*.lexi-frontend p {*/
+    /*padding: 0 !important;*/
+    /*margin: 0 !important;*/
+/*}*/
+
+/*.lexi-frontend p, .lexi-frontend select {*/
+
+/*}*/
+
+/*.lexi-frontend select {*/
+    /*border-radius: 0 !important;*/
+    /*height: 45px !important;*/
+    /*line-height: 30px !important;*/
+/*}*/
 
 .lexi-modal-container {
     padding: 16px;
@@ -103,7 +102,7 @@ time, mark, audio, video {
 }
 
 #lexi-notifier:hover {
-    opacity: 0;
+    opacity: 0.5;
     /*pointer-events: none;*/
     -webkit-transition: all 0.3s ease-in-out;
 }
@@ -178,7 +177,7 @@ time, mark, audio, video {
 
 .lexi-modal-content {
     background-color: #fefefe;
-    padding-top: 10px;
+    /*padding-top: 10px;*/
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 1px solid #888;
     width: 480px; /* Could be more or less, depending on screen size */
@@ -187,13 +186,17 @@ time, mark, audio, video {
 
 
 .lexi-frontend #lexi-login-form input, .lexi-frontend #lexi-login-form select {
+    background-color: #ffffff;
     width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
+    height: 40px;
+    padding: 2px 10px;
+    margin-top: 12px;
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
     max-width: 800px;
+    font-size: 100%;
+    text-align: center;
     }
 
 .lexi-frontend #lexi-error-message-field {
@@ -211,17 +214,19 @@ time, mark, audio, video {
 
 .lexi-button {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 100%;
     background-color: #4CAF50;
     color: white;
     padding: 5px 5px;
-    margin: 5px 0;
+    margin-top: 12px ;
     border: none;
     border-radius: 0;
     cursor: pointer;
     width: 100%;
-    height: 30px;
+    height: 40px;
     line-height: 25px;
     text-transform: none !important;
+    text-align: center;
 }
 
 .lexi-button:hover {
@@ -239,15 +244,16 @@ time, mark, audio, video {
 
 .lexi-frontend #lexi-buttons-container {
     text-align: center;
-    padding: 16px;
+    /*padding: 16px;*/
+    margin-top: 10px;
 }
 
-.lexi-frontend #lexi-buttons-container button {
-    color: white;
-    width: 95%;
-    padding: 6px;
-    margin-bottom: 5px;
-}
+/*.lexi-frontend #lexi-buttons-container button {*/
+    /*color: white;*/
+    /*width: 95%;*/
+    /*padding: 6px;*/
+    /*!*margin-bottom: 5px;*!*/
+/*}*/
 
 
 .lexi-frontend #lexi-lang-select {
@@ -260,6 +266,11 @@ time, mark, audio, video {
     float: right;
     float-offset: 0 0;
     width: 50px;
+}
+
+.lexi-frontend #lexi-input-fields p {
+    margin-top: 12px;
+    -webkit-margin-after: 0;
 }
 
 /* rought form styles for when JS is disabled */

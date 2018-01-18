@@ -2,8 +2,6 @@
  * Created by joachim on 8/17/17.
  */
 
-alert('adding login');
-
 // div that contains iframe (mainly needed for CSS)
 var lexi_login_modal_iframe_container = document.createElement("div");
 lexi_login_modal_iframe_container.id = "lexi-login-modal-iframe-container";

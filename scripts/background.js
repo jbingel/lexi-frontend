@@ -16,7 +16,6 @@ window.browser = (function () {
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Request login
     if (request.type === 'request_login') {
-        alert('receiving msg');
         console.log("Received message to request login.");
         browser.tabs.executeScript(null, {file: "scripts/inject_login_form.js"}, function() {
             return true;

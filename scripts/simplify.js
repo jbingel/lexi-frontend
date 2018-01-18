@@ -14,11 +14,11 @@ var frontend_version = browser.runtime.getManifest().version;
  * Id of current user
  * @type {string}
  */
-var USER = "default"; // will be overwritten
+var USER = "default"; // will be overwritten in main (see bottom)
 
 /**
- * stores whether feedback has been submitted, to decide whether to open
- * feedback modal again
+ * Flag whether feedback has been submitted, used to decide
+ * whether to open feedback modal again
  * @type {boolean}
  */
 var feedback_submitted = false;
@@ -105,7 +105,6 @@ function toggle_bad_feedback(element, img) {
     }
 }
 
-
 /**
  *
  */
@@ -183,22 +182,12 @@ function load_simplifications() {
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, site_html).then(function (result) {
         simplifications = result['simplifications'];
         console.log(simplifications);
-
         if (simplifications) {
+            // replace HTML
             document.body.outerHTML = result['html'];
             display_message(browser.i18n.getMessage("lexi_simplifications_loaded"));
-            // var header = document.getElementById("lexi_header");
-            // var button = document.createElement("button");
-            // button.innerHTML = "Click when done!";
-            // button.id = "feedback_button";
-            // header.appendChild(button);
-            // button.addEventListener('click', function() {
-            //     feedbackAjaxCall(SERVER_URL+"/feedback", USER);
-            // });
             // Create listeners for clicks on simplification spans
             make_simplification_listeners();
-
-            // insert_feedback_js(); // TODO this works, but move this somewhere it makes more sense conceptually
             // prepare for feedback
             register_feedback_action();
         } else {
@@ -266,7 +255,6 @@ function remove_feedback_form() {
     console.log("Removing feedback iframe.");
     var _lexi_feedback_modal_iframe_container =
         document.getElementById("lexi-feedback-modal-iframe-container");
-    console.log(_lexi_feedback_modal_iframe_container);
     document.body.removeChild(_lexi_feedback_modal_iframe_container);
 }
 
@@ -308,11 +296,11 @@ function handle_feedback(rating, feedback_txt) {
  * ******************************* */
 
 browser.runtime.onMessage.addListener(function (request) {
-    // Close login form (by deleting login iframe)
+    // Close feedback form (by deleting feedback iframe)
     if (request.type === 'delete_feedback_iframe_echo') {
         remove_feedback_form()
     }
-
+    // Receive feedback and pass on to handling function
     if (request.type === 'feedback_echo') {
         handle_feedback(request.rating, request.feedback_txt);
     }
@@ -392,11 +380,9 @@ function feedbackAjaxCall(url, rating, feedback_txt) {
 browser.storage.sync.get('lexi_user', function (usr_object) {
     USER = usr_object.lexi_user.userId;
     console.log("Started lexi extension. User: "+USER);
-    // add_lexi_header();
     create_lexi_notifier();
-    // insert_feedback_modal();
     display_message(browser.i18n.getMessage("lexi_simplifications_loading"));
-    // incremental_load_simplifications();
     load_simplifications();
-    // debugsimplify(0);
+    // incremental_load_simplifications();
+    // debugsimplify();
 });

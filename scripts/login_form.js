@@ -8,31 +8,8 @@ window.browser = (function () {
         window.browser;
 })();
 
-
-function send_close_login_message() {
-    browser.runtime.sendMessage({type:'delete_login_iframe'}, function () {
-        return true;
-    });
-}
-
-var lexi_login_modal = document.getElementById("lexi-login-modal");
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == lexi_login_modal) {
-        // lexi_login_modal.style.display = "none";
-        send_close_login_message()
-    }
-};
-
-// Insert Year of Birth optionss
-var yob_selector = $('#lexi-year-of-birth')
-yob_selector.append($('<option />').val('').html(''));
-for (var i = new Date().getFullYear()-6; i >= 1900; i--) {
-    yob_selector.append($('<option />').val(i).html(i));
-}
-
 // Important elements
+var lexi_login_modal = document.getElementById("lexi-login-modal");
 var msg_field = document.getElementById("lexi-error-message-field");
 var login_button = document.getElementById("lexi-login-button");
 var new_user_button = document.getElementById("lexi-new-user-button");
@@ -42,10 +19,32 @@ var expanded_inputs =  document.getElementById("lexi-expanded-inputs");
 var lexi_login_form = document.getElementById("lexi-login-form");
 var lexi_login_modal_close = document.getElementById("lexi-login-modal-close");
 
+// Insert Year of Birth options
+var yob_selector = $('#lexi-year-of-birth')
+yob_selector.append($('<option />').val('').html(''));
+for (var i = new Date().getFullYear()-6; i >= 1900; i--) {
+    yob_selector.append($('<option />').val(i).html(i));
+}
+
+// This script can't delete the iframe it lives in, therefore has to
+// send message to content script (via background.js)
+function send_close_login_message() {
+    browser.runtime.sendMessage({type:'delete_login_iframe'}, function () {
+        return true;
+    });
+}
+
+// When the user clicks on the cross in the upper right corner, close modal
 lexi_login_modal_close.addEventListener('click', function () {
-    // lexi_login_modal.style.display='none';
     send_close_login_message()
 });
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == lexi_login_modal) {
+        send_close_login_message()
+    }
+};
 
 function display_error(message) {
     if (msg_field) {
@@ -57,7 +56,6 @@ function display_error(message) {
         }
     }
 }
-
 
 /* ******************************* *
  * ******************************* *
@@ -208,18 +206,6 @@ register_button.addEventListener('click',
     false
 );
 
-
-back_to_login_button.addEventListener('click', function (e) {
-    e.preventDefault(); // Prevent submission
-    expanded_inputs.style.cssText = "display:none !important";
-    login_button.style.display = "block";
-    new_user_button.style.display = "block";
-    register_button.style.cssText = "display:none !important";
-    back_to_login_button.style.cssText = "display:none !important";
-    display_error(null);
-});
-
-
 /*
  If new_user button is clicked, rework lexi_login_form to register new user
  (enter email, password, year of birth, education status).
@@ -235,3 +221,16 @@ new_user_button.addEventListener('click', function(e) {
     display_error(null);
 });
 
+/*
+ If 'back to login' button is clicked, remove all registration
+ fields and buttons and go back to original form
+ */
+back_to_login_button.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent submission
+    expanded_inputs.style.cssText = "display:none !important";
+    login_button.style.display = "block";
+    new_user_button.style.display = "block";
+    register_button.style.cssText = "display:none !important";
+    back_to_login_button.style.cssText = "display:none !important";
+    display_error(null);
+});
