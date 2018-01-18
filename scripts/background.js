@@ -51,7 +51,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     {
                         type:'feedback_echo',
                         rating: request.rating,
-                        feedback_txt: request.feedback_txt
+                        feedback_text: request.feedback_text
                     }, function () { return true; });
             }
         });

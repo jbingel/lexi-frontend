@@ -34,6 +34,12 @@ var feedback_submitted = false;
 var simplifications = {};
 
 /**
+ * Stores an ID for this session
+ * @type {number}
+ */
+var session_id = -1; // will be overwritten
+
+/**
  * Stores simplification element IDs for simplifications that have been
  * clicked (e.g. to find out whether or not to add a bad_feedback_icon).
  * @type {Array}
@@ -181,6 +187,7 @@ function load_simplifications() {
     display_loading_animation();
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, site_html).then(function (result) {
         simplifications = result['simplifications'];
+        session_id = result['session_id'];
         console.log(simplifications);
         if (simplifications) {
             // replace HTML
@@ -282,8 +289,8 @@ function register_feedback_action() {
     });
 }
 
-function handle_feedback(rating, feedback_txt) {
-    feedbackAjaxCall(SERVER_URL_FEEDBACK, rating, feedback_txt);
+function handle_feedback(rating, feedback_text) {
+    feedbackAjaxCall(SERVER_URL_FEEDBACK, rating, feedback_text);
     setTimeout(remove_feedback_form(), 1000);
     display_message(browser.i18n.getMessage("lexi_feedback_submitted"));
 
@@ -302,7 +309,7 @@ browser.runtime.onMessage.addListener(function (request) {
     }
     // Receive feedback and pass on to handling function
     if (request.type === 'feedback_echo') {
-        handle_feedback(request.rating, request.feedback_txt);
+        handle_feedback(request.rating, request.feedback_text);
     }
 });
 
@@ -321,8 +328,10 @@ browser.runtime.onMessage.addListener(function (request) {
 function simplifyAjaxCall(url, html) {
     var request = {};
     request['frontend_version'] = frontend_version;
-    request['user'] = USER;
+    request['email'] = USER;
+    request['user'] = USER;  // legacy
     request['html'] = html;
+    request['url'] = window.location.href;
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -346,14 +355,16 @@ function simplifyAjaxCall(url, html) {
  * @param {string} feedback_txt
  * @returns {Promise}
  */
-function feedbackAjaxCall(url, rating, feedback_txt) {
+function feedbackAjaxCall(url, rating, feedback_text) {
     var request = {};
     request['frontend_version'] = frontend_version;
-    request['user'] = USER;
+    request['email'] = USER;
+    request['user'] = USER;  // legacy
     request['simplifications'] = simplifications;
     request['rating'] = rating;
-    request['feedback_txt'] = feedback_txt;
+    request['feedback_text'] = feedback_text;
     request['url'] = window.location.href;
+    request['session_id'] = session_id;
     console.log(request);
     return new Promise(function(resolve, reject) {
         // console.log(html.slice(0, 20));

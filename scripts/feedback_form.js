@@ -35,7 +35,7 @@ stars[4].onchange = function(){sendFeedback(5)};
 
 
 function sendFeedback(rating) {
-    var feedback_txt = $("#lexi-feedback-text").val();
-    send_feedback_contents_message(rating, feedback_txt)
+    var feedback_text = $("#lexi-feedback-text").val();
+    send_feedback_contents_message(rating, feedback_text)
 }
 
