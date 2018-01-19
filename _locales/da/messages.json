@@ -43,6 +43,12 @@
   "lexi_simplifications_error": {
     "message": "Hov! Der opstod en fejl. Lexi kan desværre ikke simplificere denne side."
   },
+  "lexi_feedback_reminder": {
+    "message": "Husk at give Lexi feedback når du har læst færdig."
+  },
+  "lexi_feedback_reminder_ok": {
+    "message": "Giv feedback nu"
+  },
   "lexi_feedback_solicit": {
     "message": "Gjorde Lexi det godt?"
   },

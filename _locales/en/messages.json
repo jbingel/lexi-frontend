@@ -43,6 +43,12 @@
   "lexi_simplifications_error": {
     "message": "Oops, something went wrong. Lexi could not simplify this page."
   },
+  "lexi_feedback_reminder": {
+    "message": "Please give Lexi feedback when you're done reading."
+  },
+  "lexi_feedback_reminder_ok": {
+    "message": "Give feedback now"
+  },
   "lexi_feedback_solicit": {
     "message": "Did Lexi do a good job?"
   },

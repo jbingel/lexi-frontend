@@ -38,4 +38,3 @@ function sendFeedback(rating) {
     var feedback_text = $("#lexi-feedback-text").val();
     send_feedback_contents_message(rating, feedback_text)
 }
-
