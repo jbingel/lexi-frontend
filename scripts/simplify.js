@@ -78,15 +78,10 @@ function debugsimplify() {
  */
 function change_text(elemId) {
     var elem = document.getElementById(elemId);
-    var orig = simplifications[elemId].original;
-    var simple = simplifications[elemId].simple;
+    var choices = simplifications[elemId].choices;
     simplifications[elemId].selection++; // increment by 1
-    var display = simplifications[elemId].selection % 2; 
-    if (display == 0) {
-        elem.innerHTML = orig;
-    } else if (display == 1) {
-        elem.innerHTML = simple;
-    }
+    var display = simplifications[elemId].selection % choices.length;
+    elem.innerHTML = choices[display];
     console.log(simplifications[elemId]);
     console.log(clicked_simplifications);
 }
@@ -156,6 +151,7 @@ function create_lexi_notifier(){
     lexi_notifier_text.setAttribute("style", "float: left; max-width: 270px");
     var lexi_notifier_close = document.createElement("span");
     lexi_notifier_close.setAttribute("id", "lexi-notifier-close");
+    lexi_notifier_close.setAttribute("class", "close");
     lexi_notifier_close.setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
     lexi_notifier_close.innerHTML = "&times;";
 
@@ -170,9 +166,9 @@ function create_lexi_notifier(){
 function create_feedback_reminder() {
     var feedback_reminder = document.createElement("div");
     feedback_reminder.setAttribute("id", "lexi-feedback-reminder");
-    feedback_reminder.setAttribute("class", "lexi-frontend");
-    feedback_reminder.innerHTML = "<p>"+
-        browser.i18n.getMessage("lexi_feedback_reminder")+"</p>";
+    feedback_reminder.setAttribute("class", "lexi-frontend animate");
+    feedback_reminder.innerHTML = '<span style="float:left;">'+
+        browser.i18n.getMessage("lexi_feedback_reminder")+"</span>";
     feedback_reminder.style.display = "none";  // deactivated per default
 
     // button listeners declared in make_interface_listeners()
@@ -180,14 +176,15 @@ function create_feedback_reminder() {
     open_feedback_modal_btn_now.setAttribute("id", "lexi-feedback-button-now");
     open_feedback_modal_btn_now.setAttribute("class", "lexi-button");
     open_feedback_modal_btn_now.textContent = browser.i18n.getMessage("lexi_feedback_reminder_ok");
-    
-    // var open_feedback_modal_btn_later = document.createElement("button");
-    // open_feedback_modal_btn_later.setAttribute("id", "lexi-feedback-button-later");
-    // open_feedback_modal_btn_later.setAttribute("class", "lexi-button");
-    // open_feedback_modal_btn_later.textContent = browser.i18n.getMessage("lexi_feedback_readon");
 
+    var feedback_reminder_close = document.createElement("span");
+    feedback_reminder_close .setAttribute("id", "lexi-feedback-reminder-close");
+    feedback_reminder_close .setAttribute("class", "close");
+    feedback_reminder_close .setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
+    feedback_reminder_close .innerHTML = "&times;";
+
+    feedback_reminder.appendChild(feedback_reminder_close);
     feedback_reminder.appendChild(open_feedback_modal_btn_now);
-    // feedback_reminder.appendChild(open_feedback_modal_btn_later);
     document.body.appendChild(feedback_reminder);
 }
 
@@ -203,10 +200,10 @@ function make_interface_listeners() {
     feedback_btn_now.addEventListener('click', function() {
         feedback_reminder_choice_handler(true)
     });
-    // var feedback_btn_later = document.getElementById("lexi-feedback-button-later");
-    // feedback_btn_later.addEventListener('click', function() {
-    //     feedback_reminder_choice_handler(false)
-    // });
+    var feedback_reminder_close = document.getElementById("lexi-feedback-reminder-close");
+    feedback_reminder_close.addEventListener('click', function() {
+        feedback_reminder_choice_handler(false)
+    });
     var lexi_notifier_close = document.getElementById("lexi-notifier-close");
     lexi_notifier_close.addEventListener('click', function() {
         document.getElementById("lexi-notifier").style.display = "none";
@@ -252,6 +249,7 @@ function load_simplifications() {
         session_id = result['session_id'];
         console.log(simplifications);
         console.log("Lexi session ID: "+session_id);
+        console.log("Backend version: "+result['backend_version']);
         if (simplifications) {
             // replace original HTML with markup return from backup (enriched w/ simplifications)
             document.body.outerHTML = result['html'];
