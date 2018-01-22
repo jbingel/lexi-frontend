@@ -47,8 +47,8 @@ var session_id = -1; // will be overwritten
 var clicked_simplifications = [];
 
 /* Useful URLs */
-// var SERVER_URL = "https://www.readwithlexi.net/lexi/";
-var SERVER_URL = "http://localhost:5000";
+var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+// var SERVER_URL = "http://localhost:5000";
 var SERVER_URL_FEEDBACK = SERVER_URL+"/feedback";
 var SERVER_URL_SIMPLIFY = SERVER_URL+"/simplify";
 

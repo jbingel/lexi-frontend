@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Lexi",
   "description": "Simplifies difficult words, learning each user's personal needs.",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "default_locale": "da",
   "icons": {
       "16": "img/l16.png",
@@ -34,5 +34,6 @@
     "contextMenus"
   ],
   "content_security_policy":"script-src 'self'; object-src 'self'",
-  "web_accessible_resources": ["img/loading.gif", "img/*png", "pages/login_form.html", "pages/feedback_form.html"]
+  "web_accessible_resources": ["img/loading.gif", "img/*png", "pages/login_form.html", "pages/feedback_form.html",
+    "config.json"]
 }
