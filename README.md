@@ -2,6 +2,18 @@
 
 ## Changelog
 
+### Version 0.2.4
++ Provide 'other' option in educational status
++ Feedback reminder later and not closable
++ Bugfix in star ratings
++ better error handling
+
+### Version 0.2.3
++ small bugfix in manifest.json
+
+### Version 0.2.2
+(skipped publication)
+
 ### Version 0.2.1
 + changeText() works on `choices' rather than harder-coded `original' and `simple'
 + UX improvements (feedback reminder closable), some CSS improvements

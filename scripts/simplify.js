@@ -67,7 +67,7 @@ function debugsimplify() {
     }
     display_loading_animation();
     return {
-        "html": html,
+        "html": site_html,
         "simplifications": ["foo"]
     }
 }
@@ -167,7 +167,9 @@ function create_feedback_reminder() {
     var feedback_reminder = document.createElement("div");
     feedback_reminder.setAttribute("id", "lexi-feedback-reminder");
     feedback_reminder.setAttribute("class", "lexi-frontend animate");
-    feedback_reminder.innerHTML = '<span style="float:left;">'+
+    feedback_reminder.innerHTML = '<span' +
+        // ' style="float:left;"' +
+        '>'+
         browser.i18n.getMessage("lexi_feedback_reminder")+"</span>";
     feedback_reminder.style.display = "none";  // deactivated per default
 
@@ -178,10 +180,11 @@ function create_feedback_reminder() {
     open_feedback_modal_btn_now.textContent = browser.i18n.getMessage("lexi_feedback_reminder_ok");
 
     var feedback_reminder_close = document.createElement("span");
-    feedback_reminder_close .setAttribute("id", "lexi-feedback-reminder-close");
-    feedback_reminder_close .setAttribute("class", "close");
-    feedback_reminder_close .setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
-    feedback_reminder_close .innerHTML = "&times;";
+    feedback_reminder_close.setAttribute("id", "lexi-feedback-reminder-close");
+    feedback_reminder_close.setAttribute("class", "close");
+    feedback_reminder_close.setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
+    feedback_reminder_close.innerHTML = "&times;";
+    feedback_reminder_close.style.display = "none";  // setting this for now, might want to activate again later
 
     feedback_reminder.appendChild(feedback_reminder_close);
     feedback_reminder.appendChild(open_feedback_modal_btn_now);
@@ -213,14 +216,20 @@ function make_interface_listeners() {
 /**
  *
  * @param msg
+ * @param display_closer
  */
-function display_message(msg) {
+function display_message(msg, display_closer) {
     // Modify notifier
     var notify_elem = document.getElementById("lexi-notifier");
     notify_elem.style.display = "block";
     var notify_elem_text = document.getElementById("lexi-notifier-text");
     notify_elem_text.innerHTML = msg;
     notify_elem_text.style.display = "inline";
+    if (display_closer == false) {
+        $("#lexi-notifier-close").hide();
+    } else if (display_closer == true) {
+        $("#lexi-notifier-close").show();
+    }
 }
 
 function display_loading_animation() {
@@ -241,7 +250,9 @@ function load_simplifications() {
     var site_html = document.body.outerHTML;
     var site_text = document.body.textContent;
     if (site_text.length > 10000) {
-        display_message(browser.i18n.getMessage("lexi_simplifications_loading_longtext"));
+        display_message(browser.i18n.getMessage("lexi_simplifications_loading_longtext"), false);
+    } else {
+        display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
     }
     display_loading_animation();
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, site_html).then(function (result) {
@@ -435,7 +446,7 @@ function simplifyAjaxCall(url, html) {
  *
  * @param {string} url
  * @param {string} rating
- * @param {string} feedback_txt
+ * @param {string} feedback_text
  * @returns {Promise}
  */
 function feedbackAjaxCall(url, rating, feedback_text) {
@@ -479,7 +490,6 @@ browser.storage.sync.get('lexi_user', function (usr_object) {
     create_lexi_notifier();
     create_feedback_reminder();
     make_interface_listeners();
-    display_message(browser.i18n.getMessage("lexi_simplifications_loading"));
     load_simplifications();
 });
    

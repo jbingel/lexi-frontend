@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Lexi",
   "description": "Simplifies difficult words, learning each user's personal needs.",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "default_locale": "da",
   "icons": {
       "16": "img/l16.png",
@@ -10,7 +10,7 @@
       "128": "img/lexi128.png"
   },
   "background": {
-    "scripts": ["global_vars.js", "scripts/require.js", "scripts/background.js", "scripts/md5.js"],
+    "scripts": ["config.js" ,"scripts/require.js", "scripts/background.js", "scripts/md5.js"],
     "persistent": false
   },
   "browser_action": {
@@ -21,7 +21,7 @@
     {
       "matches": ["<all_urls>"],
       "css": ["lexi.css"]
-      ,"js": ["scripts/jquery-3.1.1.js", "global_vars.js", "scripts/md5.js"],
+      ,"js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js"],
       "all_frames": true
     }
   ],

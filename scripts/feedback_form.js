@@ -27,11 +27,11 @@ var stars = document.getElementsByName("lexi-rating");
 console.log(stars.length.toString()+" stars");
 console.log(stars);
 // stars[0].bind("onchange", )
-stars[0].onchange = function(){sendFeedback(1)};
-stars[1].onchange = function(){sendFeedback(2)};
+stars[0].onchange = function(){sendFeedback(5)};
+stars[1].onchange = function(){sendFeedback(4)};
 stars[2].onchange = function(){sendFeedback(3)};
-stars[3].onchange = function(){sendFeedback(4)};
-stars[4].onchange = function(){sendFeedback(5)};
+stars[3].onchange = function(){sendFeedback(2)};
+stars[4].onchange = function(){sendFeedback(1)};
 
 
 function sendFeedback(rating) {

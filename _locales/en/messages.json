@@ -17,7 +17,10 @@
     "message": "Secondary/high school"
   },
   "lexi_login_education_higher": {
-    "message": "College/university"
+    "message": "Higher education"
+  },
+  "lexi_login_education_other": {
+    "message": "Other"
   },
   "lexi_login_button": {
     "message": "Log in"
@@ -31,8 +34,14 @@
   "lexi_login_register": {
     "message": "Register"
   },
+  "lexi_login_error_710": {
+    "message": "This email address is not registered."
+  },
+  "lexi_login_error_unknown": {
+    "message": "Unknown error. Server says: "
+  },
   "lexi_simplifications_loaded": {
-    "message": "Click on underlined words to simplify them."
+    "message": "Click on marked words to simplify them."
   },
   "lexi_simplifications_loading": {
     "message": "Loading simplifications..."

@@ -85,7 +85,7 @@ function registerAjaxCall(email, year_of_birth, education) {
             // console.log(this.responseText);
         };
         xhr.onerror = function(e){
-            display_error("Unknown Error Occured. Server response not received.");
+            display_error(browser.i18n.getMessage("lexi_unknown_server_error"));
         };
         xhr.open("POST", SERVER_URL_REGISTER, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -150,8 +150,11 @@ function loginbuttonclick () {
                 });
                 // lexi_login_modal.style.display = "none";
                 send_close_login_message();
+            } else if (result.status == 710) {
+                display_error(browser.i18n.getMessage("lexi_login_error_710"));
             } else {
-                display_error(result.message + "<br/>");
+                display_error(browser.i18n.getMessage("lexi_login_error_unkown")
+                    + result.message);
             }
         });
     } else {

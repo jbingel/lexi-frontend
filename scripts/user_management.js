@@ -25,7 +25,8 @@ function check_user_login() {
         if (isEmpty(uId)) {
             console.log("User not logged on. Requesting credentials...");
             browser.runtime.sendMessage({type:'request_login'}, function () {
-                // TODO work with response here, check if login actually worked
+                // TODO work with response here, check if login actually worked -- update: actually we can assume this,
+                // login form would otherwise not let user through to here
                 // console.log("Sending message to request login...");
                 // browser.runtime.sendMessage({type:'user_logged_on'}, function () {
                 //     return true;
@@ -38,7 +39,6 @@ function check_user_login() {
             browser.runtime.sendMessage({type:'user_logged_on'}, function () {
                 return true;
             });
-            // callback();
         }
     })
 }

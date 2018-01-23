@@ -14,10 +14,13 @@
     "message": "Grundskole"
   },
   "lexi_login_education_secondary": {
-    "message": "Gymnasiet"
+    "message": "Ungdomsuddannelse"
   },
   "lexi_login_education_higher": {
-    "message": "Højskole/Universitet"
+    "message": "Videregående uddannelse"
+  },
+  "lexi_login_education_other": {
+    "message": "Andet"
   },
   "lexi_login_button": {
     "message": "Log ind"
@@ -31,8 +34,14 @@
   "lexi_login_register": {
     "message": "Opret"
   },
+  "lexi_login_error_710": {
+    "message": "Denne email-adresse er ikke registreret."
+  },
+  "lexi_login_error_unknown": {
+    "message": "Ukendt fejl. Serveren siger: "
+  },
   "lexi_simplifications_loaded": {
-    "message": "Klik på de understregede ord for at simplificere dem."
+    "message": "Klik på de markerede ord for at simplificere dem."
   },
   "lexi_simplifications_loading": {
     "message": "Henter simplificeringer..."
