@@ -55,7 +55,7 @@ var SERVER_URL_SIMPLIFY = SERVER_URL+"/simplify";
 
 /* ******************************* *
  * ******************************* *
- * ********* FUNCTIONS *********** *
+ * ******** CORE FUNCTIONS ******* *
  * ******************************* *
  * ******************************* */
 
@@ -140,108 +140,6 @@ function insert_thumbsdown_icon(element) {
 }
 
 /**
- *
- */
-function create_lexi_notifier(){
-    var lexi_notifier = document.createElement("div");
-    lexi_notifier.setAttribute("id", "lexi-notifier");
-    lexi_notifier.setAttribute("class", "lexi-frontend");
-    var lexi_notifier_text = document.createElement("p");
-    lexi_notifier_text.setAttribute("id", "lexi-notifier-text");
-    lexi_notifier_text.setAttribute("style", "float: left; max-width: 270px");
-    var lexi_notifier_close = document.createElement("span");
-    lexi_notifier_close.setAttribute("id", "lexi-notifier-close");
-    lexi_notifier_close.setAttribute("class", "close");
-    lexi_notifier_close.setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
-    lexi_notifier_close.innerHTML = "&times;";
-
-    document.body.appendChild(lexi_notifier);
-    lexi_notifier.appendChild(lexi_notifier_text);
-    lexi_notifier.appendChild(lexi_notifier_close);
-}
-
-/**
- *
- */
-function create_feedback_reminder() {
-    var feedback_reminder = document.createElement("div");
-    feedback_reminder.setAttribute("id", "lexi-feedback-reminder");
-    feedback_reminder.setAttribute("class", "lexi-frontend animate");
-    feedback_reminder.innerHTML = '<span' +
-        // ' style="float:left;"' +
-        '>'+
-        browser.i18n.getMessage("lexi_feedback_reminder")+"</span>";
-    feedback_reminder.style.display = "none";  // deactivated per default
-
-    // button listeners declared in make_interface_listeners()
-    var open_feedback_modal_btn_now = document.createElement("button");
-    open_feedback_modal_btn_now.setAttribute("id", "lexi-feedback-button-now");
-    open_feedback_modal_btn_now.setAttribute("class", "lexi-button");
-    open_feedback_modal_btn_now.textContent = browser.i18n.getMessage("lexi_feedback_reminder_ok");
-
-    var feedback_reminder_close = document.createElement("span");
-    feedback_reminder_close.setAttribute("id", "lexi-feedback-reminder-close");
-    feedback_reminder_close.setAttribute("class", "close");
-    feedback_reminder_close.setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
-    feedback_reminder_close.innerHTML = "&times;";
-    feedback_reminder_close.style.display = "none";  // setting this for now, might want to activate again later
-
-    feedback_reminder.appendChild(feedback_reminder_close);
-    feedback_reminder.appendChild(open_feedback_modal_btn_now);
-    document.body.appendChild(feedback_reminder);
-}
-
-function feedback_reminder_choice_handler(do_give_feedback) {
-    $("#lexi-feedback-reminder").hide();
-    if (do_give_feedback) {
-        toggle_feedback_modal();
-    }
-}
-
-function make_interface_listeners() {
-    var feedback_btn_now = document.getElementById("lexi-feedback-button-now");
-    feedback_btn_now.addEventListener('click', function() {
-        feedback_reminder_choice_handler(true)
-    });
-    var feedback_reminder_close = document.getElementById("lexi-feedback-reminder-close");
-    feedback_reminder_close.addEventListener('click', function() {
-        feedback_reminder_choice_handler(false)
-    });
-    var lexi_notifier_close = document.getElementById("lexi-notifier-close");
-    lexi_notifier_close.addEventListener('click', function() {
-        document.getElementById("lexi-notifier").style.display = "none";
-    });
-}
-
-/**
- *
- * @param msg
- * @param display_closer
- */
-function display_message(msg, display_closer) {
-    // Modify notifier
-    var notify_elem = document.getElementById("lexi-notifier");
-    notify_elem.style.display = "block";
-    var notify_elem_text = document.getElementById("lexi-notifier-text");
-    notify_elem_text.innerHTML = msg;
-    notify_elem_text.style.display = "inline";
-    if (display_closer == false) {
-        $("#lexi-notifier-close").hide();
-    } else if (display_closer == true) {
-        $("#lexi-notifier-close").show();
-    }
-}
-
-function display_loading_animation() {
-    var notify_elem = document.getElementById("lexi-notifier-text");
-    var loading_animation = browser.runtime.getURL("img/loading.gif");
-    var current_notifier_msg = notify_elem.textContent;
-    var msg_plus_loading = "<span>"+current_notifier_msg+"</span>" +
-        "  <img id='lexi-loading-animation' src="+loading_animation+" />";
-    display_message(msg_plus_loading);
-}
-
-/**
  *  Sends an AJAX call to the server to ask for all simplifications. To this end,
  *  the entire document's <body> HTML is sent to the backend, which returns the
  *  HTML enriched with certain <span> elements that denote the simplifications.
@@ -266,17 +164,21 @@ function load_simplifications() {
             document.body.outerHTML = result['html'];
             // the login iframe might still be there before the HTML is sent to backend,
             // in which case it will be returned by the backend and re-injected above
-            // TODO this is quite ugly, better make sure the iframe isn't sent to backend
+            // TODO this is quite ugly, better make sure the iframes aren't sent to backend
             var login_iframe = document.getElementById("lexi-login-modal-iframe-container");
             if (login_iframe) {
                 document.body.removeChild(login_iframe);
             }
-            display_message(browser.i18n.getMessage("lexi_simplifications_loaded"));
+            var old_lexi_notifier = document.getElementById("lexi-notifier-iframe-container");
+            if (old_lexi_notifier) {
+                document.body.removeChild(old_lexi_notifier);
+            }
+            // inject notifier again (after old HTML has been overwritten), and when ready, display msg
+            inject_lexi_notifier(function () {
+                display_message(browser.i18n.getMessage("lexi_simplifications_loaded"));
+            });
             // Create listeners for clicks on simplification spans
             make_simplification_listeners();
-            // re-declare listeners for Lexi backend, those were deleted when 
-            // page HTML is overwritten above
-            make_interface_listeners();
             // prepare for feedback
             register_feedback_action();
         } else {
@@ -322,6 +224,60 @@ function incremental_load_simplifications() {
     })
 }
 
+
+/* ******************************* *
+ * ******************************* *
+ * ******** INJECT IFRAMES ******* *
+ * ******************************* *
+ * ******************************* */
+
+/**
+ *
+ */
+function inject_lexi_notifier(callback){
+    var lexi_notifier_iframe_container = document.createElement("div");
+    lexi_notifier_iframe_container.id = "lexi-notifier-iframe-container";
+    lexi_notifier_iframe_container.style = "position:fixed; left: 0; " +
+        "top: 0px; z-index: 1000001; display: block;";
+
+    var lexi_notifier_iframe = document.createElement("iframe");
+
+    lexi_notifier_iframe.id = "lexi-notifier-iframe";
+    lexi_notifier_iframe.src = browser.extension.getURL("pages/notifier.html");
+    lexi_notifier_iframe.style = "height: 100%; width: 100%; border: none;";
+
+    lexi_notifier_iframe_container.appendChild(lexi_notifier_iframe);
+    document.body.appendChild(lexi_notifier_iframe_container);
+    lexi_notifier_iframe.onload = function() {
+        console.log("lexi_notifier_iframe loaded.");
+        callback();
+    };
+}
+
+/**
+ *
+ */
+function inject_feedback_reminder() {
+    var lexi_feedback_reminder_iframe_container = document.createElement("div");
+    lexi_feedback_reminder_iframe_container.id = "lexi-feedback-reminder-iframe-container";
+    lexi_feedback_reminder_iframe_container.style = "position:fixed; right: 0; " +
+        "top: 0px; z-index: 1000001; display: none;";
+
+    var lexi_feedback_reminder_iframe = document.createElement("iframe");
+
+    lexi_feedback_reminder_iframe.id = "lexi-feedback-reminder-iframe";
+    lexi_feedback_reminder_iframe.src = browser.extension.getURL("pages/feedback_reminder.html");
+    lexi_feedback_reminder_iframe.style = "height: 100%; width: 100%; border: none;";
+
+    lexi_feedback_reminder_iframe_container.appendChild(lexi_feedback_reminder_iframe);
+    document.body.appendChild(lexi_feedback_reminder_iframe_container);
+    lexi_feedback_reminder_iframe.onload = function() {
+        console.log("lexi_feedback_reminder_iframe loaded.");
+        // callback();
+    };
+}
+
+
 function inject_feedback_form() {
     var lexi_feedback_modal_iframe_container = document.createElement("div");
     lexi_feedback_modal_iframe_container.id = "lexi-feedback-modal-iframe-container";
@@ -340,6 +296,36 @@ function inject_feedback_form() {
     document.body.appendChild(lexi_feedback_modal_iframe_container);
 }
 
+/* ******** IFRAMES UTILS ******** */
+
+function close_feedback_reminder_iframe(){
+    $('#lexi-feedback-reminder-iframe-container').hide();
+}
+
+function close_notifier_iframe(){
+    $('#lexi-notifier-iframe-container').hide();
+}
+
+/**
+ *
+ * @param msg
+ * @param display_closer
+ */
+function display_message(msg, display_closer) {
+    // Send message to notifier iframe
+    var notify_iframe = document.getElementById("lexi-notifier-iframe");
+    var event_data = {"type": "display_message", "msg": msg, "display_closer": display_closer};
+    notify_iframe.contentWindow.postMessage(event_data, "*");
+    // show if it's been hidden
+    $("#lexi-notifier-iframe-container").show();
+}
+
+function display_loading_animation() {
+    var notify_iframe = document.getElementById("lexi-notifier-iframe");
+    var event = {"type": "display_loading_animation"};
+    notify_iframe.contentWindow.postMessage(event, "*");
+}
+
 function remove_feedback_form() {
     console.log("Removing feedback iframe.");
     var _lexi_feedback_modal_iframe_container =
@@ -348,7 +334,7 @@ function remove_feedback_form() {
 }
 
 function toggle_feedback_reminder() {
-    var _feedback_reminder = document.getElementById("lexi-feedback-reminder");
+    var _feedback_reminder = document.getElementById("lexi-feedback-reminder-iframe-container");
     if (_feedback_reminder) {
         if (simplifications) {
             if (! feedback_submitted) {
@@ -379,7 +365,6 @@ function register_feedback_action() {
     // insert_feedback_modal();
     $("html").bind("mouseleave", function () {
         console.log("mouse leaving HTML body area...");
-        // toggle_feedback_modal();
         toggle_feedback_reminder();
     });
 }
@@ -396,6 +381,7 @@ function handle_feedback(rating, feedback_text) {
  * ******************************* *
  * ******************************* */
 
+// Two different approaches here (echos via background, direct posting to parent), unify those
 browser.runtime.onMessage.addListener(function (request) {
     // Close feedback form (by deleting feedback iframe)
     if (request.type === 'delete_feedback_iframe_echo') {
@@ -404,6 +390,15 @@ browser.runtime.onMessage.addListener(function (request) {
     // Receive feedback and pass on to handling function
     if (request.type === 'feedback_echo') {
         handle_feedback(request.rating, request.feedback_text);
+    }
+});
+
+window.addEventListener("message", function (event) {
+    if (event.data.type == "close_notifier_iframe") {
+        close_notifier_iframe();
+    } else if (event.data.type == "get_feedback") {
+        close_feedback_reminder_iframe();
+        toggle_feedback_modal();
     }
 });
 
@@ -486,10 +481,10 @@ function feedbackAjaxCall(url, rating, feedback_text) {
 browser.storage.sync.get('lexi_user', function (usr_object) {
     USER = usr_object.lexi_user.userId;
     console.log("Started lexi extension. User: "+USER);
-    create_lexi_notifier();
-    create_feedback_reminder();
-    make_interface_listeners();
-    load_simplifications();
+    inject_lexi_notifier(function(){
+        inject_feedback_reminder();
+        load_simplifications();
+    });
 });
    
  

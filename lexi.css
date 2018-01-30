@@ -65,8 +65,8 @@
     /*margin: auto;*/
     color: white;
     background-color: #4CAF50;
-    /*width:300px;*/
-    max-width: 300px;
+    /*width:350px;*/
+    max-width: 350px;
     /*text-align: center;*/
     vertical-align: middle;
     padding: 10px;
@@ -75,6 +75,14 @@
     -webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);
     opacity: 1;
     border-bottom-right-radius: 0.3em;
+}
+
+#lexi-notifier-text {
+    margin: 5px;
+    margin-right: 0;
+    float: left;
+    max-width: 250px;
+    display: inline;
 }
 
 /*#lexi-notifier:hover, #lexi-feedback-reminder:hover {*/
@@ -88,6 +96,10 @@
     /*vertical-align: middle;*/
 }
 
+#lexi-feedback-reminder-iframe-container {
+    width: 50%;
+}
+
 #lexi-feedback-reminder {
     color: white;
     background: #4CAF50;
@@ -98,6 +110,7 @@
     padding: 10px;
     -moz-box-shadow: 0 3px 7px rgba(0,0,0,.5);
     -webkit-box-shadow: 0 3px 7px rgba(0,0,0,.5);
+    width: 400px;
     max-width: 450px;
     border-radius: .4em;
     z-index: 99999999;
