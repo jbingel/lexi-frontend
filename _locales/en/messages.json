@@ -37,6 +37,9 @@
   "lexi_login_error_710": {
     "message": "This email address is not registered."
   },
+  "lexi_login_error_712": {
+    "message": "This email address is already registered."
+  },
   "lexi_login_error_unknown": {
     "message": "Unknown error. Server says: "
   },
@@ -78,6 +81,24 @@
   },
   "lexi_fields_not_set_error": {
     "message":  "All fields must be set."
+  },
+  "lexi_login_why_data": {
+    "message": "Why does Lexi need to know this?"
+  },
+  "lexi_login_why_data_explanation": {
+    "message": "Lexi improves over time. It learns which words are difficult for which users. For this, it places users into groups according to age and education."
+  },
+  "lexi_login_terms_agree": {
+    "message": "I agree to Lexi's handling of my data."
+  },
+  "lexi_login_terms_link": {
+    "message": "Click to see terms."
+  },
+  "lexi_login_terms_notchecked": {
+    "message": "Please accept Lexi's terms."
+  },
+  "lexi_terms": {
+    "message": "Lorem ipsum..."
   },
   "lexi_": {
     "message": ""

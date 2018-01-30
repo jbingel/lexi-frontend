@@ -190,7 +190,6 @@
     overflow: auto; /* Enable scroll if needed */
 }
 
-
 .lexi-frontend #lexi-login-form input, .lexi-frontend #lexi-login-form select {
     background-color: #ffffff;
     width: 100%;
@@ -204,6 +203,47 @@
     font-size: 100%;
     /*text-align: center;*/
     }
+
+.lexi-frontend #lexi-login-form input[type=checkbox] {
+    background-color: #ffffff;
+    width: 15px;
+    height: 15px;
+    margin-top: 25px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    /*text-align: center;*/
+}
+
+#lexi-login-why-data-expand-icon {
+    height: 12pt;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+#lexi-login-why-data-expand-icon:hover {
+    cursor: pointer;
+}
+
+#lexi-login-why-data {
+    /*font-size: small;*/
+}
+
+#lexi-login-why-data-explanation {
+    font-size: small;
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.lexi-text-clickable {
+    /*text-decoration: underline;*/
+    color: #4CAF50;
+}
+
+.lexi-text-clickable:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
 
 .lexi-frontend #lexi-error-message-field {
     color: #000000;

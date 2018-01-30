@@ -74,8 +74,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // TODO make main context menu for app (change user)
 //
-// browser.storage.sync.clear();
-// console.log(browser.storage.sync);
+browser.storage.sync.clear();
+console.log(browser.storage.sync);
 
 // Listen on browser action (click on icon), then check user is logged on, and finally simplify.
 browser.browserAction.onClicked.addListener(function(tabId) {

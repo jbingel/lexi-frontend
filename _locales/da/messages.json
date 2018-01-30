@@ -37,17 +37,20 @@
   "lexi_login_error_710": {
     "message": "Denne email-adresse er ikke registreret."
   },
+  "lexi_login_error_712": {
+    "message": "Denne email-adresse er allerede registreret."
+  },
   "lexi_login_error_unknown": {
     "message": "Ukendt fejl. Serveren siger: "
   },
   "lexi_simplifications_loaded": {
-    "message": "Klik på de markerede ord for at simplificere dem."
+    "message": "Klik på de markerede ord for at se nemmere ord."
   },
   "lexi_simplifications_loading": {
-    "message": "Henter simplificeringer..."
+    "message": "Henter simple ord..."
   },
   "lexi_simplifications_loading_longtext": {
-    "message": "Henter simplificeringer - det kan tage lidt tid."
+    "message": "Henter simple ord - det kan tage lidt tid."
   },
   "lexi_simplifications_error": {
     "message": "Hov! Der opstod en fejl. Lexi kan desværre ikke simplificere denne side."
@@ -56,7 +59,7 @@
     "message": "Husk at give Lexi feedback når du har læst færdig."
   },
   "lexi_feedback_reminder_ok": {
-    "message": "Giv feedback nu"
+    "message": "Bedøm nu"
   },
   "lexi_feedback_solicit": {
     "message": "Gjorde Lexi det godt?"
@@ -79,7 +82,26 @@
   "lexi_fields_not_set_error": {
     "message":  "Alle skal udfyldes."
   },
+  "lexi_login_why_data": {
+    "message": "Hvorfor skal Lexi vide dette?"
+  },
+  "lexi_login_why_data_explanation": {
+    "message": "Lexi forbedres løbende. Den lærer sig, hvlike ord er særlig svære for hvilke brugere. Derfor grupperes brugerne ifølge deres alder og uddannelse."
+  },
+  "lexi_login_terms_agree": {
+    "message": "Jeg er enig med Lexis behandling af mine data."
+  },
+  "lexi_login_terms_link": {
+    "message": "Klik for mere info."
+  },
+  "lexi_login_terms_notchecked": {
+    "message": "Venligst acceptér Lexis betingelser."
+  },
+  "lexi_terms": {
+    "message": "Lorem ipsum..."
+  },
   "lexi_": {
     "message": ""
   }
+
 }

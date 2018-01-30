@@ -18,9 +18,15 @@ var back_to_login_button = document.getElementById("lexi-back-to-login-button");
 var expanded_inputs =  document.getElementById("lexi-expanded-inputs");
 var lexi_login_form = document.getElementById("lexi-login-form");
 var lexi_login_modal_close = document.getElementById("lexi-login-modal-close");
+var why_data = document.getElementById("lexi-login-why-data");
+var why_data_expand = document.getElementById("lexi-login-why-data-expand-icon");
+var why_data_explanation = document.getElementById("lexi-login-why-data-explanation");
+var terms_agree_checkbox = document.getElementById("lexi-login-terms");
+var terms_link = document.getElementById("lexi-login-terms-link");
+
 
 // Insert Year of Birth options
-var yob_selector = $('#lexi-year-of-birth')
+var yob_selector = $('#lexi-year-of-birth');
 yob_selector.append($('<option />').val('').html(''));
 for (var i = new Date().getFullYear()-6; i >= 1900; i--) {
     yob_selector.append($('<option />').val(i).html(i));
@@ -39,11 +45,29 @@ lexi_login_modal_close.addEventListener('click', function () {
     send_close_login_message()
 });
 
+// Toggle explanation on why birth year and education are needed
+var explanation_expanded = false;
+why_data_expand.onclick = function() {
+    if (explanation_expanded) {
+        why_data_explanation.style.display = "none";
+        why_data_expand.src = browser.runtime.getURL("img/expand.png");
+    } else {
+        why_data_explanation.style.display = "block";
+        why_data_expand.src = browser.runtime.getURL("img/collapse.png");
+    }
+    explanation_expanded = !explanation_expanded;
+};
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
     if (event.target == lexi_login_modal) {
         send_close_login_message()
     }
+};
+
+// Open iframe with terms upon click
+terms_link.onclick = function() {
+    inject_terms_iframe();
 };
 
 function display_error(message) {
@@ -179,26 +203,31 @@ function registerbuttonclick () {
     var education = document.getElementById('lexi-education').value;
     if (email && year_of_birth && education) {
         // var email_hash = md5(email);
-        var email_hash = email;
-        registerAjaxCall( email_hash, year_of_birth, education).then(
-            function (result) {
-                console.log(result);
-                console.log(result.status);
-                if (result.status == 200) {
-                    browser.storage.sync.set({
-                        "lexi_user": {
-                            "userId": email
-                        }
-                    });
-                    browser.runtime.sendMessage({type:'user_logged_on'}, function () {
+        if ($("#lexi-login-terms").prop("checked") == false) {
+            terms_agree_checkbox.style.border = "1px solid red";
+            display_error(browser.i18n.getMessage("lexi_login_terms_notchecked"));
+        } else {
+            var email_hash = email;
+            registerAjaxCall(email_hash, year_of_birth, education).then(
+                function (result) {
+                    console.log(result);
+                    console.log(result.status);
+                    if (result.status == 200) {
+                        browser.storage.sync.set({
+                            "lexi_user": {
+                                "userId": email
+                            }
+                        });
+                        browser.runtime.sendMessage({type:'user_logged_on'}, function () {
 
-                    });
-                    // lexi_login_modal.style.display = "none";
-                    send_close_login_message()
-                } else {
-                    display_error(result.message + "<br/>");
-                }
-            });
+                        });
+                        // lexi_login_modal.style.display = "none";
+                        send_close_login_message()
+                    } else {
+                        display_error(result.message + "<br/>");
+                    }
+                });
+        }
     } else {
         display_error(browser.i18n.getMessage("lexi_fields_not_set_error"));
     }
@@ -237,3 +266,25 @@ back_to_login_button.addEventListener('click', function (e) {
     back_to_login_button.style.cssText = "display:none !important";
     display_error(null);
 });
+
+function close_terms_iframe(){
+    $('#lexi-terms-modal-iframe-container').remove();
+}
+
+function inject_terms_iframe() {
+    var lexi_terms_modal_iframe_container = document.createElement("div");
+    lexi_terms_modal_iframe_container.id = "lexi-terms-modal-iframe-container";
+    lexi_terms_modal_iframe_container.style = "position:fixed; left: 0; right: 0; " +
+        "bottom: 0; top: 0px; z-index: 1000001; display: block;";
+
+    var lexi_terms_modal_iframe = document.createElement("iframe");
+    lexi_terms_modal_iframe.onload = function() {
+        console.log("lexi_terms_modal_iframe loaded.");
+    };
+    lexi_terms_modal_iframe.id = "lexi-terms-modal-iframe";
+    lexi_terms_modal_iframe.src = browser.extension.getURL("pages/terms.html");
+    lexi_terms_modal_iframe.style = "height: 100%; width: 100%; border: none;";
+
+    lexi_terms_modal_iframe_container.appendChild(lexi_terms_modal_iframe);
+    document.body.appendChild(lexi_terms_modal_iframe_container);
+}

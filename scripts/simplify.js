@@ -47,8 +47,8 @@ var session_id = -1; // will be overwritten
 var clicked_simplifications = [];
 
 /* Useful URLs */
-var SERVER_URL = "https://www.readwithlexi.net/lexi/";
-// var SERVER_URL = "http://localhost:5000";
+// var SERVER_URL = "https://www.readwithlexi.net/lexi/";
+var SERVER_URL = "http://localhost:5000";
 var SERVER_URL_FEEDBACK = SERVER_URL+"/feedback";
 var SERVER_URL_SIMPLIFY = SERVER_URL+"/simplify";
 
@@ -432,8 +432,7 @@ function simplifyAjaxCall(url, html) {
             resolve(JSON.parse(this.responseText));
         };
         xhr.onerror = function(e){
-            var lexi_header = document.getElementById("lexi_header");
-            lexi_header.innerHTML = "Unknown Error Occured. Server response not received.";
+            display_message(browser.i18n.getMessage("lexi_unknown_server_error"));
         };
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");

@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### Version 0.3.0
++ Clarification of why personal data is needed in registration modal
++ Terms and conditions checked in registration modal
+
+
 ### Version 0.2.4
 + Provide 'other' option in educational status
 + Feedback reminder later and not closable
