@@ -2,6 +2,12 @@
  * Created by joachim on 8/17/17.
  */
 
+window.browser = (function () {
+    return window.msBrowser ||
+        window.chrome ||
+        window.browser;
+})();
+
 // div that contains iframe (mainly needed for CSS)
 var lexi_login_modal_iframe_container = document.createElement("div");
 lexi_login_modal_iframe_container.id = "lexi-login-modal-iframe-container";
@@ -18,13 +24,17 @@ lexi_login_modal_iframe.style = "height: 100%; width: 100%; border: none;";
 lexi_login_modal_iframe_container.appendChild(lexi_login_modal_iframe);
 document.body.appendChild(lexi_login_modal_iframe_container);
 
-// When hearing the background script echo the below message, delete iframe
-browser.runtime.onMessage.addListener(function (request) {
-    // Close login form (by deleting login iframe)
-    if (request.type === 'delete_login_iframe_echo') {
-        console.log("Removing login iframe");
-        var lexi_login_modal_iframe_container =
-            document.getElementById("lexi-login-modal-iframe-container");
-        document.body.removeChild(lexi_login_modal_iframe_container);
+
+function close_login_iframe() {
+    console.log("Removing login iframe.");
+    var _lexi_login_modal_iframe_container =
+        document.getElementById("lexi-login-modal-iframe-container");
+    if (_lexi_login_modal_iframe_container)
+        document.body.removeChild(_lexi_login_modal_iframe_container);
+}
+
+window.addEventListener("message", function (event) {
+    if (event.data.type == "close_login_iframe") {
+        close_login_iframe();
     }
 });

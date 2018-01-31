@@ -8,6 +8,7 @@ window.browser = (function () {
         window.browser;
 })();
 
+var this_iframe_id = "lexi-notifier-iframe";
 
 window.addEventListener('message', function(event) {
     if (event.data.type == "display_message") {
@@ -19,6 +20,6 @@ window.addEventListener('message', function(event) {
 
 var feedback_btn_now = document.getElementById("lexi-feedback-button-now");
 feedback_btn_now.addEventListener('click', function() {
-    var event = {"type": "get_feedback"};
+    var event = {"type": "solicit_feedback"};
     parent.postMessage(event, "*");
 });

@@ -2,19 +2,21 @@
  * Created by joachim on 10/13/17.
  */
 
+var this_iframe_id = "lexi-feedback-modal-iframe";
+
 
 function send_close_feedback_message() {
-    // This will be heard by background.js, which will forward it to simplify.js
-    browser.runtime.sendMessage({type:'delete_feedback_iframe'}, function () {
-        return true;
-    });
+    var event = {"type": "delete_feedback_iframe"};
+    parent.postMessage(event, "*");
 }
 
 function send_feedback_contents_message(rating, feedback_text) {
-    // This will be heard by background.js, which will forward it to simplify.js
-    browser.runtime.sendMessage({type:'feedback', rating: rating, feedback_text: feedback_text}, function () {
-        return true;
-    });
+    var event = {
+        "type": "feedback",
+        "rating": rating,
+        "feedback_text": feedback_text
+    };
+    parent.postMessage(event, "*");
 }
 
 var close_button = document.getElementById("lexi-feedback-modal-close-btn");

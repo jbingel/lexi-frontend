@@ -20,8 +20,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "css": ["lexi.css"]
-      ,"js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js"],
+      "css": ["lexi.css"],
+      "js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js"],
       "all_frames": true
     }
   ],
@@ -36,5 +36,6 @@
   "content_security_policy":"script-src 'self'; object-src 'self'",
   "web_accessible_resources": [
     "img/loading.gif", "img/*png", "pages/terms.html", "pages/*", "pages/login_form.html",
-    "pages/feedback_form.html", "config.json", "pages/notifier.html", "pages/feedback_reminder.html", "scripts/*"]
+    "pages/feedback_form.html", "config.js", "pages/notifier.html", "pages/feedback_reminder.html",
+    "scripts/*", "lexi-iframes.css"]
 }

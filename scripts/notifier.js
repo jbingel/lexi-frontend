@@ -8,11 +8,11 @@ window.browser = (function () {
         window.browser;
 })();
 
+var this_iframe_id = "lexi-notifier-iframe";
 var notifier_text_elem = document.getElementById("lexi-notifier-text");
 var close_x = document.getElementById("lexi-notifier-close");
 
 window.addEventListener('message', function(event) {
-    console.log(event.data);
     if (event.data.type == "display_message") {
         notifier_text_elem.innerHTML = event.data.msg;
         console.log(notifier_text_elem.innerHTML );

@@ -8,6 +8,12 @@ window.browser = (function () {
         window.browser;
 })();
 
+var this_iframe_id = "lexi-login-modal-iframe";
+
+var SERVER_URL = settings.LEXI_SERVER_URL;
+var SERVER_URL_LOGIN = SERVER_URL + settings.login_route;
+var SERVER_URL_REGISTER = SERVER_URL + settings.register_route;
+
 // Important elements
 var lexi_login_modal = document.getElementById("lexi-login-modal");
 var msg_field = document.getElementById("lexi-error-message-field");
@@ -35,9 +41,13 @@ for (var i = new Date().getFullYear()-6; i >= 1900; i--) {
 // This script can't delete the iframe it lives in, therefore has to
 // send message to content script (via background.js)
 function send_close_login_message() {
-    browser.runtime.sendMessage({type:'delete_login_iframe'}, function () {
-        return true;
-    });
+    // browser.runtime.sendMessage({type:'delete_login_iframe'}, function () {
+    //     return true;
+    // });
+    var event = {"type": "close_login_iframe"};
+    console.log(event);
+    console.log(parent);
+    parent.postMessage(event, "*");
 }
 
 // When the user clicks on the cross in the upper right corner, close modal

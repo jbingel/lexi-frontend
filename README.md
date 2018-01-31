@@ -2,6 +2,13 @@
 
 ## Changelog
 
+### Version 0.3.2
++ marking original word
++ division of injected CSS and iframe CSS
++ centralised configuration (e.g. of URLs)
++ slimmer message passing
++ towards resizing frame containers to their content
+
 ### Version 0.3.1
 + Notifier and feedback reminder in iframes
 + Cleanup of simplify.js
