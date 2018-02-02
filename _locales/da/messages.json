@@ -1,4 +1,7 @@
 {
+  "lexi_change_user": {
+    "message": "Skift bruger"
+  },
   "lexi_login_email": {
     "message": "Email-adresse",
     "description": "Tast ind din email-adresse"

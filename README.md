@@ -4,6 +4,7 @@
 
 ### Version 0.3.2
 + marking original word
++ change user in context menu
 + division of injected CSS and iframe CSS
 + centralised configuration (e.g. of URLs)
 + slimmer message passing

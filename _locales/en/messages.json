@@ -1,4 +1,7 @@
 {
+  "lexi_change_user": {
+    "message": "Change user"
+  },
   "lexi_login_email": {
     "message": "E-mail address",
     "description": "Type in your email address"

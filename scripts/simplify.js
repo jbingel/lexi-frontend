@@ -310,7 +310,7 @@ function inject_feedback_reminder() {
     feedback_reminder_close.setAttribute("id", "lexi-feedback-reminder-close");
     feedback_reminder_close.setAttribute("class", "close");
     feedback_reminder_close.innerHTML = "&times;";
-    // feedback_reminder_close.style.display = "none";  // setting this for now, might want to activate again later
+    feedback_reminder_close.style.display = "none";  // setting this for now, might want to activate again later
 
     var notification_container = document.getElementById("lexi-notification-container");
     lexi_feedback_reminder_flexbox.appendChild(lexi_logo);

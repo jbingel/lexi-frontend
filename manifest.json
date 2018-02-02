@@ -10,8 +10,8 @@
       "128": "img/lexi128.png"
   },
   "background": {
-    "scripts": ["config.js" ,"scripts/require.js", "scripts/background.js", "scripts/md5.js"],
-    "persistent": false
+    "scripts": ["scripts/background.js"],
+    "persistent": true
   },
   "browser_action": {
     "default_icon": "img/l.png",
@@ -37,5 +37,14 @@
   "web_accessible_resources": [
     "img/loading.gif", "img/*png", "pages/terms.html", "pages/*", "pages/login_form.html",
     "pages/feedback_form.html", "config.js", "pages/notifier.html", "pages/feedback_reminder.html",
-    "scripts/*", "lexi-iframes.css"]
+    "scripts/*", "lexi-iframes.css"],
+  "commands": {
+    "run-lexi": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "linux": "Ctrl+Shift+L"
+      },
+      "description": "Run Lexi"
+    }
+  }
 }
