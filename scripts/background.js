@@ -14,6 +14,8 @@ window.browser = (function () {
 
 // Handle requests
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log("background.js got a msg..." + request);
+
     // Request login
     if (request.type === 'request_login') {
         console.log("Received message to request login.");
@@ -30,6 +32,25 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
     }
 
+    if (request.type === 'notify') {
+        browser.notifications.create("lexi-notifier", {
+            "type": "basic",
+            "iconUrl": browser.extension.getURL("img/lexi64.png"),
+            "title": "Lexi",
+            "message": request.msg
+        })
+    }
+
+    if (request.type === 'feedback_reminder') {
+        browser.notifications.create("feedback-reminder", {
+            "type": "basic",
+            "iconUrl": browser.extension.getURL("img/lexi64.png"),
+            "title": "Lexi",
+            "message": request.msg,
+            "buttons": [{title: request.button_text}]
+        })
+    }
+
 });
 
 
@@ -43,10 +64,14 @@ console.log(browser.storage.sync);
 browser.browserAction.onClicked.addListener(function(tabId) {
     browser.tabs.executeScript(null, {file: "config.js"}, function(){
         browser.tabs.executeScript(null, {file: "scripts/jquery-3.1.1.js"}, function() {
-            browser.tabs.executeScript(null, {file: "scripts/iframe_resizer/iframeResizer.min.js"}, function() {
-                /* First, make sure user is logged on (aka if userId is set in browser.storage */
-                browser.tabs.executeScript(null, {file: "scripts/user_management.js"}, function () {});
-            });
+            // browser.tabs.executeScript(null, {file: "scripts/iframe_resizer/iframeResizer.min.js"}, function() {
+                // browser.tabs.executeScript(null, {file: "scripts/FrameManager.js"}, function() {
+                    // browser.tabs.executeScript(null, {file: "scripts/frame.js"}, function() {
+                        /* First, make sure user is logged on (aka if userId is set in browser.storage */
+                        browser.tabs.executeScript(null, {file: "scripts/user_management.js"}, function () {});
+                    // });
+                // });
+            // });
         });
     });
 });

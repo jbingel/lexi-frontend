@@ -22,9 +22,9 @@ $(".lexi-localize").each(function (_) {
 
 
 
-window.onload = function(){
-    setTimeout(reportDimensions, 50);
-};
+// window.onload = function(){
+//     setTimeout(reportDimensions, 50);
+// };
 
 function reportDimensions() {
     console.log(document.body);

@@ -10,7 +10,7 @@
       "128": "img/lexi128.png"
   },
   "background": {
-    "scripts": ["config.js" ,"scripts/require.js", "scripts/background.js", "scripts/md5.js"],
+    "scripts": ["scripts/background.js"],
     "persistent": false
   },
   "browser_action": {

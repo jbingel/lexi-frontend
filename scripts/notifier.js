@@ -32,6 +32,32 @@ window.addEventListener('message', function(event) {
 });
 
 close_x.onclick = function() {
-    var event = {"type": "close_notifier_iframe"};
+    var event = {"type": "close_notifier"};
     parent.postMessage(event, "*");
 };
+
+window.onload = function(event) {
+    // window.setInterval(publishHeight, 300);
+};
+
+// $(function() {
+//
+//     var $content = $("#content");
+//
+//     function toggleFontSize() {
+//
+//         if ($content.css("font-size") == "22px") {
+//             $("#content").animate({
+//                 fontSize: "15px"
+//             });
+//         } else {
+//             $("#content").animate({
+//                 fontSize: "22px"
+//             });
+//         }
+//
+//     }
+//
+//     var int = setInterval(toggleFontSize, 5000);
+
+// });
