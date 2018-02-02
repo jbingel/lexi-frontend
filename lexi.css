@@ -26,26 +26,111 @@
     filter: drop-shadow(0px 3px 3px #79b3ea);
 }
 
-/* IFRAME CONTAINERS */
-#lexi-feedback-reminder-iframe-container {
-    position:fixed;
-    right: 30px;
+
+/* NOTIFICATIONS */
+#lexi-notification-container {
+    position: fixed;
     top: 30px;
+    right: 30px;
+    width: 350px;
+    max-width: 40%;
+    pointer-events: none;
     z-index: 1000001;
-    display: none;
-    max-width: 50%;
 }
 
-#lexi-feedback-reminder-iframe {
-    height: 100%;
+.lexi-notification {
     width: 100%;
+    background-color: #f1f1f1;
+    color: black;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    margin-bottom: 20px;
+    padding: 10px;
+    pointer-events: all;
+}
+
+.lexi-notification .flexbox {
+    display: flex;
+}
+
+.lexi-notification .lexi-logo {
+    width: 15%;
+    height: 15%;
+    margin-right: 5%;
+    /*flex: 1;*/
+}
+
+.lexi-notification .lexi-notification-content {
+    width: 70%;
+    /*flex: 1;*/
+    /*float: right;*/
+}
+
+#lexi-loading-animation {
+    height: 14pt;
+    /*vertical-align: middle;*/
+}
+
+#lexi-feedback-reminder {
+    display: none;
+}
+
+.lexi-button {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 100%;
+    /*background-color: #4CAF50;*/
+    background-color: #74c374;
+    color: white;
+    padding: 5px 5px;
+    margin-top: 12px ;
     border: none;
-    display: block;
+    border-radius: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 40px;
+    line-height: 25px;
+    text-transform: none !important;
+    text-align: center;
+}
+
+.lexi-button:hover {
+    opacity: 0.8;
+}
+
+.lexi-notification .close {
+    /*float: right;*/
+    width: 5%;
+    margin-left: 5%;
+    font-size:150%;
+    margin-top: -4pt;  /* correct for space above 'x' */
+    /*flex: 1;*/
+}
+
+/* Close button on hover */
+.lexi-notification .close:hover,
+.lexi-notification .close:focus {
+    color: red;
+    cursor: pointer;
 }
 
 iframe {
     width: 1px;
     min-width: 100%;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.25s;
+    animation: animatezoom 0.25s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
 }
 
 /*.lexi-rate-area:not(:checked) > input {*/

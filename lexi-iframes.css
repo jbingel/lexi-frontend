@@ -58,10 +58,7 @@ body {
 /*-webkit-transition: all 0.3s ease-in-out;*/
 /*}*/
 
-#lexi-loading-animation {
-    height: 14pt;
-    /*vertical-align: middle;*/
-}
+
 
 #lexi-feedback-reminder {
     color: white;

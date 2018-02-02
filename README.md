@@ -8,6 +8,7 @@
 + centralised configuration (e.g. of URLs)
 + slimmer message passing
 + towards resizing frame containers to their content
++ Notifier and feedback reminder back into main frame (due to problems with unresizable iframe containers)
 
 ### Version 0.3.1
 + Notifier and feedback reminder in iframes

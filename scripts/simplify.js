@@ -50,6 +50,8 @@ var clicked_simplifications = [];
 var SERVER_URL = settings.LEXI_SERVER_URL;
 var SERVER_URL_FEEDBACK = SERVER_URL+settings.feedback_route;
 var SERVER_URL_SIMPLIFY = SERVER_URL+settings.simplify_route;
+/* Lexi logo */
+var logo_url = browser.runtime.getURL("img/lexi.png");
 
 console.log(settings);
 
@@ -165,15 +167,12 @@ function load_simplifications() {
         if (simplifications) {
             // replace original HTML with markup return from backup (enriched w/ simplifications)
             document.body.outerHTML = result['html'];
-            // the login and notifier iframes might still be there before the HTML is sent to backend,
-            // in which case they will be returned by the backend and re-injected above
+            // the login iframe might still be there before the HTML is sent to backend,
+            // in which case it will be returned by the backend and re-injected above
             // TODO this is quite ugly, better make sure the iframes aren't sent to backend
             close_login_iframe(true);
-            close_notifier_iframe(true);
-            // inject notifier again (after old HTML has been overwritten), and when ready, display msg
-            inject_lexi_notifier(function () {
-                display_message(browser.i18n.getMessage("lexi_simplifications_loaded"));
-            });
+            display_message(browser.i18n.getMessage("lexi_simplifications_loaded"));
+            make_interface_listeners();
             // Create listeners for clicks on simplification spans
             make_simplification_listeners();
             // prepare for feedback
@@ -228,48 +227,98 @@ function incremental_load_simplifications() {
  * ******************************* *
  * ******************************* */
 
+function inject_notification_container() {
+    var notification_container = document.createElement("div");
+    notification_container.setAttribute("id", "lexi-notification-container");
+    document.body.appendChild(notification_container);
+}
+
 /**
  *
  */
 function inject_lexi_notifier(callback){
-    var lexi_notifier_iframe_container = document.createElement("div");
-    lexi_notifier_iframe_container.id = "lexi-notifier-iframe-container";
-    lexi_notifier_iframe_container.style = "position:fixed; left: 0; " +
-        "top: 0px; z-index: 1000001; display: block;";
+    var lexi_notifier = document.createElement("div");
+    lexi_notifier.setAttribute("id", "lexi-notifier");
+    lexi_notifier.setAttribute("class", "lexi-frontend lexi-notification animate");
 
-    var lexi_notifier_iframe = document.createElement("iframe");
-    lexi_notifier_iframe.id = "lexi-notifier-iframe";
-    lexi_notifier_iframe.src = browser.extension.getURL("pages/notifier.html");
-    lexi_notifier_iframe.style = "position:relative; height: 100%; width: 100%; border: none;";
+    var lexi_notifier_flexbox = document.createElement("div");
+    lexi_notifier_flexbox.setAttribute("class", "flexbox");
 
-    lexi_notifier_iframe_container.appendChild(lexi_notifier_iframe);
-    document.body.appendChild(lexi_notifier_iframe_container);
-    lexi_notifier_iframe.onload = function() {
-        // resizeIframe(this);
-        console.log("lexi_notifier_iframe loaded.");
-        // iFrameResize({log:true}, '#lexi-notifier-iframe');
-        callback();
+    var lexi_logo = document.createElement("img");
+    lexi_logo.setAttribute("class", "lexi-logo");
+    lexi_logo.setAttribute("src", logo_url);
+
+    var lexi_notifier_text = document.createElement("div");
+    lexi_notifier_text.setAttribute("id", "lexi-notifier-text");
+    lexi_notifier_text.setAttribute("class", "lexi-notification-content");
+    // lexi_notifier_text.setAttribute("style", "float: left; max-width: 270px");
+    var lexi_notifier_close = document.createElement("div");
+    lexi_notifier_close.setAttribute("id", "lexi-notifier-close");
+    lexi_notifier_close.setAttribute("class", "close");
+    // lexi_notifier_close.setAttribute("style", "float: right; margin-left: 15px; font-size:150%");
+    lexi_notifier_close.innerHTML = "&times;";
+
+    var notification_container = document.getElementById("lexi-notification-container");
+    notification_container.appendChild(lexi_notifier);
+    lexi_notifier.appendChild(lexi_notifier_flexbox);
+    lexi_notifier_flexbox.appendChild(lexi_logo);
+    lexi_notifier_flexbox.appendChild(lexi_notifier_text);
+    lexi_notifier_flexbox.appendChild(lexi_notifier_close);
+
+    lexi_notifier_close.onclick = function () {
+        $("#lexi-notifier").hide();
     };
+    // setTimeout(function (){
+    //     console.log("registering");
+    //
+    //     lexi_notifier_close.onclick = function() {
+    //         console.log("closing...");
+    //         close_notifier();
+    //     }}, 5000);
+
+    if (callback) callback();
 }
 
 /**
  *
  */
 function inject_feedback_reminder() {
-    var lexi_feedback_reminder_iframe_container = document.createElement("div");
-    lexi_feedback_reminder_iframe_container.id = "lexi-feedback-reminder-iframe-container";
+    var feedback_reminder = document.createElement("div");
+    feedback_reminder.setAttribute("id", "lexi-feedback-reminder");
+    feedback_reminder.setAttribute("class", "lexi-frontend lexi-notification animate");
+    feedback_reminder.style.display = "none";  // deactivated per default
 
-    var lexi_feedback_reminder_iframe = document.createElement("iframe");
-    lexi_feedback_reminder_iframe.id = "lexi-feedback-reminder-iframe";
-    lexi_feedback_reminder_iframe.src = browser.extension.getURL("pages/feedback_reminder.html");
+    var lexi_feedback_reminder_flexbox = document.createElement("div");
+    lexi_feedback_reminder_flexbox.setAttribute("class", "flexbox");
 
-    lexi_feedback_reminder_iframe_container.appendChild(lexi_feedback_reminder_iframe);
-    document.body.appendChild(lexi_feedback_reminder_iframe_container);
-    lexi_feedback_reminder_iframe.onload = function() {
-        // resizeIframe(this);
-        console.log("lexi_feedback_reminder_iframe loaded.");
-        // iFrameResize({log:true}, '#lexi-feedback-reminder-iframe');
-    };
+    var lexi_logo = document.createElement("img");
+    lexi_logo.setAttribute("class", "lexi-logo");
+    lexi_logo.setAttribute("src", logo_url);
+
+    var lexi_feedback_reminder_text = document.createElement("div");
+    lexi_feedback_reminder_text.setAttribute("id", "lexi-feedback-reminder-text");
+    lexi_feedback_reminder_text.setAttribute("class", "lexi-notification-content");
+    lexi_feedback_reminder_text.textContent = browser.i18n.getMessage("lexi_feedback_reminder");
+    
+    // button listeners declared in make_interface_listeners()
+    var open_feedback_modal_btn_now = document.createElement("button");
+    open_feedback_modal_btn_now.setAttribute("id", "lexi-feedback-button-now");
+    open_feedback_modal_btn_now.setAttribute("class", "lexi-button");
+    open_feedback_modal_btn_now.textContent = browser.i18n.getMessage("lexi_feedback_reminder_ok");
+
+    var feedback_reminder_close = document.createElement("div");
+    feedback_reminder_close.setAttribute("id", "lexi-feedback-reminder-close");
+    feedback_reminder_close.setAttribute("class", "close");
+    feedback_reminder_close.innerHTML = "&times;";
+    // feedback_reminder_close.style.display = "none";  // setting this for now, might want to activate again later
+
+    var notification_container = document.getElementById("lexi-notification-container");
+    lexi_feedback_reminder_flexbox.appendChild(lexi_logo);
+    lexi_feedback_reminder_flexbox.appendChild(lexi_feedback_reminder_text);
+    lexi_feedback_reminder_flexbox.appendChild(feedback_reminder_close);
+    feedback_reminder.appendChild(lexi_feedback_reminder_flexbox);
+    feedback_reminder.appendChild(open_feedback_modal_btn_now);
+    notification_container.appendChild(feedback_reminder);
 }
 
 function inject_feedback_form() {
@@ -305,12 +354,12 @@ function close_iframe(iframe_id, full_delete) {
     }
 }
 
-function close_feedback_reminder_iframe(full_delete){
-    close_iframe("lexi-feedback-reminder-iframe", full_delete);
+function close_feedback_reminder(full_delete) {
+    $("#lexi-feedback-reminder").hide();
 }
 
-function close_notifier_iframe(full_delete){
-    close_iframe("lexi-notifier-iframe", full_delete);
+function close_notifier(full_delete) {
+    $("#lexi-notifier").hide();
 }
 
 function close_feedback_modal_iframe(full_delete) {
@@ -321,28 +370,57 @@ function close_login_iframe(full_delete) {
     close_iframe("lexi-login-modal-iframe", full_delete);
 }
 
+function make_interface_listeners() {
+    var feedback_btn_now = document.getElementById("lexi-feedback-button-now");
+    feedback_btn_now.addEventListener('click', function() {
+        feedback_reminder_choice_handler(true)
+    });
+    var feedback_reminder_close = document.getElementById("lexi-feedback-reminder-close");
+    feedback_reminder_close.addEventListener('click', function() {
+        feedback_reminder_choice_handler(false)
+    });
+    var lexi_notifier_close = document.getElementById("lexi-notifier-close");
+    lexi_notifier_close.addEventListener('click', function() {
+        close_notifier();
+    });
+}
+
+function feedback_reminder_choice_handler(do_give_feedback) {
+    close_feedback_reminder();
+    if (do_give_feedback) {
+        toggle_feedback_modal();
+    }
+}
+
 /**
  *
  * @param msg
  * @param display_closer
  */
 function display_message(msg, display_closer) {
-    // Send message to notifier iframe
-    var notify_iframe = document.getElementById("lexi-notifier-iframe");
-    var event_data = {"type": "display_message", "msg": msg, "display_closer": display_closer};
-    notify_iframe.contentWindow.postMessage(event_data, "*");
-    // show if it's been hidden
-    $("#lexi-notifier-iframe-container").show();
+    var notify_elem = document.getElementById("lexi-notifier");
+    notify_elem.style.display = "block";
+    var notify_elem_text = document.getElementById("lexi-notifier-text");
+    notify_elem_text.innerHTML = msg;
+    var notifier_closer = document.getElementById("lexi-notifier-close");
+    if (display_closer == false) {
+        notifier_closer.style.opacity = "none";
+    } else if (display_closer == true) {
+        notifier_closer.style.display = "block";
+    }
 }
 
 function display_loading_animation() {
-    var notify_iframe = document.getElementById("lexi-notifier-iframe");
-    var event = {"type": "display_loading_animation"};
-    notify_iframe.contentWindow.postMessage(event, "*");
+    var notifier_text_elem = document.getElementById("lexi-notifier-text");
+    var loading_animation = browser.runtime.getURL("img/loading.gif");
+    var cur_notify_elem_text = notifier_text_elem.textContent;
+    var msg_plus_loading = "<span>"+cur_notify_elem_text+"</span>" +
+        "  <img id='lexi-loading-animation' src="+loading_animation+" />";
+    display_message(msg_plus_loading);
 }
 
 function toggle_feedback_reminder() {
-    var _feedback_reminder = document.getElementById("lexi-feedback-reminder-iframe-container");
+    var _feedback_reminder = document.getElementById("lexi-feedback-reminder");
     if (_feedback_reminder) {
         if (simplifications) {
             if (! feedback_submitted) {
@@ -404,10 +482,10 @@ function resize_iframe(iframe_id, width, height) {
 
 window.addEventListener("message", function (event) {
     console.log(event.data);
-    if (event.data.type == "close_notifier_iframe") {
-        close_notifier_iframe();
+    if (event.data.type == "close_notifier") {
+        close_notifier();
     } else if (event.data.type == "solicit_feedback") {
-        close_feedback_reminder_iframe();
+        close_feedback_reminder();
         toggle_feedback_modal();
     } else if (event.data.type == "delete_feedback_iframe") {
         close_feedback_modal_iframe(true);
@@ -499,10 +577,10 @@ function feedbackAjaxCall(url, rating, feedback_text) {
 browser.storage.sync.get('lexi_user', function (usr_object) {
     USER = usr_object.lexi_user.userId;
     console.log("Started lexi extension. User: "+USER);
-    inject_lexi_notifier(function(){
-        inject_feedback_reminder();
-        load_simplifications();
-    });
+    inject_notification_container();
+    inject_lexi_notifier();
+    inject_feedback_reminder();
+    load_simplifications();
 });
    
  
