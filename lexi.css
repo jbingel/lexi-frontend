@@ -46,6 +46,7 @@
     margin-bottom: 20px;
     padding: 10px;
     pointer-events: all;
+    box-shadow: 0 0 10px #888;
 }
 
 .lexi-notification .flexbox {

@@ -69,4 +69,10 @@ function isEmpty(obj) {
     return true;
 }
 
-check_user_login();
+// var lexi_has_been_injected = false;
+if (typeof lexi_has_been_injected == 'undefined') {
+    check_user_login();
+    var lexi_has_been_injected = true;
+} else {
+    console.log("Lexi has already been used in this tab.")
+}

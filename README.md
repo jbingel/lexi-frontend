@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### Version 0.3.3
++ Allow execution of Lexi only once per tab load
++ better style of notification boxes
+
 ### Version 0.3.2
 + marking original word
 + change user in context menu

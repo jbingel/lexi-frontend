@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Lexi",
   "description": "Simplifies difficult words, learning each user's personal needs.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "default_locale": "da",
   "icons": {
       "16": "img/l16.png",
@@ -37,7 +37,8 @@
   "web_accessible_resources": [
     "img/loading.gif", "img/*png", "pages/terms.html", "pages/*", "pages/login_form.html",
     "pages/feedback_form.html", "config.js", "pages/notifier.html", "pages/feedback_reminder.html",
-    "scripts/*", "lexi-iframes.css"],
+    "scripts/*", "lexi-iframes.css"
+  ],
   "commands": {
     "run-lexi": {
       "suggested_key": {
