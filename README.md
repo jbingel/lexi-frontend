@@ -2,6 +2,9 @@
 
 ## Changelog
 
+### Version 0.3.4
++ Improved CSS to prevent linebreaks at thumbsdown
+
 ### Version 0.3.3
 + Allow execution of Lexi only once per tab load
 + better style of notification boxes

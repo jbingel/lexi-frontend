@@ -19,6 +19,7 @@
     width: 15px;
     margin-top: -5px;
     margin-left: 5px;
+    display: inline;
 }
 
 .lexi-bad-feedback-icon:hover {
@@ -95,10 +96,12 @@
 
 .lexi-button:hover {
     opacity: 0.8;
+    background-color: #74c374;
 }
 
 .lexi-notification .close {
     /*float: right;*/
+    color: black;
     width: 5%;
     margin-left: 5%;
     font-size:150%;

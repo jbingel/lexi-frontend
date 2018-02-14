@@ -130,17 +130,23 @@ function make_simplification_listeners() {
  */
 function insert_thumbsdown_icon(element) {
     var elemId = element.id;
-    var feedback_span = document.createElement("span");
-    feedback_span.setAttribute("class", "lexi-bad-feedback");
-    feedback_span.setAttribute("data-reference", elemId);
+    var nowrap_span = document.createElement("span");
+    nowrap_span.setAttribute("style", "white-space: nowrap;");
+
+    var thumbsdown_span = document.createElement("span");
+    thumbsdown_span.setAttribute("class", "lexi-bad-feedback");
+    thumbsdown_span.setAttribute("data-reference", elemId);
     var img = document.createElement("img");
     img.src = browser.runtime.getURL("img/thumbsdown_deselected.png");
     img.setAttribute("class", "lexi-bad-feedback-icon");
-    element.insertAdjacentElement("afterend", feedback_span);
 
-    feedback_span.appendChild(img);
-    feedback_span.addEventListener('click', function () {
-        toggle_thumbsdown(feedback_span, img);
+    element.parentNode.insertBefore(nowrap_span, element);
+    nowrap_span.appendChild(element);
+    nowrap_span.appendChild(thumbsdown_span);
+
+    thumbsdown_span.appendChild(img);
+    thumbsdown_span.addEventListener('click', function () {
+        toggle_thumbsdown(thumbsdown_span, img);
     })
 }
 
@@ -414,8 +420,8 @@ function display_loading_animation() {
     var notifier_text_elem = document.getElementById("lexi-notifier-text");
     var loading_animation = browser.runtime.getURL("img/loading.gif");
     var cur_notify_elem_text = notifier_text_elem.textContent;
-    var msg_plus_loading = "<span>"+cur_notify_elem_text+"</span>" +
-        "  <img id='lexi-loading-animation' src="+loading_animation+" />";
+    var msg_plus_loading = '<span>'+cur_notify_elem_text +
+        '&nbsp;<img id="lexi-loading-animation" style="display: inline;" src='+loading_animation+' /></span>';
     display_message(msg_plus_loading);
 }
 
