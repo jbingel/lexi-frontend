@@ -1,18 +1,20 @@
 /* CONTENT */
 .lexi-simplify {
-    background-color: #b3f4aa;
+    background-color: #bcffb3;
     color: black;
     /*text-decoration:underline;*/
     /*text-decoration-style: dotted;*/
     /*text-decoration-color: #288520;*/
 }
-.lexi-simplify:hover {background: #87de87;}
+/*.lexi-simplify:hover {background: #87de87;}*/
 
 .lexi-simplify[data-displaying-original="true"] {
-    text-decoration: underline;
-    text-decoration-style: solid;
-    text-decoration-color: #079807;
+    background-color: #87de87;
 }
+
+/*.lexi-simplify[data-displaying-original="true"]:hover {*/
+    /*background-color: #69bb69;*/
+/*}*/
 
 .lexi-bad-feedback-icon {
     height: 15px;
@@ -27,6 +29,15 @@
     filter: drop-shadow(0px 3px 3px #79b3ea);
 }
 
+.lexi-ondemand-simplification-button {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.lexi-ondemand-simplification-button:hover {
+    opacity: 0.8;
+}
 
 /* NOTIFICATIONS */
 #lexi-notification-container {

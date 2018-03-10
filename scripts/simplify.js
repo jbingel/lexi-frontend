@@ -115,7 +115,7 @@ function make_simplification_listeners() {
         this.addEventListener('click', function () {
             change_text(this.id);
             if (jQuery.inArray(this.id, clicked_simplifications) == -1) {
-                insert_thumbsdown_icon(this);
+                // insert_thumbsdown_icon(this);
                 clicked_simplifications.push(this.id);
                 console.log(clicked_simplifications);
             }

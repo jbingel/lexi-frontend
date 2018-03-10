@@ -64,7 +64,8 @@ function main() {
     browser.tabs.executeScript(null, {file: "config.js"}, function(){
         browser.tabs.executeScript(null, {file: "scripts/jquery-3.1.1.js"}, function() {
             /* First, make sure user is logged on (aka if userId is set in browser.storage */
-            browser.tabs.executeScript(null, {file: "scripts/user_management.js"}, function () {});
+            // browser.tabs.executeScript(null, {file: "scripts/user_management.js"}, function () {});
+            browser.tabs.executeScript(null, {file: "scripts/ondemand.js"}, function () {});
         });
     });
 }

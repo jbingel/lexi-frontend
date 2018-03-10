@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### Version 0.4.0
++ Moved to on-demand simplifications
++ Removed thumbsdown and feedback text
+
 ### Version 0.3.4
 + Improved CSS to prevent linebreaks at thumbsdown
 
