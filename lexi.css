@@ -1,6 +1,8 @@
 /* CONTENT */
 .lexi-simplify {
-    background-color: #bcffb3;
+    /*background-color: #ccfff8;*/
+    /*background-color: #bcffb3;*/
+    background-color: #75ff70;
     color: black;
     /*text-decoration:underline;*/
     /*text-decoration-style: dotted;*/
@@ -9,7 +11,8 @@
 /*.lexi-simplify:hover {background: #87de87;}*/
 
 .lexi-simplify[data-displaying-original="true"] {
-    background-color: #87de87;
+    background-color: #cbffc4;
+    /*background-color: #75ff70;*/
 }
 
 /*.lexi-simplify[data-displaying-original="true"]:hover {*/
@@ -33,10 +36,17 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
+    position: fixed;
+    /*position: absolute!important;*/
+    /*position: -webkit-sticky; !* Safari *!*/
+    /*position: sticky;*/
+    z-index: 1000000;
 }
 
 .lexi-ondemand-simplification-button:hover {
-    opacity: 0.8;
+    /*opacity: 0.8;*/
+    -webkit-filter: drop-shadow(0px 2px 2px #bcffb3);
+    filter: drop-shadow(0px 2px 2px #bcffb3);
 }
 
 /* NOTIFICATIONS */
@@ -66,8 +76,8 @@
 }
 
 .lexi-notification .lexi-logo {
-    width: 15%;
-    height: 15%;
+    width: 50px!important;
+    height: 50px!important;
     margin-right: 5%;
     /*flex: 1;*/
 }
@@ -91,7 +101,7 @@
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 100%;
     /*background-color: #4CAF50;*/
-    background-color: #74c374;
+    background: #74c374;
     color: white;
     padding: 5px 5px;
     margin-top: 12px ;

@@ -37,7 +37,7 @@ var simplifications = {};
  * Stores an ID for this session
  * @type {number}
  */
-var session_id = -1; // will be overwritten
+var request_id = -1; // will be overwritten
 
 /**
  * Stores simplification element IDs for simplifications that have been
@@ -166,9 +166,9 @@ function load_simplifications() {
     display_loading_animation();
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, site_html).then(function (result) {
         simplifications = result['simplifications'];
-        session_id = result['session_id'];
+        request_id = result['request_id'];
         console.log(simplifications);
-        console.log("Lexi session ID: "+session_id);
+        console.log("Lexi session ID: "+request_id);
         console.log("Backend version: "+result['backend_version']);
         if (simplifications) {
             // replace original HTML with markup return from backup (enriched w/ simplifications)
@@ -547,7 +547,7 @@ function simplifyAjaxCall(url, html) {
  */
 function feedbackAjaxCall(url, rating, feedback_text) {
     console.log("Sending feedback for session id:");
-    console.log(session_id);
+    console.log(request_id);
     var request = {};
     request['frontend_version'] = frontend_version;
     request['email'] = USER;
@@ -556,7 +556,7 @@ function feedbackAjaxCall(url, rating, feedback_text) {
     request['rating'] = rating;
     request['feedback_text'] = feedback_text;
     request['url'] = window.location.href;
-    request['session_id'] = session_id;
+    request['request_id'] = request_id;
     console.log(request);
     return new Promise(function(resolve, reject) {
         // console.log(html.slice(0, 20));

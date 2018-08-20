@@ -2,6 +2,14 @@
 
 ## Changelog
 
+### Version 0.4.2
++ Disabled simplification of entire page after login/registration
+
+### Version 0.4.1
++ Fixed bugs with on-demand simplifications
++ `session_id` renamed to `request_id`
++ Fixed on-demand simplification interface
+
 ### Version 0.4.0
 + Moved to on-demand simplifications
 + Removed thumbsdown and feedback text
@@ -43,7 +51,7 @@
 (skipped publication)
 
 ### Version 0.2.1
-+ changeText() works on `choices' rather than harder-coded `original' and `simple'
++ changeText() works on `choices` rather than harder-coded `original` and `simple`
 + UX improvements (feedback reminder closable), some CSS improvements
 
 ### Version 0.2

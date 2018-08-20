@@ -10,12 +10,13 @@ window.browser = (function () {
 
 var max_node_identifier_id = 0;
 var lexi_ondemand_id = 0;
+var request_ids = [];
 
-
-/* Useful URLs */
+/* Useful URLs (`settings` is declared in config.js) */
 var SERVER_URL = settings.LEXI_SERVER_URL;
 var SERVER_URL_FEEDBACK = SERVER_URL+settings.feedback_route;
 var SERVER_URL_SIMPLIFY = SERVER_URL+settings.simplify_route;
+
 /* Lexi logo */
 var logo_url = browser.runtime.getURL("img/lexi.png");
 
@@ -35,6 +36,7 @@ var USER = "default"; // will be overwritten in main (see bottom)
 var feedback_submitted = false;
 
 /**
+ * TODO description below not accurate anymore, update
  * Stores all simplifications as returned from backend. Each simplification
  * has an ID starting with `lexi_'. This object maps an ID to another
  * object containing the fields: (i) `original': the original text,
@@ -51,46 +53,84 @@ var simplifications = {};
 var clicked_simplifications = [];
 
 
+function parents(node) {
+    var nodes = [node];
+    for (; node; node = node.parentNode) {
+        nodes.unshift(node)
+    }
+    return nodes
+}
+
+function commonAncestor(node1, node2) {
+    if (node1 == node2) {
+        console.log("Identical start and end node.");
+        return node1.parentNode;
+    }
+
+    var parents1 = parents(node1);
+    var parents2 = parents(node2);
+
+    if (parents1[0] != parents2[0]) throw "No common ancestor!"
+
+    for (var i = 0; i < parents1.length; i++) {
+        if (parents1[i] != parents2[i]) return parents1[i - 1];
+    }
+}
+
+
 function getSelectedNodes() {
     var nodes = [];
     var range = getSelectionRange();
 
     if (range) {
-        var firstNode = range[0].parentNode;
-        var lastNode = range[2].parentNode;
+        var ancestorNode = commonAncestor(range[0], range[2]);
+        console.log(ancestorNode);
+        var offsets_in_ancestor = getSelectionCharacterOffsetWithin(ancestorNode);
+        console.log(ancestorNode, offsets_in_ancestor);
 
-        // typical case: selection is within one node
-        if (firstNode == lastNode) {
-            nodes.push({
-                "node": firstNode,
-                "startOffset": range[1],
-                "endOffset": range[3]
-            });
-
-        // else: first and last node are not the same
-        } else { // TODO test if child relation between nodes, too!
-            nodes.push({
-                "node": firstNode,
-                "startOffset": range[1],
-                "endOffset": firstNode.outerHTML.length
-            });
-            var curNode = firstNode.nextSibling;
-            while (curNode && curNode != lastNode) {
-                nodes.push({
-                    "node": curNode,
-                    "startOffset": 0,
-                    "endOffset": 0
-                });
-                curNode = curNode.nextSibling;
-            }
-            nodes.push({
-                "node": lastNode,
-                "startOffset": 0,
-                "endOffset": range[3]
-            });
-        }
+        nodes.push({
+            "node": ancestorNode,
+            "startOffset": offsets_in_ancestor.start,
+            "endOffset": offsets_in_ancestor.end
+        });
+        //
+        // var firstNode = range[0].parentNode;
+        // var lastNode = range[2].parentNode;
+        // // var firstNode = range[0];
+        // // var lastNode = range[2];
+        //
+        // // typical case: selection is within one node
+        // if (firstNode == lastNode) {
+        //     nodes.push({
+        //         "node": firstNode,
+        //         "startOffset": range[1],
+        //         "endOffset": range[3]
+        //     });
+        //
+        // // else: first and last node are not the same
+        // } else { // TODO test if child relation between nodes, too!
+        //     nodes.push({
+        //         "node": firstNode,
+        //         "startOffset": range[1],
+        //         "endOffset": firstNode.outerHTML.length
+        //     });
+        //     var curNode = firstNode.nextSibling;
+        //     while (curNode && curNode != lastNode) {
+        //         nodes.push({
+        //             "node": curNode,
+        //             "startOffset": 0,
+        //             "endOffset": 0
+        //         });
+        //         curNode = curNode.nextSibling;
+        //     }
+        //     nodes.push({
+        //         "node": lastNode,
+        //         "startOffset": 0,
+        //         "endOffset": range[3]
+        //     });
+        // }
     }
-    clear_selection();
+    // clear_selection();
     return nodes;
 }
 
@@ -122,6 +162,40 @@ function getNodeSrcOffset(node) {
 }
 
 
+/**
+ * Gets selection offset relative to a parent element
+ * https://stackoverflow.com/questions/4811822/
+ * @param element the parent element
+ * @returns {{start: number, end: number}}
+ */
+function getSelectionCharacterOffsetWithin(element) {
+    var start = 0;
+    var end = 0;
+    var doc = element.ownerDocument || element.document;
+    var win = doc.defaultView || doc.parentWindow;
+    var sel;
+    if (typeof win.getSelection != "undefined") {
+        sel = win.getSelection();
+        if (sel.rangeCount > 0) {
+            var range = win.getSelection().getRangeAt(0);
+            var preCaretRange = range.cloneRange();
+            preCaretRange.selectNodeContents(element);
+            preCaretRange.setEnd(range.startContainer, range.startOffset);
+            start = preCaretRange.toString().length;
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            end = preCaretRange.toString().length;
+        }
+    } else if ( (sel = doc.selection) && sel.type != "Control") {
+        var textRange = sel.createRange();
+        var preCaretTextRange = doc.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToStart", textRange);
+        start = preCaretTextRange.text.length;
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        end = preCaretTextRange.text.length;
+    }
+    return { start: start, end: end };
+}
 
 /**
  * Gets the current selection and finds its start and end (nodes and char offsets)
@@ -151,7 +225,7 @@ function getSelectionRange() {
         start = sel.focusOffset;
         end = sel.anchorOffset;
     }
-
+    console.log(startNode, start, endNode, end);
     return [startNode, start, endNode, end];
 }
 
@@ -167,12 +241,16 @@ function clear_selection() {
     }
 }
 
-function offer_simplification() {
+function offer_simplification(mouse_event) {
     var selected_nodes = getSelectedNodes();
+    console.log(selected_nodes);
     // limit functionality to when a single node is selected, else backend is overloaded
-    if (selected_nodes.length == 1) {
+    // also don't insert another button when the mouseup event is on this Lexi button
+    if (selected_nodes.length == 1 &&
+        mouse_event.srcElement.className != "lexi-ondemand-simplification-button") {
         var node = selected_nodes[0];
-        inject_simplification_button(node["node"], node["startOffset"], node["endOffset"])
+        inject_simplification_button(node["node"], node["startOffset"], node["endOffset"],
+            mouse_event.clientX, mouse_event.clientY);
     }
 }
 
@@ -183,13 +261,14 @@ function simplify(node, start, end) {
     // if (selected_nodes.length == 1) {
     //     var node = selected_nodes[0]["node"];
     console.log(node);
-    display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
+    // display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end).then(function (result) {
-        simplifications = result['simplifications'];
-        session_id = result['session_id'];
+        simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
+        request_ids.push(result['request_id']);
         console.log(simplifications);
-        console.log("Lexi session ID: "+session_id);
+        console.log("Lexi request ID: "+result['request_id']);
         console.log("Backend version: "+result['backend_version']);
+        console.log(result);
         if (simplifications) {
             // replace original HTML with markup returned from backup
             // (enriched w/ simplifications)
@@ -226,7 +305,6 @@ function simplifyAjaxCall(url, html, startOffset, endOffset) {
     var request = {};
     request['frontend_version'] = frontend_version;
     request['email'] = USER;
-    request['user'] = USER;  // legacy
     request['html'] = html;
     request['startOffset'] = startOffset;
     request['endOffset'] = endOffset;
@@ -254,17 +332,14 @@ function simplifyAjaxCall(url, html, startOffset, endOffset) {
  * @returns {Promise}
  */
 function feedbackAjaxCall(url, rating, feedback_text) {
-    console.log("Sending feedback for session id:");
-    console.log(session_id);
+    console.log("Sending feedback for request IDs:"+request_ids);
     var request = {};
     request['frontend_version'] = frontend_version;
     request['email'] = USER;
-    request['user'] = USER;  // legacy
     request['simplifications'] = simplifications;
     request['rating'] = rating;
     request['feedback_text'] = feedback_text;
     request['url'] = window.location.href;
-    request['session_id'] = session_id;
     console.log(request);
     return new Promise(function(resolve, reject) {
         // console.log(html.slice(0, 20));
@@ -294,22 +369,24 @@ function toggle_feedback_reminder() {
     }
 }
 
-function inject_simplification_button(node, start, end) {
+function inject_simplification_button(node, start, end, mouse_x, mouse_y) {
     var simplification_button = document.createElement("div");
     simplification_button.setAttribute("class", "lexi-ondemand-simplification-button");
     simplification_button.setAttribute("id", "lexi-ondemand-simplification-"+lexi_ondemand_id.toString());
-    lexi_ondemand_id += 1;
+    simplification_button.setAttribute("style",
+        "top:"+(mouse_y-20).toString()+"px; left:"+(mouse_x+20).toString()+"px;");
     var lexi_logo = document.createElement("img");
     lexi_logo.setAttribute("class", "lexi-ondemand-simplification-button");
     lexi_logo.src = logo_url;
     console.log(simplification_button);
     lexi_logo.addEventListener("click", function () {
+        clear_selection();
+        lexi_ondemand_id += 1;
         simplification_button.style.display = "none";
         simplify(node, start, end);
-        // node.removeChild(simplification_button);
     });
     simplification_button.appendChild(lexi_logo);
-    node.appendChild(simplification_button);
+    document.body.appendChild(simplification_button);
 }
 
 function register_feedback_action() {
@@ -375,8 +452,8 @@ function toggle_feedback_modal() {
         if (feedback_submitted) {
             console.log("Feedback already submitted, doing nothing.");
         } else {
-            // if (document.getElementById("lexi-feedback-modal-iframe-container")) {
-            if (document.getElementById("lexi-feedback-modal")) {
+            if (document.getElementById("lexi-feedback-modal-iframe-container")) {
+            // if (document.getElementById("lexi-feedback-modal")) {
                 console.log("Feedback reminder already there, doing nothing.")
             } else {
                 console.log("Should display now...");
@@ -407,6 +484,7 @@ function make_interface_listeners() {
  * @param {string} elemId
  */
 function change_text(elemId) {
+    console.log(simplifications);
     var elem = document.getElementById(elemId);
     var choices = simplifications[elemId].choices;
     var original = simplifications[elemId].original;
@@ -425,14 +503,15 @@ function change_text(elemId) {
  */
 function make_simplification_listeners() {
     $(".lexi-simplify").each(function () {
-        this.addEventListener('click', function () {
+        console.log(this.id, this);
+        this.onclick = function() {
             change_text(this.id);
             if (jQuery.inArray(this.id, clicked_simplifications) == -1) {
                 // insert_thumbsdown_icon(this);
                 clicked_simplifications.push(this.id);
                 console.log(clicked_simplifications);
             }
-        });
+        };
     })
 }
 
@@ -443,6 +522,7 @@ function inject_lexi_notifier(callback){
     var lexi_notifier = document.createElement("div");
     lexi_notifier.setAttribute("id", "lexi-notifier");
     lexi_notifier.setAttribute("class", "lexi-frontend lexi-notification animate");
+    lexi_notifier.setAttribute("style", "display:none");
 
     var lexi_notifier_flexbox = document.createElement("div");
     lexi_notifier_flexbox.setAttribute("class", "flexbox");
@@ -584,6 +664,8 @@ window.addEventListener("message", function (event) {
  * ******************************* *
  * ******************************* */
 
+console.log("Lexi: Ondemand simplification available.");
+
 browser.storage.sync.get('lexi_user', function (usr_object) {
     USER = usr_object.lexi_user.userId;
     console.log("Started lexi extension. User: "+USER);
@@ -591,5 +673,10 @@ browser.storage.sync.get('lexi_user', function (usr_object) {
     inject_lexi_notifier();
     inject_feedback_reminder();
     // load_simplifications();
-    document.onmouseup = offer_simplification;
+    document.onmouseup = function (event) {
+        $(".lexi-ondemand-simplification-button").each(function (){
+            this.style.display = "none";
+        });
+        offer_simplification(event);
+    }
 });

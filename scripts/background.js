@@ -26,8 +26,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === "user_logged_on") {
         // now start the simplifier
         console.log("Received message that user is logged on, " +
-            "running simplifications script now.");
-        browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
+            "on-demand simplification now available.");
+        // browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
     }
 
 });
