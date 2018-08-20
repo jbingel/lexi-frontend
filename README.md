@@ -2,6 +2,10 @@
 
 ## Changelog
 
+
+### Version 0.4.3
++ Terms and conditions link
+
 ### Version 0.4.2
 + Disabled simplification of entire page after login/registration
 
