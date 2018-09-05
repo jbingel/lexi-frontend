@@ -60,6 +60,9 @@ if (commands) {  // TODO somehow this is undefined
 
 
 function main() {
+    var tab = browser.tabs.getCurrent();
+    var tabId = tab.id;
+    alert(tabId);
     // check user is logged on, and finally simplify.
     browser.tabs.executeScript(null, {file: "config.js"}, function(){
         browser.tabs.executeScript(null, {file: "scripts/jquery-3.1.1.js"}, function() {
@@ -69,9 +72,8 @@ function main() {
         });
     });
 }
+
 browser.browserAction.onClicked.addListener(function(tabId) {
     console.log("Click on Lexi icon");
     main();
 });
-
-

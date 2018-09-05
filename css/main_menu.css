@@ -1,0 +1,50 @@
+html, body {
+    width: 200px;
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.info {
+    padding: 5px;
+}
+
+#error-content {
+    color: #c1202c
+}
+
+#button-content {
+    margin: auto;
+}
+
+a {
+    text-decoration: none;
+    color: #5da15d;
+}
+
+table{
+    border-collapse:collapse;
+    width: 100%;
+}
+
+tr, td {
+    border: none;
+    padding: 0;
+}
+
+.menu-item:hover {
+    opacity: 50%;
+    background-color: #95f495;
+    cursor: pointer;
+}
+
+.menu-item img {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+}
+
+.menu-item span {
+}

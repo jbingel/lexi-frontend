@@ -262,6 +262,7 @@ function simplify(node, start, end) {
     //     var node = selected_nodes[0]["node"];
     console.log(node);
     // display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
+    if (end <= 0) {end = node.textContent.length}
     simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end).then(function (result) {
         simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
         request_ids.push(result['request_id']);
@@ -639,6 +640,14 @@ function handle_feedback(rating, feedback_text) {
 
 /* these are for cross-origin communication between frames */
 
+/* Messages from backgroundscripts */
+browser.runtime.onMessage.addListener( function (message) {
+    if (message.type === "simplify_all") {
+        simplify(document.body, 0, 0);
+}
+});
+
+/* Messages from other content scripts */
 window.addEventListener("message", function (event) {
     console.log(event.data);
     if (event.data.type == "close_notifier") {
@@ -654,6 +663,8 @@ window.addEventListener("message", function (event) {
         handle_feedback(event.data.rating, event.data.feedback_text);
     } else if (event.data.type == "resize_iframe") {
         // resize_iframe(event.data.iframe_id, event.data.width, event.data.height);
+    } else if (event.data.type == "simplify_all") {
+        alert("SIMPLIFY ALL");
     }
 });
 
