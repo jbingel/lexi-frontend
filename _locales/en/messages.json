@@ -1,4 +1,16 @@
 {
+  "lexi_down": {
+    "message": "Sorry, Lexi is currently not working. Please try later."
+  },
+  "lexi_popup_simplify_all": {
+    "message": "Simplify whole page"
+  },
+  "lexi_popup_change_user": {
+    "message": "Change/create user"
+  },
+  "lexi_popup_new_version_available": {
+    "message": "New version of Lexi available!"
+  },
   "lexi_change_user": {
     "message": "Change user"
   },

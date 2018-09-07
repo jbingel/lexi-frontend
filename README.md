@@ -2,6 +2,15 @@
 
 ## Changelog
 
+### Version 0.4.6
++ Connection check at browser action
++ Check for new version at browser action
+
+### Version 0.4.5
++ Popup menu to change user and simplify whole page
+
+### Version 0.4.4
++ Allow to simplify whole page again (targets with available synonyms)
 
 ### Version 0.4.3
 + Terms and conditions link

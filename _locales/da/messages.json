@@ -1,4 +1,16 @@
 {
+  "lexi_down": {
+    "message": "Øv, Lexi virker i øjeblikket ikke. Prøv igen senere."
+  },
+  "lexi_popup_simplify_all": {
+    "message": "Simplificer hele siden"
+  },
+  "lexi_popup_change_user": {
+    "message": "Skift/opret bruger"
+  },
+  "lexi_popup_new_version_available": {
+    "message": "Der findes en ny version af Lexi!"
+  },
   "lexi_change_user": {
     "message": "Skift bruger"
   },

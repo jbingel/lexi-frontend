@@ -29,7 +29,7 @@ table{
     width: 100%;
 }
 
-tr, td {
+tr, td, button {
     border: none;
     padding: 0;
 }
@@ -40,11 +40,22 @@ tr, td {
     cursor: pointer;
 }
 
+.disabled {
+    opacity: 30%;
+    background-color: #e1e1e1;
+    cursor: default;
+    pointer-events:none;
+    color: #7d7d7d;
+}
+
 .menu-item img {
     width: 40px;
     height: 40px;
     padding: 5px;
 }
 
-.menu-item span {
+.disabled img {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+    opacity: 70%;
 }

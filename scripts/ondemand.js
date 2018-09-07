@@ -263,27 +263,31 @@ function simplify(node, start, end) {
     console.log(node);
     // display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
     if (end <= 0) {end = node.textContent.length}
-    simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end).then(function (result) {
-        simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
-        request_ids.push(result['request_id']);
-        console.log(simplifications);
-        console.log("Lexi request ID: "+result['request_id']);
-        console.log("Backend version: "+result['backend_version']);
-        console.log(result);
-        if (simplifications) {
-            // replace original HTML with markup returned from backup
-            // (enriched w/ simplifications)
-            console.log(result['html']);
-            node.outerHTML = result['html'];
-            make_interface_listeners();
-            // Create listeners for clicks on simplification spans
-            make_simplification_listeners();
-            // prepare for feedback
-            register_feedback_action();
-        } else {
-            display_message(browser.i18n.getMessage("lexi_simplifications_error"));
-        }
-    });
+    return new Promise(function (resolve, reject) {
+        simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end).then(function (result) {
+            simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
+            request_ids.push(result['request_id']);
+            console.log(simplifications);
+            console.log("Lexi request ID: "+result['request_id']);
+            console.log("Backend version: "+result['backend_version']);
+            console.log(result);
+            if (simplifications) {
+                // replace original HTML with markup returned from backup
+                // (enriched w/ simplifications)
+                console.log(result['html']);
+                node.outerHTML = result['html'];
+                make_interface_listeners();
+                // Create listeners for clicks on simplification spans
+                make_simplification_listeners();
+                // prepare for feedback
+                register_feedback_action();
+                resolve(simplifications);
+            } else {
+                display_message(browser.i18n.getMessage("lexi_simplifications_error"));
+                reject(new Error("Could not simplify."));
+            }
+        });
+    })
     // }
 }
 
@@ -631,6 +635,25 @@ function handle_feedback(rating, feedback_text) {
     display_message(browser.i18n.getMessage("lexi_feedback_submitted"));
 }
 
+function handle_simplify_all(message, sender, sendResponse) {
+    if (message.type === "simplify_all") {
+        return simplify_all().then(function () {
+            // send this message to popup script. sendResponse or sending Promise doesn't work somehow
+            // TODO adapt this to send Promise instead:
+            // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage
+            browser.runtime.sendMessage({"type": "simplification_done"});
+        })
+    }
+}
+
+function simplify_all() {
+    return new Promise(function(resolve, reject) {
+        simplify(document.body, 0, 0)
+            .then(function (value) {resolve(true)})
+            .catch(function() {console.log('error');}
+        );
+    })
+}
 
 /* ******************************* *
  * ******************************* *
@@ -641,11 +664,13 @@ function handle_feedback(rating, feedback_text) {
 /* these are for cross-origin communication between frames */
 
 /* Messages from backgroundscripts */
-browser.runtime.onMessage.addListener( function (message) {
-    if (message.type === "simplify_all") {
-        simplify(document.body, 0, 0);
-}
-});
+browser.runtime.onMessage.addListener(handle_simplify_all);
+//
+//     function (message) {
+//     if (message.type === "simplify_all") {
+//         handle_simplify_all(message)
+//     }
+// });
 
 /* Messages from other content scripts */
 window.addEventListener("message", function (event) {
@@ -663,8 +688,6 @@ window.addEventListener("message", function (event) {
         handle_feedback(event.data.rating, event.data.feedback_text);
     } else if (event.data.type == "resize_iframe") {
         // resize_iframe(event.data.iframe_id, event.data.width, event.data.height);
-    } else if (event.data.type == "simplify_all") {
-        alert("SIMPLIFY ALL");
     }
 });
 
