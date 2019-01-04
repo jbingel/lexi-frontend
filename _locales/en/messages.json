@@ -2,6 +2,9 @@
   "lexi_down": {
     "message": "Sorry, Lexi is currently not working. Please try later."
   },
+  "lexi_no_user": {
+    "message": "Please log in or register to use Lexi."
+  },
   "lexi_popup_simplify_all": {
     "message": "Simplify whole page"
   },

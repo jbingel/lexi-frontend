@@ -2,17 +2,15 @@
  * Created by joachim on 10/13/16.
  */
 
-// require.config({
-//     baseUrl: "."
-// });
-
 window.browser = (function () {
     return window.msBrowser ||
         window.chrome ||
         window.browser;
 })();
 
-// Handle requests
+/*
+ Handle requests
+ */
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Request login
     if (request.type === 'request_login') {
@@ -39,12 +37,22 @@ chrome.contextMenus.create({
     contexts: ["browser_action"]
 });
 
+chrome.contextMenus.create({
+    id: "remove_user",
+    title: "clear user",
+    contexts: ["browser_action"]
+});
+
 chrome.contextMenus.onClicked.addListener(handle_context_menu_click);
 function handle_context_menu_click(info, tab) {
     if (info.menuItemId == "change_user") {
         browser.tabs.executeScript(null, {file: "scripts/inject_login_form.js"}, function() {
             return true;
         });
+    }
+
+    if (info.menuItemId == "remove_user") {
+        browser.storage.sync.clear();
     }
 }
 

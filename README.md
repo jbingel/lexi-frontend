@@ -2,6 +2,9 @@
 
 ## Changelog
 
+### Version 0.4.7
++ Warning if no user registered (e.g. after fresh install)
+
 ### Version 0.4.6
 + Connection check at browser action
 + Check for new version at browser action

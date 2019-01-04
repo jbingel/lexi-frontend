@@ -32,19 +32,47 @@ function test_connection() {
         xhr.onload = function () {
             resolve(JSON.parse(this.responseText));
         };
-        xhr.onerror = function(e){
-            button_simplify.classList.add("disabled");
-            button_changeuser.classList.add("disabled");
-            error_content.textContent = browser.i18n.getMessage("lexi_down");
-            error_content.style.display = "block";
-        };
+        xhr.onerror = warn_lexi_down;
         xhr.open("POST", TEST_CONNECTION_URL, true);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhr.setRequestHeader("access-control-allow-origin", "*");
         xhr.send(JSON.stringify(request));
     })
 }
-test_connection();
+
+/* TEST USER REGISTERED */
+function test_user_registered() {
+    browser.storage.sync.get('lexi_user', function (usr_object) {
+        return !!usr_object;
+    })
+}
+
+function warn_lexi_down() {
+    button_simplify.classList.add("disabled");
+    button_changeuser.classList.add("disabled");
+    error_content.textContent = browser.i18n.getMessage("lexi_down");
+    error_content.style.display = "block";
+}
+
+function warn_no_user() {
+    button_simplify.classList.add("disabled");
+    error_content.textContent = browser.i18n.getMessage("lexi_no_user");
+    error_content.style.display = "block";
+}
+
+test_connection().then(function (result) {
+    if (result.status == 200) {
+        // everything ok with connection, now check if user is registered in browser
+        browser.storage.sync.get('lexi_user', function (usr_object) {
+            if (!usr_object.lexi_user) {
+                warn_no_user();
+            }
+        });
+        // if (!test_user_registered()) { warn_no_user(); }
+    } else {
+        warn_lexi_down();
+    }
+});
 
 /* QUERY FOR NEW VERSION */
 function query_new_version_ajax_call() {
@@ -122,7 +150,7 @@ button_simplify.onclick = function (ev) {
         activeTabId = tab.id;
         browser.tabs.sendMessage(activeTabId, {type:'simplify_all'}, function () {return true;})
             .then(function (response) {
-                alert("simplification_done XXX");
+                alert("simplification_done!");
                 button_simplify_img.src = "../img/checkmark.png";
                 window.close();
             });

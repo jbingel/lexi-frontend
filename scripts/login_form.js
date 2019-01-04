@@ -184,7 +184,7 @@ function loginbuttonclick () {
                 });
                 // lexi_login_modal.style.display = "none";
                 send_close_login_message();
-                browser.runtime.reload();
+                browser.tabs.reload();
             } else if (result.status == 710) {
                 display_error(browser.i18n.getMessage("lexi_login_error_710"));
             } else {
@@ -234,8 +234,7 @@ function registerbuttonclick () {
                         });
                         // lexi_login_modal.style.display = "none";
                         send_close_login_message()
-                        browser.runtime.reload();
-                    } else {
+                        browser.tabs.reload();                    } else {
                         display_error(result.message + "<br/>");
                     }
                 });

@@ -2,6 +2,9 @@
   "lexi_down": {
     "message": "Øv, Lexi virker i øjeblikket ikke. Prøv igen senere."
   },
+  "lexi_no_user": {
+    "message": "Venligst log ind eller opret ny bruger."
+  },
   "lexi_popup_simplify_all": {
     "message": "Simplificer hele siden"
   },
