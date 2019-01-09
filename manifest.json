@@ -24,7 +24,7 @@
       "matches": ["<all_urls>"],
       "css": ["lexi.css"],
       "js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js", "scripts/ondemand.js"],
-      "all_frames": true
+      "all_frames": false
     }
   ],
   "permissions": [
