@@ -118,6 +118,9 @@
   "lexi_terms": {
     "message": "Lorem ipsum..."
   },
+  "lexi_unsupported_language": {
+    "message": "Lexi kan desværre ikke behandle dette sprog."
+  },
   "lexi_": {
     "message": ""
   }

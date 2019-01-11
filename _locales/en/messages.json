@@ -115,6 +115,9 @@
   "lexi_login_terms_notchecked": {
     "message": "Please accept Lexi's terms."
   },
+  "lexi_unsupported_language": {
+    "message": "Sorry, Lexi does not support this language."
+  },
   "lexi_terms": {
     "message": "Lorem ipsum..."
   },

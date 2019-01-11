@@ -262,33 +262,41 @@ function simplify(node, start, end) {
     //     var node = selected_nodes[0]["node"];
     console.log(node);
     // display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
-    if (end <= 0) {end = node.textContent.length}
-    return new Promise(function (resolve, reject) {
-        simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end).then(function (result) {
-            simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
-            request_ids.push(result['request_id']);
-            console.log(simplifications);
-            console.log("Lexi request ID: "+result['request_id']);
-            console.log("Backend version: "+result['backend_version']);
-            console.log(result);
-            if (simplifications) {
-                // replace original HTML with markup returned from backup
-                // (enriched w/ simplifications)
-                console.log(result['html']);
-                node.outerHTML = result['html'];
-                make_interface_listeners();
-                // Create listeners for clicks on simplification spans
-                make_simplification_listeners();
-                // prepare for feedback
-                register_feedback_action();
-                resolve(simplifications);
-            } else {
-                display_message(browser.i18n.getMessage("lexi_simplifications_error"));
-                reject(new Error("Could not simplify."));
-            }
-        });
-    })
-    // }
+    var text = node.textContent;
+    guessLanguage.detect(text, function (language) {
+        if (settings.SUPPORTED_LANGUAGES.includes(language)) {
+            if (end <= 0) {end = text.length}
+            return new Promise(function (resolve, reject) {
+                simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end, language).then(function (result) {
+                    simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
+                    request_ids.push(result['request_id']);
+                    console.log(simplifications);
+                    console.log("Lexi request ID: "+result['request_id']);
+                    console.log("Backend version: "+result['backend_version']);
+                    console.log(result);
+                    if (simplifications) {
+                        // replace original HTML with markup returned from backup
+                        // (enriched w/ simplifications)
+                        console.log(result['html']);
+                        node.outerHTML = result['html'];
+                        make_interface_listeners();
+                        // Create listeners for clicks on simplification spans
+                        make_simplification_listeners();
+                        // prepare for feedback
+                        register_feedback_action();
+                        resolve(simplifications);
+                    } else {
+                        display_message(browser.i18n.getMessage("lexi_simplifications_error"));
+                        reject(new Error("Could not simplify."));
+                    }
+                });
+            })
+        } else {
+            console.log("Text to be simplified does not seem to be in a supported " +
+                "language. Detected '" + language + "' as the text's language.");
+            display_message(browser.i18n.getMessage("lexi_unsupported_language"));
+        }
+    });
 }
 
 
@@ -304,15 +312,17 @@ function simplify(node, start, end) {
  * @param {string} html -
  * @param {string} startOffset -
  * @param {string} endOffset -
+ * @param {string} languageId -
  * @returns {Promise}
  */
-function simplifyAjaxCall(url, html, startOffset, endOffset) {
+function simplifyAjaxCall(url, html, startOffset, endOffset, languageId) {
     var request = {};
     request['frontend_version'] = frontend_version;
     request['email'] = USER;
     request['html'] = html;
     request['startOffset'] = startOffset;
     request['endOffset'] = endOffset;
+    request['languageId'] = languageId;
     request['url'] = window.location.href;
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();

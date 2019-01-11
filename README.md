@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### Version 0.4.8
++ Identify language and limit simplifications to supported languages, display warning if not supported 
++ Provide language ID to simplification call
+
 ### Version 0.4.7
 + Warning if no user registered (e.g. after fresh install)
 

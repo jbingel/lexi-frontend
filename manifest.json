@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Lexi",
   "description": "Simplifies difficult words, learning each user's personal needs.",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "default_locale": "da",
   "icons": {
       "16": "img/l16.png",
@@ -23,7 +23,8 @@
     {
       "matches": ["<all_urls>"],
       "css": ["lexi.css"],
-      "js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js", "scripts/ondemand.js"],
+      "js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js", "lib/_languageData.js",
+        "lib/guessLanguage.js","scripts/ondemand.js"],
       "all_frames": false
     }
   ],
