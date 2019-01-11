@@ -58,6 +58,11 @@ function handle_context_menu_click(info, tab) {
 
 var commands = (browser.commands || chrome.commands);
 if (commands) {  // TODO somehow this is undefined
+
+    // source: https://developer.chrome.com/extensions/commands
+    // In your background page, you can bind a handler to each of the
+    // commands defined in the manifest (except for '_execute_browser_action'
+    // and '_execute_page_action') via onCommand.addListener.
     commands.onCommand.addListener(function(command) {
         if (command == "run-lexi") {
             console.log("Received Lexi keyboard shortcut command");
