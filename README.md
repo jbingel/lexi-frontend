@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### Version 0.4.9
++ Restructuring, code cleanup
++ hot key Ctrl+Shift+L to simplify whole page
+
 ### Version 0.4.8
 + Identify language and limit simplifications to supported languages, display warning if not supported 
 + Provide language ID to simplification call

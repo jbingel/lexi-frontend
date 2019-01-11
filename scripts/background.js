@@ -25,7 +25,6 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // now start the simplifier
         console.log("Received message that user is logged on, " +
             "on-demand simplification now available.");
-        // browser.tabs.executeScript(null, {file: "scripts/simplify.js"});
     }
 
 });
@@ -61,27 +60,37 @@ if (commands) {  // TODO somehow this is undefined
     commands.onCommand.addListener(function(command) {
         if (command == "run-lexi") {
             console.log("Received Lexi keyboard shortcut command");
-            main();
+            send_simplify_all_request();
         }
     });
 }
 
 
-function main() {
-    var tab = browser.tabs.getCurrent();
-    var tabId = tab.id;
-    alert(tabId);
-    // check user is logged on, and finally simplify.
-    browser.tabs.executeScript(null, {file: "config.js"}, function(){
-        browser.tabs.executeScript(null, {file: "scripts/jquery-3.1.1.js"}, function() {
-            /* First, make sure user is logged on (aka if userId is set in browser.storage */
-            // browser.tabs.executeScript(null, {file: "scripts/user_management.js"}, function () {});
-            browser.tabs.executeScript(null, {file: "scripts/ondemand.js"}, function () {});
-        });
-    });
+// simplify whole page
+
+/**
+ * Helper function to execute function in current active tab
+ * @param tabCallback
+ */
+function doInCurrentTab(tabCallback) {
+    browser.tabs.query(
+        { currentWindow: true, active: true },
+        function (tabArray) {tabCallback(tabArray[0]);}
+    );
 }
 
-browser.browserAction.onClicked.addListener(function(tabId) {
-    console.log("Click on Lexi icon");
-    main();
-});
+function send_simplify_all_request() {
+    console.log("Trying to call simplification for whole page.");
+    // TODO display some notification this is running
+    var activeTabId;
+    doInCurrentTab(function (tab) {
+        activeTabId = tab.id;
+        browser.tabs.sendMessage(activeTabId, {type: 'simplify_all'}, function () {
+            return true;
+        })
+            .then(function (response) {
+                alert("simplification_done!");
+                window.close();
+            });
+    });
+}

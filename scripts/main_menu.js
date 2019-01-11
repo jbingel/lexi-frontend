@@ -8,6 +8,8 @@ window.browser = (function () {
         window.browser;
 })();
 var frontend_version = browser.runtime.getManifest().version;
+var USER = "default"; // will be overwritten in main (see bottom)
+
 
 // get variables for popup elements
 var button_simplify = document.getElementById("button-simplify-all");
@@ -19,8 +21,8 @@ var error_content = document.getElementById("error-content");
 var update_content = document.getElementById("update-content");
 
 var SERVER_URL = settings.LEXI_SERVER_URL;
-var TEST_CONNECTION_URL = SERVER_URL + "/test_connection";
-var NEW_VERSION_URL = SERVER_URL + "/versioncheck";
+var TEST_CONNECTION_URL = SERVER_URL + settings.test_connection_route;
+var NEW_VERSION_URL = SERVER_URL + settings.versioncheck_route;
 
 /* TEST CONNECTION */
 function test_connection() {
@@ -64,9 +66,8 @@ test_connection().then(function (result) {
     if (result.status == 200) {
         // everything ok with connection, now check if user is registered in browser
         browser.storage.sync.get('lexi_user', function (usr_object) {
-            if (!usr_object.lexi_user) {
-                warn_no_user();
-            }
+            if (usr_object.lexi_user) {} // all fine
+            else { warn_no_user(); }
         });
         // if (!test_user_registered()) { warn_no_user(); }
     } else {
@@ -167,10 +168,3 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 /* i18n */
 button_simplify_txt.textContent = browser.i18n.getMessage("lexi_popup_simplify_all");
-button_changeuser_txt.textContent = browser.i18n.getMessage("lexi_popup_change_user");
-
-// test_connection().then(function (value) {
-//     if (button_changeuser.disabled) {
-//         alert('fo');
-//     }
-// });

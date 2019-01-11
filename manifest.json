@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Lexi",
   "description": "Simplifies difficult words, learning each user's personal needs.",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "default_locale": "da",
   "icons": {
       "16": "img/l16.png",
@@ -22,9 +22,9 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "css": ["lexi.css"],
-      "js": ["scripts/jquery-3.1.1.js", "config.js", "scripts/md5.js", "lib/_languageData.js",
-        "lib/guessLanguage.js","scripts/ondemand.js"],
+      "css": ["css/lexi.css"],
+      "js": ["lib/jquery-3.1.1.js", "config.js", "lib/md5.js", "lib/_languageData.js",
+        "lib/guessLanguage.js","scripts/simplify.js"],
       "all_frames": false
     }
   ],
@@ -40,13 +40,13 @@
   "web_accessible_resources": [
     "img/loading.gif", "img/*png", "pages/terms.html", "pages/*", "pages/login_form.html",
     "pages/feedback_form.html", "config.js", "pages/notifier.html", "pages/feedback_reminder.html",
-    "scripts/*", "lexi-iframes.css"
+    "scripts/*", "css/*"
   ],
   "commands": {
-    "_execute_browser_action": {
+    "run-lexi": {
       "suggested_key": {
         "default": "Ctrl+Shift+L",
-        "linux": "Ctrl+Shift+L"
+        "mac": "Command+Shift+L"
       },
       "description": "Run Lexi"
     }

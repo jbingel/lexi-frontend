@@ -2,6 +2,7 @@
  * Created by joachim on 6/6/17.
  */
 
+var USER = "unknown";
 
 window.browser = (function () {
     return window.msBrowser ||
@@ -12,11 +13,6 @@ window.browser = (function () {
 // Speed up calls to hasOwnProperty
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-
-// browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
-//     alert(tabs[0].id);
-//     browser.tabs.sendMessage(tabs[0].id, {type:'request_password'});
-// });
 
 function check_user_login() {
     var userId;
@@ -76,3 +72,8 @@ if (typeof lexi_has_been_injected == 'undefined') {
 } else {
     console.log("Lexi has already been used in this tab.")
 }
+
+browser.storage.sync.get('lexi_user', function (usr_object) {
+    USER = usr_object.lexi_user.userId;
+    console.log("Started lexi extension. User: "+USER);
+});

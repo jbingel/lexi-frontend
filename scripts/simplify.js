@@ -645,7 +645,7 @@ function handle_feedback(rating, feedback_text) {
     display_message(browser.i18n.getMessage("lexi_feedback_submitted"));
 }
 
-function handle_simplify_all(message, sender, sendResponse) {
+function handle_messages(message, sender, sendResponse) {
     if (message.type === "simplify_all") {
         return simplify_all().then(function () {
             // send this message to popup script. sendResponse or sending Promise doesn't work somehow
@@ -674,13 +674,7 @@ function simplify_all() {
 /* these are for cross-origin communication between frames */
 
 /* Messages from backgroundscripts */
-browser.runtime.onMessage.addListener(handle_simplify_all);
-//
-//     function (message) {
-//     if (message.type === "simplify_all") {
-//         handle_simplify_all(message)
-//     }
-// });
+browser.runtime.onMessage.addListener(handle_messages);
 
 /* Messages from other content scripts */
 window.addEventListener("message", function (event) {
@@ -708,11 +702,11 @@ window.addEventListener("message", function (event) {
  * ******************************* *
  * ******************************* */
 
-console.log("Lexi: Ondemand simplification available.");
 
 browser.storage.sync.get('lexi_user', function (usr_object) {
     USER = usr_object.lexi_user.userId;
     console.log("Started lexi extension. User: "+USER);
+    console.log("Lexi: Ondemand simplification available.");
     inject_notification_container();
     inject_lexi_notifier();
     inject_feedback_reminder();
