@@ -121,6 +121,14 @@
   "lexi_unsupported_language": {
     "message": "Lexi kan desværre ikke behandle dette sprog."
   },
+  "lexi_unsupported_format": {
+    "message": "Beklager, Lexi kan ikke behandle formatet $format$.",
+    "placeholders": {
+      "format": {
+        "content": "$1"
+      }
+    }
+  },
   "lexi_": {
     "message": ""
   }

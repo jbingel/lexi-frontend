@@ -261,42 +261,52 @@ function simplify(node, start, end) {
     // if (selected_nodes.length == 1) {
     //     var node = selected_nodes[0]["node"];
     console.log(node);
-    // display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
-    var text = node.textContent;
-    guessLanguage.detect(text, function (language) {
-        if (settings.SUPPORTED_LANGUAGES.includes(language)) {
-            if (end <= 0) {end = text.length}
-            return new Promise(function (resolve, reject) {
-                simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end, language).then(function (result) {
-                    simplifications = Object.assign(simplifications, result['simplifications']);  // updates the object
-                    request_ids.push(result['request_id']);
-                    console.log(simplifications);
-                    console.log("Lexi request ID: "+result['request_id']);
-                    console.log("Backend version: "+result['backend_version']);
-                    console.log(result);
-                    if (simplifications) {
-                        // replace original HTML with markup returned from backup
-                        // (enriched w/ simplifications)
-                        console.log(result['html']);
-                        node.outerHTML = result['html'];
-                        make_interface_listeners();
-                        // Create listeners for clicks on simplification spans
-                        make_simplification_listeners();
-                        // prepare for feedback
-                        register_feedback_action();
-                        resolve(simplifications);
-                    } else {
-                        display_message(browser.i18n.getMessage("lexi_simplifications_error"));
-                        reject(new Error("Could not simplify."));
-                    }
-                });
-            })
+    return new Promise(function (resolve, reject) {
+        if (window.location.href.endsWith(".pdf")) {
+            display_message(browser.i18n.getMessage("lexi_unsupported_format", "PDF"));
+            reject(new Error("Page format not supported (PDF)."));
         } else {
-            console.log("Text to be simplified does not seem to be in a supported " +
-                "language. Detected '" + language + "' as the text's language.");
-            display_message(browser.i18n.getMessage("lexi_unsupported_language"));
+            var text = node.textContent;
+            guessLanguage.detect(text, function (language) {
+                if (settings.SUPPORTED_LANGUAGES.includes(language)) {
+                    if (end <= 0) {end = text.length}
+                    // return new Promise(function (resolve, reject) {
+                    simplifyAjaxCall(SERVER_URL_SIMPLIFY, node.outerHTML, start, end, language).then(function (result) {
+                        // update global 'simplifications' object
+                        simplifications = Object.assign(simplifications, result['simplifications']);
+                        request_ids.push(result['request_id']);
+                        console.log(simplifications);
+                        console.log("Lexi request ID: "+result['request_id']);
+                        console.log("Backend version: "+result['backend_version']);
+                        console.log(result);
+                        if (simplifications) {
+                            // replace original HTML with markup returned from backup
+                            // (enriched w/ simplifications)
+                            console.log(result['html']);
+                            node.outerHTML = result['html'];
+                            make_interface_listeners();
+                            // Create listeners for clicks on simplification spans
+                            make_simplification_listeners();
+                            // prepare for feedback
+                            register_feedback_action();
+                            resolve(simplifications);
+                        } else {  // TODO work with error code
+                            display_message(browser.i18n.getMessage("lexi_simplifications_error"));
+                            reject(new Error("Could not simplify."));
+                        }
+                    })
+                        // .catch(reject(new Error("Unknown problem.")));
+                    // })
+                } else {
+                    console.log("Text to be simplified does not seem to be in a supported " +
+                        "language. Detected '" + language + "' as the text's language.");
+                    display_message(browser.i18n.getMessage("lexi_unsupported_language"));
+                    reject(new Error("unsupported language: "+language))
+                }
+            });
         }
     });
+    // display_message(browser.i18n.getMessage("lexi_simplifications_loading"), false);
 }
 
 
@@ -647,23 +657,32 @@ function handle_feedback(rating, feedback_text) {
 
 function handle_messages(message, sender, sendResponse) {
     if (message.type === "simplify_all") {
-        return simplify_all().then(function () {
+        var result = simplify(document.body, 0, 0);
+        result.then(function () {
+        // simplify(document.body, 0, 0).then(function () {
+            // sendResponse({response: "simplification_done"});
             // send this message to popup script. sendResponse or sending Promise doesn't work somehow
             // TODO adapt this to send Promise instead:
             // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage
             browser.runtime.sendMessage({"type": "simplification_done"});
+            // alert("msg sent");
+            return true;
+        }).catch(function (reason) {
+            browser.runtime.sendMessage({"type": "simplification_done"});
+            // alert(["problem", reason]);
         })
     }
 }
 
-function simplify_all() {
-    return new Promise(function(resolve, reject) {
-        simplify(document.body, 0, 0)
-            .then(function (value) {resolve(true)})
-            .catch(function() {console.log('error');}
-        );
-    })
-}
+// function simplify_all() {
+//     return simplify(document.body, 0, 0)
+//     // return new Promise(function(resolve, reject) {
+//     //     simplify(document.body, 0, 0)
+//     //         .then(function () {resolve(true)})
+//     //         .catch(function() {console.log('error');}
+//     //     );
+//     // })
+// }
 
 /* ******************************* *
  * ******************************* *

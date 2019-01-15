@@ -100,7 +100,8 @@ function query_new_version() {
         var most_recent_version = result['most_recent_version'];
         var download_url = result['download_url'];
         if (most_recent_version !== frontend_version) {
-            announce_new_version(most_recent_version, download_url);
+            // Don't do this anymore, will update itself
+            // announce_new_version(most_recent_version, download_url);
         }
     });
 }
@@ -150,11 +151,15 @@ button_simplify.onclick = function (ev) {
     doInCurrentTab(function (tab) {
         activeTabId = tab.id;
         browser.tabs.sendMessage(activeTabId, {type:'simplify_all'}, function () {return true;})
-            .then(function (response) {
-                alert("simplification_done!");
-                button_simplify_img.src = "../img/checkmark.png";
-                window.close();
-            });
+            // alert("simplification_done!");
+            // button_simplify_img.src = "../img/checkmark.png";
+            // window.close();
+
+            // .then(function (response) {
+            //     alert("simplification_done!");
+            //     button_simplify_img.src = "../img/checkmark.png";
+            //     window.close();
+            // });
     });
 };
 

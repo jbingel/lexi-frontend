@@ -88,9 +88,5 @@ function send_simplify_all_request() {
         browser.tabs.sendMessage(activeTabId, {type: 'simplify_all'}, function () {
             return true;
         })
-            .then(function (response) {
-                alert("simplification_done!");
-                window.close();
-            });
     });
 }

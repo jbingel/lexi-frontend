@@ -118,6 +118,14 @@
   "lexi_unsupported_language": {
     "message": "Sorry, Lexi does not support this language."
   },
+  "lexi_unsupported_format": {
+    "message": "Sorry, format $format$ is not supported.",
+    "placeholders": {
+      "format": {
+        "content": "$1"
+      }
+    }
+  },
   "lexi_terms": {
     "message": "Lorem ipsum..."
   },
